@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
+  <!--
+    DYNAMIC NEWS SITEMAP
+    ═══════════════════════════════════════════════════════
+    This file should be generated dynamically by your backend.
+    Each article published must appear here within 2 minutes
+    for Google News indexing.
+
+    For Netlify + Supabase: Create a serverless function at
+    /netlify/functions/sitemap-news.js that queries Supabase
+    for articles published in the last 48 hours and returns
+    this XML format.
+
+    EXAMPLE ENTRY (add one per article):
+  -->
+  <url>
+    <loc>https://teluguscooplive.com/article/ARTICLE-ID</loc>
+    <news:news>
+      <news:publication>
+        <news:name>TeluguScoopLive</news:name>
+        <news:language>te</news:language>
+      </news:publication>
+      <news:publication_date>2026-03-22T10:00:00+05:30</news:publication_date>
+      <news:title>Article Title Here</news:title>
+      <news:keywords>telangana, andhra pradesh, politics, telugu news</news:keywords>
+    </news:news>
+  </url>
+
+</urlset>

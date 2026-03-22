@@ -1,0 +1,62 @@
+{
+  "name": "TeluguScoopLive",
+  "short_name": "TeluguScoop",
+  "description": "Breaking Telugu News — Cinema, Politics, Sports, Telangana & Andhra Pradesh",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0D0D0D",
+  "theme_color": "#E8192C",
+  "lang": "te",
+  "dir": "ltr",
+  "categories": ["news"],
+  "iarc_rating_id": "",
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/home.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "TeluguScoopLive Home"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Politics",
+      "short_name": "రాజకీయాలు",
+      "description": "Latest Politics News",
+      "url": "/politics",
+      "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Cinema",
+      "short_name": "సినిమా",
+      "description": "Latest Cinema News",
+      "url": "/cinema",
+      "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Telangana",
+      "short_name": "తెలంగాణ",
+      "description": "Telangana News",
+      "url": "/telangana",
+      "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
+    }
+  ]
+}

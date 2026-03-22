@@ -1,0 +1,38 @@
+# ════════════════════════════════════════════════════════════
+# TeluguScoopLive — Netlify Configuration
+# ════════════════════════════════════════════════════════════
+
+[build]
+  publish = "."
+  functions = "netlify/functions"
+
+# ── Route /sitemap-news.xml to the live function ─────────
+[[redirects]]
+  from   = "/sitemap-news.xml"
+  to     = "/.netlify/functions/sitemap-news"
+  status = 200
+
+# ── Security Headers ──────────────────────────────────────
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options        = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy        = "strict-origin-when-cross-origin"
+    Permissions-Policy     = "geolocation=(), microphone=(), camera=()"
+
+# ── Cache static assets ───────────────────────────────────
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/manifest.json"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+[[headers]]
+  for = "/icons/*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"

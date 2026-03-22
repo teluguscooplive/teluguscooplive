@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+
+# Block admin/private paths
+Disallow: /admin
+Disallow: /api/
+Disallow: /_supabase/
+
+# Sitemaps
+Sitemap: https://teluguscooplive.com/sitemap.xml
+Sitemap: https://teluguscooplive.com/sitemap-news.xml
