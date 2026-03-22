@@ -28,6 +28,14 @@
 </script>
 <!-- ▲ FOUC PREVENTION ▲ -->
 <title>TeluguScoopLive — Breaking Telugu News, Cinema, Politics & Cricket</title>
+<script id="tsl-tn-stub">
+/* Thumbnail stub — defined early so autopost wrappers always find it.
+   Real implementation in tsl-thumbnail-engine overwrites this. */
+window.generateArticleThumbnail = function(article) {
+  // Stub: replaced by tsl-thumbnail-engine on load
+  return Promise.resolve(null);
+};
+</script>
 <meta name="description" content="Your premium source for Telugu news, cinema, politics, cricket and discussions.">
 <!-- ▼▼▼ REPLACE WITH YOUR REAL VALUES ▼▼▼ -->
 <meta name="sb-url" content="https://tunyhhcecpdewffcjaxx.supabase.co">
@@ -4105,7 +4113,7 @@ window.mbnSetActive = function() {};
     <div class="nav-actions">
       <button class="search-btn" onclick="App.openSearch()">🔍</button>
       <!-- Notification bell — shown after login -->
-      <button class="notif-bell-btn" id="notifBellBtn" onclick="App.openNotifPanel()" style="display:none;position:relative;background:none;border:none;cursor:pointer;padding:6px;font-size:18px;color:var(--muted);transition:color 0.2s;" title="Notifications">
+      <button class="notif-bell-btn" id="notifBellBtn" onclick="App.openNotifPanel()" style="display:inline-flex;align-items:center;position:relative;background:none;border:none;cursor:pointer;padding:6px;font-size:18px;color:var(--muted);transition:color 0.2s;" title="Notifications">
         🔔
         <span class="notif-bell-badge" id="notifBellBadge" style="display:none;position:absolute;top:2px;right:2px;background:#E8192C;color:#fff;font-size:9px;font-weight:700;border-radius:50%;min-width:16px;height:16px;line-height:16px;text-align:center;padding:0 3px;pointer-events:none;">0</span>
       </button>
@@ -13506,7 +13514,22 @@ ORDER BY category;`;
         // ── AUTO-POST TO TELEGRAM after rewrite+publish ──
         const _apFn2 = window.autoPostToSocials || (window.App && window.App.autoPostToSocials);
         if (typeof _apFn2 === 'function') {
-          _apFn2(Object.assign({}, article, updateData, { id: articleId }));
+          (async function(){
+            var _artData2 = Object.assign({}, article, updateData, { id: articleId });
+            try {
+              if (typeof window.generateArticleThumbnail === 'function') {
+                var _tnUrl2 = await Promise.race([
+                  window.generateArticleThumbnail(_artData2),
+                  new Promise(function(r){ setTimeout(function(){ r(null); }, 4500); })
+                ]);
+                if (_tnUrl2) {
+                  _artData2 = Object.assign({}, _artData2, { image: _tnUrl2 });
+                  try { if (window.sb && articleId) window.sb.from('articles').update({ image: _tnUrl2 }).eq('id', articleId); } catch(e){}
+                }
+              }
+            } catch(e) { console.warn('[TN] _apFn2 err:', e.message); }
+            _apFn2(_artData2);
+          })();
         }
 
         loadAdminDrafts(); loadAdminArticles();
@@ -13849,13 +13872,28 @@ ORDER BY category;`;
     if (publishState) {
       const _apFn3 = window.autoPostToSocials || (window.App && window.App.autoPostToSocials);
       if (typeof _apFn3 === 'function') {
+        async function _doPost3(artObj) {
+          try {
+            if (typeof window.generateArticleThumbnail === 'function') {
+              var _tnUrl3 = await Promise.race([
+                window.generateArticleThumbnail(artObj),
+                new Promise(function(r){ setTimeout(function(){ r(null); }, 4500); })
+              ]);
+              if (_tnUrl3) {
+                artObj = Object.assign({}, artObj, { image: _tnUrl3 });
+                try { if (window.sb && artObj.id) window.sb.from('articles').update({ image: _tnUrl3 }).eq('id', artObj.id); } catch(e){}
+              }
+            }
+          } catch(e) { console.warn('[TN] _apFn3 err:', e.message); }
+          _apFn3(artObj);
+        }
         const cached = (typeof allArticles !== 'undefined' ? allArticles : [])
           .find(function(a){ return a.id == articleId; });
         if (cached) {
-          _apFn3(cached);
+          _doPost3(cached);
         } else {
           sb.from('articles').select('*').eq('id', articleId).single()
-            .then(function(res){ if (res.data) _apFn3(res.data); });
+            .then(function(res){ if (res.data) _doPost3(res.data); });
         }
       }
     }
@@ -14869,6 +14907,126 @@ Write exactly 5 paragraphs, minimum 600 words. No section labels. Zero repetitio
 #adminTabThumbnail { background: #f59e0b !important; color: #111 !important; font-weight:700 !important; }
 #adminTabThumbnail.active { background: #d97706 !important; color: #fff !important; }
 #tnCanvas { user-select:none; }
+</style>
+<style id="tsl-mobile-nav-fix">
+/* ═══════════════════════════════════════════════
+   MOBILE NAV FIX — Logo shrinks, actions always visible
+   ═══════════════════════════════════════════════ */
+@media (max-width: 768px) {
+
+  /* 1. Remove overflow:hidden that clips nav-actions */
+  .nav-top {
+    overflow: visible !important;
+    padding: 0 8px !important;
+    height: 56px !important;
+    min-height: 56px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 6px !important;
+  }
+
+  /* 2. Logo wrapper — shrink on mobile */
+  .tsl-nav-logo {
+    flex-shrink: 1 !important;
+    min-width: 0 !important;
+    gap: 6px !important;
+    overflow: hidden !important;
+    max-width: calc(100% - 160px) !important;
+  }
+
+  /* 3. Circle icon — smaller on mobile */
+  .tsl-nav-logo > img:first-child {
+    height: 40px !important;
+    width: 40px !important;
+    min-width: 40px !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* 4. Brand text — smaller on mobile */
+  .tsl-nav-logo div span[style*="font-size:30px"],
+  .tsl-nav-logo div span[style*="font-size: 30px"] {
+    font-size: 18px !important;
+  }
+
+  /* 5. Tagline — hide on very small screens */
+  .tsl-nav-logo div[style*="font-size:9.5px"],
+  .tsl-nav-logo div[style*="font-size: 9.5px"] {
+    display: none !important;
+  }
+
+  /* 6. NEWS mic icon — hide on mobile to save space */
+  .tsl-nav-logo > img:last-child {
+    display: none !important;
+  }
+
+  /* 7. Nav actions — always visible, never overflow */
+  .nav-actions {
+    flex-shrink: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    margin-left: auto !important;
+    min-width: 0 !important;
+  }
+
+  /* 8. Search button — always show */
+  .search-btn {
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 14px !important;
+    flex-shrink: 0 !important;
+    display: flex !important;
+  }
+
+  /* 9. Notification bell — always show */
+  .notif-bell-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    padding: 4px !important;
+    font-size: 16px !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* 10. Login button — compact */
+  .btn-login {
+    display: inline-flex !important;
+    padding: 5px 10px !important;
+    font-size: 11px !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* 11. Subscribe — hide text, keep short version */
+  .btn-subscribe {
+    padding: 5px 8px !important;
+    font-size: 11px !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+  }
+
+  .btn-sub-full { display: none !important; }
+  .btn-sub-short { display: inline !important; }
+}
+
+@media (max-width: 400px) {
+  /* Extra small phones */
+  .tsl-nav-logo > img:first-child {
+    height: 34px !important;
+    width: 34px !important;
+    min-width: 34px !important;
+  }
+  .tsl-nav-logo div span[style*="font-size:30px"],
+  .tsl-nav-logo div span[style*="font-size: 30px"] {
+    font-size: 15px !important;
+  }
+  /* Hide subscribe on tiny screens, keep login */
+  .btn-subscribe { display: none !important; }
+  .btn-login {
+    padding: 4px 8px !important;
+    font-size: 10px !important;
+  }
+}
 </style>
 </head><body>
     <span class="brand">TeluguScoop</span>
@@ -18494,7 +18652,7 @@ window.TeluguRewriter = TeluguRewriter;
       if (!CFG.sbUrl || !CFG.sbKey) return null;
       try {
         // Re-use global supabase-js already loaded by main app
-        _sb = window.supabase?.createClient(CFG.sbUrl, CFG.sbKey) || null;
+        _sb = window._sbClient || (window.App && window.App._sb ? window.App._sb : null) || null; /* reuse existing client */
       } catch(e) { console.warn('[NEX] Supabase client error:', e.message); }
       return _sb;
     }
@@ -23879,6 +24037,16 @@ window.autoPostToSocials = async function autoPostToSocials(article) {
 // Ensure window.autoPostToSocials is always accessible from main app scripts
 window.autoPostToSocials = window.autoPostToSocials || autoPostToSocials;
 
+// ── Expose sb client globally for thumbnail engine ──
+document.addEventListener('DOMContentLoaded', function() {
+  /* Reuse existing client — no new createClient() call */
+  if (!window.sb) {
+    window.sb = window._sbClient
+      || (window.App && window.App._sb ? window.App._sb : null)
+      || null;
+  }
+});
+
 // ══════════════════════════════════════════════════════
 //  RSS XML GENERATOR
 // ══════════════════════════════════════════════════════
@@ -24572,7 +24740,7 @@ function _loadBg(cb) {
   if (_bgLoading) return;
   _bgLoading = true;
   var img = new Image();
-  img.onload  = function() { _bg = img; _bgCbs.forEach(function(f){ f(img); }); _bgCbs = []; };
+  img.onload  = function() { _bg = img; console.log('[TN] ✅ Studio background loaded OK'); _bgCbs.forEach(function(f){ f(img); }); _bgCbs = []; };
   img.onerror = function() {            _bgCbs.forEach(function(f){ f(null); }); _bgCbs = []; };
   img.src = 'data:image/jpeg;base64,' + _B64;
 }
@@ -24720,12 +24888,10 @@ function _draw(article, bg) {
 
 /* ---- Supabase upload ---- */
 function _getSB() {
-  try {
-    var u = document.querySelector('meta[name="sb-url"]').content;
-    var k = document.querySelector('meta[name="sb-key"]').content;
-    if (u && k && window.supabase) return window.supabase.createClient(u,k);
-  } catch(e) {}
-  return null;
+  /* Always reuse the single client created by the main app — never create a new one */
+  return window._sbClient
+    || (window.App && window.App._sb && typeof window.App._sb.from === 'function' ? window.App._sb : null)
+    || null;
 }
 
 function _upload(canvas, artId) {
@@ -24734,22 +24900,35 @@ function _upload(canvas, artId) {
       if (!blob) { resolve(null); return; }
       blob.arrayBuffer().then(function(buf) {
         var sb = _getSB();
-        if (!sb) { resolve(null); return; }
-        var path = 'auto/' + artId + '-' + Date.now() + '.jpg';
-        sb.storage.from(TN_BUCKET).upload(path, new Uint8Array(buf), {
-          contentType: 'image/jpeg', upsert: true, cacheControl: '3600'
-        }).then(function(res) {
-          if (res.error) { console.warn('[TN] Upload err:', res.error.message); resolve(null); return; }
-          var pub = sb.storage.from(TN_BUCKET).getPublicUrl(path);
-          resolve(pub.data ? pub.data.publicUrl : null);
-        }).catch(function(e) { console.warn('[TN] Upload ex:', e.message); resolve(null); });
+        /* If client not ready yet, wait 1s and retry once */
+        if (!sb) {
+          setTimeout(function() {
+            var sb2 = _getSB();
+            if (!sb2) { resolve(null); return; }
+            _doUpload(sb2, new Uint8Array(buf), artId, resolve);
+          }, 1000);
+          return;
+        }
+        _doUpload(sb, new Uint8Array(buf), artId, resolve);
       }).catch(function(){ resolve(null); });
     }, 'image/jpeg', 0.88);
   });
 }
 
+function _doUpload(sb, data, artId, resolve) {
+  var path = 'auto/' + artId + '-' + Date.now() + '.jpg';
+  sb.storage.from(TN_BUCKET).upload(path, data, {
+    contentType: 'image/jpeg', upsert: true, cacheControl: '3600'
+  }).then(function(res) {
+    if (res.error) { console.warn('[TN] Upload err:', res.error.message); resolve(null); return; }
+    var pub = sb.storage.from(TN_BUCKET).getPublicUrl(path);
+    resolve(pub.data ? pub.data.publicUrl : null);
+  }).catch(function(e) { console.warn('[TN] Upload ex:', e.message); resolve(null); });
+}
+
 /* ---- Public API ---- */
 window.generateArticleThumbnail = function(article) {
+  console.log('[TN] 🎬 generateArticleThumbnail called for:', article ? article.title : 'NO ARTICLE');
   var t0 = Date.now();
   return new Promise(function(resolve) {
     _loadBg(function(bg) {
@@ -24757,7 +24936,7 @@ window.generateArticleThumbnail = function(article) {
         var canvas = _draw(article, bg);
         var artId  = article.id || ('tmp-' + Date.now());
         _upload(canvas, artId).then(function(url) {
-          console.log('[TN] Done in', Date.now()-t0, 'ms -', url || 'upload failed');
+          console.log('[TN] ✅ Done in', Date.now()-t0, 'ms | url:', url || '❌ upload failed | using fallback');
           resolve(url || article.image || TN_DEFAULT);
         });
       } catch(e) {
@@ -24798,7 +24977,7 @@ function _patch() {
         return orig(article);
       });
   };
-  console.log('[TN] autoPostToSocials patched OK');
+  console.log('[TN] ✅ autoPostToSocials window patch registered (backup only)');
   return true;
 }
 
