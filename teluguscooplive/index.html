@@ -13476,26 +13476,7 @@ ORDER BY category;`;
         toast('✓ AI rewrite complete and published!', 'success');
         document.getElementById('draft-' + articleId)?.remove();
 
-        // ── AUTO-POST TO TELEGRAM after rewrite+publish ──
-        const _apFn2 = window.autoPostToSocials || (window.App && window.App.autoPostToSocials);
-        if (typeof _apFn2 === 'function') {
-          (async function(){
-            var _artData2 = Object.assign({}, article, updateData, { id: articleId });
-            try {
-              if (typeof window.generateArticleThumbnail === 'function') {
-                var _tnUrl2 = await Promise.race([
-                  window.generateArticleThumbnail(_artData2),
-                  new Promise(function(r){ setTimeout(function(){ r(null); }, 4500); })
-                ]);
-                if (_tnUrl2) {
-                  _artData2 = Object.assign({}, _artData2, { image: _tnUrl2 });
-                  try { if (window.sb && articleId) window.sb.from('articles').update({ image: _tnUrl2 }).eq('id', articleId); } catch(e){}
-                }
-              }
-            } catch(e) { console.warn('[TN] _apFn2 err:', e.message); }
-            _apFn2(_artData2);
-          })();
-        }
+        // AUTO-POST handled by _patchPublishHooks only
 
         loadAdminDrafts(); loadAdminArticles();
         loadArticles(currentCategory === 'home' ? null : currentCategory);
@@ -13833,35 +13814,7 @@ ORDER BY category;`;
     document.getElementById('draft-' + articleId)?.remove();
     document.getElementById('article-' + articleId)?.remove();
 
-    // ── AUTO-POST TO TELEGRAM on publish ──
-    if (publishState) {
-      const _apFn3 = window.autoPostToSocials || (window.App && window.App.autoPostToSocials);
-      if (typeof _apFn3 === 'function') {
-        async function _doPost3(artObj) {
-          try {
-            if (typeof window.generateArticleThumbnail === 'function') {
-              var _tnUrl3 = await Promise.race([
-                window.generateArticleThumbnail(artObj),
-                new Promise(function(r){ setTimeout(function(){ r(null); }, 4500); })
-              ]);
-              if (_tnUrl3) {
-                artObj = Object.assign({}, artObj, { image: _tnUrl3 });
-                try { if (window.sb && artObj.id) window.sb.from('articles').update({ image: _tnUrl3 }).eq('id', artObj.id); } catch(e){}
-              }
-            }
-          } catch(e) { console.warn('[TN] _apFn3 err:', e.message); }
-          _apFn3(artObj);
-        }
-        const cached = (typeof allArticles !== 'undefined' ? allArticles : [])
-          .find(function(a){ return a.id == articleId; });
-        if (cached) {
-          _doPost3(cached);
-        } else {
-          sb.from('articles').select('*').eq('id', articleId).single()
-            .then(function(res){ if (res.data) _doPost3(res.data); });
-        }
-      }
-    }
+    // AUTO-POST handled by _patchPublishHooks only
 
     await loadAdminDrafts();
     await loadAdminArticles();
@@ -23806,28 +23759,17 @@ async function postToTelegram(article) {
 
   const text = _postBody(article);
 
-  // ── Generate TV-style thumbnail then send as photo ──
+  // article.image already contains the thumbnail URL (set by _patchPublishHooks)
+  const imgUrl = article.image;
+
   try {
-    let thumbUrl = article.image || null;
-
-    // Try canvas thumbnail generation (gives the TV news style image)
-    if (typeof window.generateArticleThumbnail === 'function') {
-      try {
-        thumbUrl = await Promise.race([
-          window.generateArticleThumbnail(article),
-          new Promise(r => setTimeout(() => r(article.image || null), 5000))
-        ]);
-      } catch(e) { thumbUrl = article.image || null; }
-    }
-
-    // Send as photo if we have a URL
-    if (thumbUrl && thumbUrl.startsWith('http')) {
+    if (imgUrl && imgUrl.startsWith('http')) {
       const r = await fetch(`https://api.telegram.org/bot${token}/sendPhoto`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           chat_id: chatId,
-          photo: thumbUrl,
+          photo: imgUrl,
           caption: text,
           parse_mode: 'HTML',
           reply_markup: {
