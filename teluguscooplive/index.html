@@ -8471,6 +8471,9 @@ var App = (() => {
 
   // ── ADMIN ─────────────────────────────────────────────
   function openAdmin() {
+    /* Hide mobile bottom nav when admin opens */
+    var _mbn = document.getElementById('mobileBottomNav');
+    if (_mbn) _mbn.style.setProperty('display','none','important');
     toggleUserDropdown(false);
     if (!currentUser) { openModal('loginModal'); return; }
     if (!isAdmin() && !isModerator()) {
@@ -22963,8 +22966,8 @@ window.TeluguRewriter = TeluguRewriter;
 </script>
 
 <!-- ── MOBILE BOTTOM NAV ─────────────────────────────── -->
-<div id="mobileBottomNav" style="display:block;position:fixed;bottom:0;left:0;right:0;width:100%;z-index:999999;background:#fff;border-top:2px solid #f0f0f5;box-shadow:0 -3px 16px rgba(0,0,0,0.10);">
-  <div class="mbn-inner" style="display:flex;flex-direction:row;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:6px 4px 4px;gap:2px;align-items:center;">
+<div id="mobileBottomNav">
+  <div class="mbn-inner">
     <button class="mbn-btn mbn-active" data-mbn="home" onclick="mbnCloseArticleThen(this, function(){ App.filterCategory('home'); })">
       <span class="mbn-ico">🏠</span><span class="mbn-lbl">Home</span>
     </button>
@@ -22995,41 +22998,61 @@ window.TeluguRewriter = TeluguRewriter;
   </div>
 </div>
 <script>
-// Bottom nav: show on main pages, hide inside admin
+// Bottom nav: show on mobile main pages, HIDE in admin panel
 (function(){
   function showNav() {
     var nav = document.getElementById('mobileBottomNav');
     if (!nav) return;
+    var isMobile = window.innerWidth <= 768;
     var adminEl = document.getElementById('adminModal');
-    if (adminEl && adminEl.classList.contains('open')) {
-      nav.style.display = 'none';
-      return;
+    var adminOpen = adminEl && adminEl.classList.contains('open');
+
+    if (!isMobile || adminOpen) {
+      nav.style.setProperty('display', 'none', 'important');
+    } else {
+      nav.style.setProperty('display', 'block', 'important');
     }
-    nav.style.display = window.innerWidth <= 768 ? 'block' : 'none';
   }
 
   window._mbnShow = showNav;
 
-  showNav();
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', showNav);
-  } else {
-    showNav();
-  }
-  window.addEventListener('resize', showNav);
-
+  // Hook: hide nav as soon as admin opens, show when it closes
   document.addEventListener('DOMContentLoaded', function() {
-    var adminEl = document.getElementById('adminModal');
-    if (adminEl && window.MutationObserver) {
-      new MutationObserver(showNav).observe(adminEl, { attributes: true, attributeFilter: ['class'] });
+    var adminModal = document.getElementById('adminModal');
+    if (adminModal && window.MutationObserver) {
+      new MutationObserver(function() {
+        showNav();
+      }).observe(adminModal, { attributes: true, attributeFilter: ['class', 'style'] });
+    }
+    // Also patch App.openAdmin if available
+    var _origOpenAdmin = window.App && window.App.openAdmin;
+    if (_origOpenAdmin) {
+      window.App.openAdmin = function() {
+        _origOpenAdmin.apply(this, arguments);
+        setTimeout(showNav, 50);
+      };
     }
   });
+
+  // Run immediately and on DOM ready
+  showNav();
+  document.addEventListener('DOMContentLoaded', function() {
+    showNav();
+    // Watch adminModal open/close
+    var adminEl = document.getElementById('adminModal');
+    if (adminEl && window.MutationObserver) {
+      new MutationObserver(showNav).observe(adminEl, {
+        attributes: true, attributeFilter: ['class', 'style']
+      });
+    }
+  });
+  window.addEventListener('resize', showNav);
 })();
 </script>
 <style id="mobile-bottom-nav-fix">
 /* ── MOBILE BOTTOM NAV — Fixed tab bar like screenshot ── */
 #mobileBottomNav {
-  display: block;
+  display: none;
   position: fixed;
   bottom: 0; left: 0; right: 0;
   width: 100%;
