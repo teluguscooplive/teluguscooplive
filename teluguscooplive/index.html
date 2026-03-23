@@ -4013,6 +4013,52 @@ function safeOpenModal(id) {
 }
 </script>
 <body>
+<!-- ═══════════════ SRI RAMA NAVAMI BANNER ═══════════════ -->
+<div id="ramaNavamiBanner" style="display:none;position:fixed;top:0;left:0;right:0;z-index:999998;background:linear-gradient(135deg,#FF6B00,#FF8C00,#FFD700,#FF8C00,#FF6B00);background-size:400% 400%;animation:ramaGradient 3s ease infinite;box-shadow:0 4px 24px rgba(255,140,0,0.5);">
+  <div style="position:relative;overflow:hidden;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+    <!-- Decorative elements -->
+    <div style="position:absolute;inset:0;background:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 20%22><text y=%2215%22 font-size=%2218%22>🌸</text><text x=%2225%22 y=%2215%22 font-size=%2218%22>🌺</text><text x=%2250%22 y=%2215%22 font-size=%2218%22>🌸</text><text x=%2275%22 y=%2215%22 font-size=%2218%22>🌺</text></svg>') repeat-x;opacity:0.2;pointer-events:none;"></div>
+    <!-- Left: Bow & Arrow icon -->
+    <div style="font-size:28px;flex-shrink:0;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.3));">🏹</div>
+    <!-- Center content -->
+    <div style="flex:1;text-align:center;">
+      <div style="font-size:17px;font-weight:900;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,0.4);letter-spacing:0.05em;line-height:1.2;">
+        🙏 శ్రీ రామ నవమి శుభాకాంక్షలు 🙏
+      </div>
+      <div style="font-size:12px;font-weight:700;color:rgba(255,255,255,0.95);margin-top:2px;text-shadow:0 1px 4px rgba(0,0,0,0.3);">
+        Sri Rama Navami Greetings — జై శ్రీ రామ్! 🕉️
+      </div>
+    </div>
+    <!-- Right: Temple icon -->
+    <div style="font-size:28px;flex-shrink:0;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.3));">🛕</div>
+    <!-- Close button -->
+    <button onclick="document.getElementById('ramaNavamiBanner').style.display='none';document.body.style.paddingTop='';" 
+      style="position:absolute;top:6px;right:8px;background:rgba(0,0,0,0.25);border:none;color:#fff;width:22px;height:22px;border-radius:50%;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;line-height:1;">✕</button>
+  </div>
+</div>
+<style>
+@keyframes ramaGradient {
+  0%,100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+</style>
+<script>
+(function(){
+  var now = new Date();
+  /* Show on March 26 IST */
+  var ist = new Date(now.getTime() + (5.5 * 60 * 60 * 1000));
+  if (ist.getMonth() === 2 && ist.getDate() === 26) {
+    var el = document.getElementById('ramaNavamiBanner');
+    if (el) {
+      el.style.display = 'block';
+      document.body.style.paddingTop = (document.body.style.paddingTop ? 
+        (parseInt(document.body.style.paddingTop)||0) + 72 : 72) + 'px';
+    }
+  }
+})();
+</script>
+<!-- ═══════════════════════════════════════════════════════ -->
+
 <script>
 /* Early shim: mbnCloseArticleThen is fully defined later in the bottom-nav
    script block. This stub lets top-nav pills safely call it before that block
@@ -5378,7 +5424,7 @@ body, .news-card-title, .section-title, .article-title {
       <div class="tsl-ftr-company-title">Company Info &amp; Contact</div>
       <div class="tsl-ftr-company-sub">TeluguScoop — Fast, reliable Telugu news &amp; discussions.</div>
       <a class="tsl-ftr-company-email" href="/cdn-cgi/l/email-protection#5622333a23312325353939263a3f203316313b373f3a7835393b" style="display:block;margin-bottom:6px;">
-        <span>✉</span> <strong style="color:rgba(196,161,10,0.9);"><span class="__cf_email__" data-cfemail="8efaebe2fbe9fbfdede1e1fee2e7f8ebcee9e3efe7e2a0ede1e3">[email&#160;protected]</span></strong>
+        <span>✉</span> <strong style="color:rgba(196,161,10,0.9);">teluguscooplive@gmail.com</strong>
       </a>
       <a href="https://wa.me/918978213237" target="_blank" rel="noopener" style="font-size:12px;color:rgba(255,255,255,0.55);text-decoration:none;display:block;margin-bottom:10px;">
         📱 <strong style="color:#25D366;">+91 8978213237</strong> (WhatsApp)
@@ -5424,7 +5470,7 @@ body, .news-card-title, .section-title, .article-title {
         </div>
         <div style="margin-top:10px;">
           <div style="font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(196,127,10,0.8);margin-bottom:6px;">Contact</div>
-          <a href="/cdn-cgi/l/email-protection#5226373e27352721313d3d223e3b243712353f333b3e7c313d3f" style="font-size:11px;color:rgba(255,255,255,0.45);text-decoration:none;">✉ <span class="__cf_email__" data-cfemail="6e1a0b021b091b1d0d01011e0207180b2e09030f0702400d0103">[email&#160;protected]</span></a><br>
+          <a href="mailto:teluguscooplive@gmail.com" style="color:var(--gold);font-weight:700;">teluguscooplive@gmail.com</a><br>
           <a href="https://wa.me/918978213237" target="_blank" rel="noopener" style="font-size:11px;color:rgba(255,255,255,0.45);text-decoration:none;margin-top:3px;display:block;">📱 +91 8978213237</a>
         </div>
       </div>
@@ -6891,7 +6937,7 @@ CREATE POLICY "Auth write settings" ON site_settings
       </div>
       <div class="page-section">
         <h3>📬 Contact Us</h3>
-        <p>📧 <a href="/cdn-cgi/l/email-protection#fb8f9e978e9c8e889894948b97928d9ebb9c969a9297d5989496" style="color:var(--gold);font-weight:700;"><span class="__cf_email__" data-cfemail="0470616871637177676b6b74686d7261446369656d682a676b69">[email&#160;protected]</span></a></p>
+        <p>📧 <a href="mailto:teluguscooplive@gmail.com" style="color:var(--gold);font-weight:700;">teluguscooplive@gmail.com</a></p>
         <p>📱 <a href="https://wa.me/918978213237" target="_blank" rel="noopener" style="color:#25D366;font-weight:700;">+91 8978213237</a> (WhatsApp)</p>
         <p style="color:var(--muted);font-size:12px;">For news tips, corrections, advertising, partnerships, or general inquiries.</p>
         <p style="margin-top:8px;">
@@ -6932,7 +6978,7 @@ CREATE POLICY "Auth write settings" ON site_settings
       </div>
       <div class="page-section">
         <h3>5. Your Rights</h3>
-        <p>Request deletion of your account and data anytime by emailing <a href="/cdn-cgi/l/email-protection#4b3f2e273e2c3e382824243b27223d2e0b2c262a222765282426"><span class="__cf_email__" data-cfemail="e99d8c859c8e9c9a8a86869985809f8ca98e84888085c78a8684">[email&#160;protected]</span></a>. We process all requests within 7 days.</p>
+        <p>Request deletion of your account and data anytime by emailing <a href="mailto:teluguscooplive@gmail.com" style="color:var(--gold);font-weight:700;">teluguscooplive@gmail.com</a>. We process all requests within 7 days.</p>
       </div>
       <div class="page-section">
         <h3>6. Security</h3>
@@ -6940,7 +6986,7 @@ CREATE POLICY "Auth write settings" ON site_settings
       </div>
       <div class="page-section">
         <h3>7. Contact</h3>
-        <p>Questions? Email us: <a href="/cdn-cgi/l/email-protection#1f6b7a736a786a6c7c70706f7376697a5f78727e7673317c7072"><span class="__cf_email__" data-cfemail="4236272e37253731212d2d322e2b342702252f232b2e6c212d2f">[email&#160;protected]</span></a></p>
+        <p>Questions? Email us: <a href="mailto:teluguscooplive@gmail.com" style="color:var(--gold);font-weight:700;">teluguscooplive@gmail.com</a></p>
       </div>
     </div>
   </div>
@@ -6982,7 +7028,7 @@ CREATE POLICY "Auth write settings" ON site_settings
       </div>
       <div class="page-section">
         <h3>7. Contact</h3>
-        <p>For any questions about these terms, contact us at <a href="/cdn-cgi/l/email-protection#d5a1b0b9a0b2a0a6b6babaa5b9bca3b095b2b8b4bcb9fbb6bab8" style="color:var(--gold);font-weight:700;"><span class="__cf_email__" data-cfemail="80f4e5ecf5e7f5f3e3efeff0ece9f6e5c0e7ede1e9ecaee3efed">[email&#160;protected]</span></a> or WhatsApp <a href="https://wa.me/918978213237" target="_blank" rel="noopener" style="color:#25D366;font-weight:700;">+91 8978213237</a>.</p>
+        <p>For any questions about these terms, contact us at <a href="mailto:teluguscooplive@gmail.com" style="color:var(--gold);font-weight:700;">teluguscooplive@gmail.com</a> or WhatsApp <a href="https://wa.me/918978213237" target="_blank" rel="noopener" style="color:#25D366;font-weight:700;">+91 8978213237</a>.</p>
       </div>
     </div>
   </div>
@@ -6998,7 +7044,7 @@ CREATE POLICY "Auth write settings" ON site_settings
     <div class="modal-body">
       <div style="background:rgba(196,161,10,0.08);border:1px solid rgba(196,161,10,0.25);border-radius:10px;padding:14px 16px;margin-bottom:20px;">
         <div style="font-size:12px;font-weight:700;color:var(--gold);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.08em;">✉ Official Email</div>
-        <a href="/cdn-cgi/l/email-protection#5e2a3b322b392b2d3d31312e3237283b1e39333f3732703d3133" style="font-size:15px;font-weight:700;color:var(--white);text-decoration:none;"><span class="__cf_email__" data-cfemail="0e7a6b627b697b7d6d61617e6267786b4e69636f6762206d6163">[email&#160;protected]</span></a>
+        <a href="mailto:teluguscooplive@gmail.com" style="color:var(--gold);font-weight:700;">teluguscooplive@gmail.com</a>
         <div style="font-size:11px;color:var(--muted);margin-top:4px;">For news tips, advertising, support &amp; general inquiries</div>
       </div>
 
@@ -7016,17 +7062,17 @@ CREATE POLICY "Auth write settings" ON site_settings
         <div class="contact-info-box">
           <h4>📰 Editorial</h4>
           <p>News tips, press releases, editorial inquiries</p>
-          <a href="/cdn-cgi/l/email-protection#4236272e37253731212d2d322e2b342702252f232b2e6c212d2f"><span class="__cf_email__" data-cfemail="8df9e8e1f8eaf8feeee2e2fde1e4fbe8cdeae0ece4e1a3eee2e0">[email&#160;protected]</span></a>
+          <a href="mailto:teluguscooplive@gmail.com" style="color:var(--gold);font-weight:700;">teluguscooplive@gmail.com</a>
         </div>
         <div class="contact-info-box">
           <h4>📣 Advertise</h4>
           <p>Reach 500K+ monthly Telugu readers</p>
-          <a href="/cdn-cgi/l/email-protection#afdbcac3dac8dadcccc0c0dfc3c6d9caefc8c2cec6c381ccc0c2"><span class="__cf_email__" data-cfemail="3c485950495b494f5f53534c50554a597c5b515d5550125f5351">[email&#160;protected]</span></a>
+          <a href="mailto:teluguscooplive@gmail.com" style="color:var(--gold);font-weight:700;">teluguscooplive@gmail.com</a>
         </div>
         <div class="contact-info-box">
           <h4>🛠️ Support</h4>
           <p>Account issues, bug reports, feature requests</p>
-          <a href="/cdn-cgi/l/email-protection#5420313821332127373b3b24383d2231143339353d387a373b39"><span class="__cf_email__" data-cfemail="ea9e8f869f8d9f998985859a86839c8faa8d878b8386c4898587">[email&#160;protected]</span></a>
+          <a href="mailto:teluguscooplive@gmail.com" style="color:var(--gold);font-weight:700;">teluguscooplive@gmail.com</a>
         </div>
         <div class="contact-info-box">
           <h4>📍 Location</h4>
@@ -22983,17 +23029,15 @@ window.TeluguRewriter = TeluguRewriter;
 })();
 </script>
 <style id="mobile-bottom-nav-fix">
-/* ── MOBILE BOTTOM NAV — Pill Style ── */
+/* ── MOBILE BOTTOM NAV — Fixed tab bar like screenshot ── */
 #mobileBottomNav {
-  display: block;
+  display: none;
   position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  bottom: 0; left: 0; right: 0;
   width: 100%;
   background: #fff;
-  border-top: 1px solid #e5e7eb;
-  box-shadow: 0 -2px 12px rgba(0,0,0,0.10);
+  border-top: 2px solid #f0f0f5;
+  box-shadow: 0 -3px 16px rgba(0,0,0,0.10);
   z-index: 99999;
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
@@ -23003,9 +23047,8 @@ window.TeluguRewriter = TeluguRewriter;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
-  padding: 8px 10px 6px;
-  gap: 7px;
-  align-items: center;
+  padding: 6px 4px 4px;
+  gap: 2px;
 }
 #mobileBottomNav .mbn-inner::-webkit-scrollbar { display: none; }
 #mobileBottomNav .mbn-btn {
@@ -23013,44 +23056,46 @@ window.TeluguRewriter = TeluguRewriter;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  flex: 0 0 auto;
-  min-width: 54px;
-  padding: 5px 10px 4px;
-  background: #f3f4f6;
-  border: 1.5px solid transparent;
-  border-radius: 20px;
+  flex: 1 0 auto;
+  min-width: 56px;
+  max-width: 80px;
+  padding: 4px 4px 3px;
+  background: transparent;
+  border: none;
+  border-radius: 10px;
   cursor: pointer;
-  gap: 1px;
+  gap: 2px;
   -webkit-tap-highlight-color: transparent;
-  transition: background 0.15s, border-color 0.15s;
+  transition: all 0.15s;
 }
 #mobileBottomNav .mbn-ico {
-  font-size: 17px;
-  line-height: 1;
+  font-size: 20px;
+  line-height: 1.1;
   display: block;
+  transition: transform 0.15s;
 }
 #mobileBottomNav .mbn-lbl {
-  font-size: 9px;
-  font-weight: 700;
-  color: #374151;
+  font-size: 9.5px;
+  font-weight: 600;
+  color: #6b7280;
   display: block;
   white-space: nowrap;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
 }
+/* Active state */
+#mobileBottomNav .mbn-btn.mbn-active .mbn-ico { transform: scale(1.15); }
+#mobileBottomNav .mbn-btn.mbn-active .mbn-lbl { color: #E8192C; font-weight: 700; }
 #mobileBottomNav .mbn-btn.mbn-active {
-  background: #f3f4f6;
-  border-color: transparent;
-  border-bottom: 2.5px solid #E8192C;
+  background: rgba(232,25,44,0.06);
+  border-radius: 10px;
 }
-#mobileBottomNav .mbn-btn.mbn-active .mbn-lbl { color: #E8192C; }
-#mobileBottomNav .mbn-btn.mbn-active .mbn-ico  { transform: scale(1.1); }
 
 @media (max-width: 768px) {
   #mobileBottomNav { display: block !important; }
-  body { padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px)) !important; }
-  .toast-container { bottom: 80px !important; }
-  #pushNotifBar { bottom: 80px !important; }
+  body { padding-bottom: calc(68px + env(safe-area-inset-bottom, 0px)) !important; }
+  .toast-container { bottom: 76px !important; }
+  #pushNotifBar { bottom: 76px !important; }
 }
-/* Hide on desktop */
 @media (min-width: 769px) {
   #mobileBottomNav { display: none !important; }
 }
@@ -24827,21 +24872,29 @@ function _rrect(ctx, x, y, w, h, r) {
 }
 
 function _wrap(ctx, txt, x, y, maxW, lh, maxL) {
-  var words = txt.split(' '), line = '', drawn = 0;
+  /* Clean word-wrap: fill lines left to right, ellipsis on last line */
+  var words = txt.split(' ');
+  var lines = [];
+  var cur = '';
   for (var i = 0; i < words.length; i++) {
-    var test = line ? line + ' ' + words[i] : words[i];
-    if (ctx.measureText(test).width > maxW && line) {
-      if (drawn >= maxL - 1) {
-        var rest = words.slice(i).join(' ');
-        while (ctx.measureText(line + ' ' + rest + '...').width > maxW && rest.length > 0)
-          rest = rest.slice(0,-1);
-        ctx.fillText(line + (rest ? ' ' + rest + '...' : ''), x, y);
-        return;
-      }
-      ctx.fillText(line, x, y); line = words[i]; y += lh; drawn++;
-    } else { line = test; }
+    var test = cur ? cur + ' ' + words[i] : words[i];
+    if (ctx.measureText(test).width > maxW && cur) {
+      lines.push(cur);
+      cur = words[i];
+      if (lines.length >= maxL) { cur = ''; break; }
+    } else { cur = test; }
   }
-  if (line) ctx.fillText(line, x, y);
+  if (cur) lines.push(cur);
+  /* If overflow, add ellipsis to last line */
+  if (lines.length > maxL) lines = lines.slice(0, maxL);
+  if (words.length > 0 && cur === '' && lines.length === maxL) {
+    var last = lines[maxL-1];
+    while (ctx.measureText(last + '...').width > maxW && last.length > 0)
+      last = last.slice(0,-1).trimRight();
+    lines[maxL-1] = last + '...';
+  }
+  for (var j = 0; j < lines.length; j++)
+    ctx.fillText(lines[j], x, y + j * lh);
 }
 
 /* ---- Main draw ---- */
