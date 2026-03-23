@@ -23753,14 +23753,83 @@ function _postBody(article) {
 //  TELEGRAM
 // ══════════════════════════════════════════════════════
 async function postToTelegram(article) {
-  /* Handled by Netlify function — see netlify/functions/autopost.js */
-  return { ok: true, platform: 'telegram', _skip: true };
+  const token  = _sk('tg_token');
+  const chatId = _sk('tg_chat_id');
+  if (!token || !chatId) return { ok: false, reason: 'No Telegram token/chat_id configured' };
+
+  const text = _postBody(article);
+  const articleUrl = _articleUrl(article);
+  const replyMarkup = { inline_keyboard: [[{ text: '\uD83D\uDCD6 Read Full Article', url: articleUrl }]] };
+
+  try {
+    // Try 1: canvas blob upload directly to Telegram (no Supabase needed)
+    if (typeof window.generateArticleThumbnailBlob === 'function') {
+      try {
+        const blob = await Promise.race([
+          window.generateArticleThumbnailBlob(article),
+          new Promise(r => setTimeout(() => r(null), 5000))
+        ]);
+        if (blob) {
+          const form = new FormData();
+          form.append('chat_id', chatId);
+          form.append('photo', blob, 'thumbnail.jpg');
+          form.append('caption', text);
+          form.append('parse_mode', 'HTML');
+          form.append('reply_markup', JSON.stringify(replyMarkup));
+          const r = await fetch('https://api.telegram.org/bot' + token + '/sendPhoto', { method: 'POST', body: form });
+          const d = await r.json();
+          if (d.ok) return { ok: true, platform: 'telegram' };
+          console.warn('[TG] Blob send failed:', d.description);
+        }
+      } catch(blobErr) { console.warn('[TG] Blob err:', blobErr.message); }
+    }
+
+    // Try 2: fallback URL
+    const imgUrl = article.image;
+    if (imgUrl && imgUrl.startsWith('http')) {
+      const r = await fetch('https://api.telegram.org/bot' + token + '/sendPhoto', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: chatId, photo: imgUrl, caption: text, parse_mode: 'HTML', reply_markup: replyMarkup })
+      });
+      const d = await r.json();
+      if (d.ok) return { ok: true, platform: 'telegram' };
+      // Photo failed — fall back to text
+    }
+    // Text-only with HTML parse mode and inline button
+    const articleUrl = _articleUrl(article);
+    const r2 = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text: text,
+        parse_mode: 'HTML',
+        disable_web_page_preview: false,
+        reply_markup: {
+          inline_keyboard: [[
+            { text: '📖 Read Full Article', url: articleUrl }
+          ]]
+        }
+      })
+    });
+    const d2 = await r2.json();
+    if (!d2.ok) {
+      // Give actionable error based on Telegram error code
+      let errMsg = d2.description || 'Unknown Telegram error';
+      if (errMsg.includes('chat not found'))     errMsg = 'Chat not found — bot is NOT in the channel. Add bot as Admin to your channel first, then use Auto-Find Chat ID.';
+      if (errMsg.includes('Unauthorized'))       errMsg = 'Unauthorized — bot token is invalid. Get a fresh token from @BotFather.';
+      if (errMsg.includes('bot was kicked'))     errMsg = 'Bot was kicked from the channel — re-add it as Admin.';
+      if (errMsg.includes('have no rights'))     errMsg = 'Bot has no rights to post — make it Admin with "Post Messages" permission.';
+      if (errMsg.includes('PEER_ID_INVALID'))    errMsg = 'Invalid Chat ID — use Auto-Find Chat ID button to get the correct numeric ID.';
+      return { ok: false, platform: 'telegram', error: errMsg };
+    }
+    return { ok: true, platform: 'telegram' };
+  } catch(e) {
+    return { ok: false, platform: 'telegram', error: e.message };
+  }
 }
 
-async function postToFacebook(article) {
-  /* Handled by Netlify function — see netlify/functions/autopost.js */
-  return { ok: true, platform: 'facebook', _skip: true };
-}
 // ══════════════════════════════════════════════════════
 //  FACEBOOK PAGE — with retry + logging
 // ══════════════════════════════════════════════════════
@@ -23988,37 +24057,31 @@ window.autoPostToSocials = async function autoPostToSocials(article) {
 
   console.log('[AutoPost] Article:', article.title.substring(0, 60));
 
-  // ── Call Netlify serverless function (generates HD thumbnail + posts both platforms) ──
-  try {
-    const payload = {
-      article: article,
-      tg_token:  tgToken  || null,
-      tg_chat_id:tgChat   || null,
-      fb_token:  fbToken  || null,
-      fb_page_id:fbPageId || null
-    };
-    console.log('[AutoPost] Calling Netlify function...');
-    const res = await fetch('/.netlify/functions/autopost', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    const data = await res.json();
-    console.log('[AutoPost] Result:', JSON.stringify(data.results));
+  const runners = [
+    postToTelegram(article),
+    postToFacebook(article)
+  ];
 
-    const tgOk = data.results?.telegram?.ok;
-    const fbOk = data.results?.facebook?.ok;
-    const count = (tgOk?1:0) + (fbOk?1:0);
-
-    if (count > 0) {
-      if (typeof toast === 'function') toast('📣 Posted to ' + count + ' platform' + (count>1?'s':''), 'success');
+  const results = await Promise.allSettled(runners);
+  const platforms = ['Telegram', 'Facebook'];
+  let successCount = 0;
+  results.forEach((r, i) => {
+    if (r.status === 'fulfilled' && r.value?.ok) {
+      successCount++;
+      console.log('[AutoPost] ✅', platforms[i], '— posted successfully');
     } else {
-      console.error('[AutoPost] Both platforms failed:', JSON.stringify(data.results));
-      if (typeof toast === 'function') toast('⚠️ AutoPost failed — check console', 'error');
+      const err = r.value?.error || r.value?.reason || r.reason?.message || 'unknown error';
+      console.error('[AutoPost] ❌', platforms[i], '— FAILED:', err);
     }
-  } catch(e) {
-    console.error('[AutoPost] Netlify function error:', e.message);
-    if (typeof toast === 'function') toast('⚠️ AutoPost error: ' + e.message, 'error');
+  });
+
+  console.log('[AutoPost] ── Done:', successCount, '/', results.length, 'platforms succeeded ──');
+
+  if (successCount > 0) {
+    if (typeof toast === 'function') toast(`📣 Posted to ${successCount} platform${successCount > 1 ? 's' : ''}`, 'success');
+    else if (window.App && window.App._toast) window.App._toast(`📣 Posted to ${successCount} platform${successCount > 1 ? 's' : ''}`, 'success');
+  } else {
+    console.error('[AutoPost] ❌ ALL platforms failed. Open Admin → Social Settings → click Test to diagnose.');
   }
 };
 // Ensure window.autoPostToSocials is always accessible from main app scripts
