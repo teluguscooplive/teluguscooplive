@@ -8726,45 +8726,8 @@ ORDER BY tablename, cmd;
 
     console.log('[publishArticle] ✓', publishNow ? 'Published' : 'Draft saved', '— title:', title.substring(0, 60));
 
-    // ── AUTO-POST TO TELEGRAM with real article ID ──
-    if (publishNow) {
-      const _apFn = window.autoPostToSocials || (window.App && window.App.autoPostToSocials);
-      if (typeof _apFn === 'function') {
-        // Try to get the real DB id by fetching the just-inserted article
-        // This ensures the share URL uses ?article=ID (not slug) for reliable deep linking
-        (async function() {
-          try {
-            const { data: inserted } = await sb.from('articles')
-              .select('id, title, excerpt, image, slug, category')
-              .eq('slug', articleData.slug)
-              .eq('published', true)
-              .limit(1).single();
-            if (inserted && inserted.id) {
-              (async function(){
-                var _d = inserted;
-                if (typeof window.generateArticleThumbnail === 'function') {
-                  try {
-                    var _u = await Promise.race([
-                      window.generateArticleThumbnail(_d),
-                      new Promise(function(r){ setTimeout(function(){ r(null); }, 4500); })
-                    ]);
-                    if (_u) {
-                      _d = Object.assign({}, inserted, {image: _u});
-                      try { var _sb3 = window.sb || window._sbClient; if (_sb3 && inserted.id) _sb3.from('articles').update({image:_u}).eq('id',inserted.id); } catch(e){}
-                    }
-                  } catch(e){}
-                }
-                _apFn(_d);
-              })();
-            } else {
-              _apFn(articleData); // fallback: use slug
-            }
-          } catch(e) {
-            _apFn(articleData); // fallback on any error
-          }
-        })();
-      }
-    }
+    // ── AUTO-POST handled by _patchPublishHooks (social script) ──
+    // Removed duplicate call here to prevent double-posting
 
     // Invalidate article caches so new content shows immediately
     cacheClear('articles_');
@@ -23842,17 +23805,29 @@ async function postToTelegram(article) {
   if (!token || !chatId) return { ok: false, reason: 'No Telegram token/chat_id configured' };
 
   const text = _postBody(article);
-  const imgUrl = article.image;
 
+  // ── Generate TV-style thumbnail then send as photo ──
   try {
-    // Try sendPhoto first if image available
-    if (imgUrl && imgUrl.startsWith('http')) {
+    let thumbUrl = article.image || null;
+
+    // Try canvas thumbnail generation (gives the TV news style image)
+    if (typeof window.generateArticleThumbnail === 'function') {
+      try {
+        thumbUrl = await Promise.race([
+          window.generateArticleThumbnail(article),
+          new Promise(r => setTimeout(() => r(article.image || null), 5000))
+        ]);
+      } catch(e) { thumbUrl = article.image || null; }
+    }
+
+    // Send as photo if we have a URL
+    if (thumbUrl && thumbUrl.startsWith('http')) {
       const r = await fetch(`https://api.telegram.org/bot${token}/sendPhoto`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           chat_id: chatId,
-          photo: imgUrl,
+          photo: thumbUrl,
           caption: text,
           parse_mode: 'HTML',
           reply_markup: {
