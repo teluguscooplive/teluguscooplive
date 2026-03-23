@@ -23870,7 +23870,7 @@ async function postToFacebook(article) {
 
   // ── Helper: one attempt ──────────────────────────────
   async function _attempt() {
-    // Try 1: Upload thumbnail blob to imgbb (free), then post URL to Facebook
+    // Try 1: Upload thumbnail blob to Telegra.ph (free), then post URL to Facebook
     if (typeof window.generateArticleThumbnailBlob === 'function') {
       try {
         const blob = await Promise.race([
@@ -23878,23 +23878,15 @@ async function postToFacebook(article) {
           new Promise(r => setTimeout(() => r(null), 6000))
         ]);
         if (blob) {
-          // Convert blob to base64 for imgbb upload
-          const base64 = await new Promise(res => {
-            const reader = new FileReader();
-            reader.onloadend = () => res(reader.result.split(',')[1]);
-            reader.readAsDataURL(blob);
+          // Upload to Telegra.ph (free image host, no account needed)
+          const tphForm = new FormData();
+          tphForm.append('file', blob, 'thumbnail.jpg');
+          const tphRes = await fetch('https://telegra.ph/upload', {
+            method: 'POST', body: tphForm
           });
-          // Upload to imgbb (free, no auth needed for basic upload)
-          const imgbbKey = _sk('imgbb_key') || '70c4cfe54b41ed44699462589c4c2a5a';
-          const imgbbForm = new FormData();
-          imgbbForm.append('image', base64);
-          imgbbForm.append('key', imgbbKey);
-          const imgbbRes = await fetch('https://api.imgbb.com/1/upload', {
-            method: 'POST', body: imgbbForm
-          });
-          const imgbbData = await imgbbRes.json();
-          if (imgbbData.success) {
-            const hostedUrl = imgbbData.data.url;
+          const tphData = await tphRes.json();
+          if (Array.isArray(tphData) && tphData[0] && tphData[0].src) {
+            const hostedUrl = 'https://telegra.ph' + tphData[0].src;
             console.log('[Facebook] Thumbnail hosted at:', hostedUrl);
             const r = await fetch('https://graph.facebook.com/v19.0/' + pageId + '/photos', {
               method: 'POST',
@@ -23902,12 +23894,12 @@ async function postToFacebook(article) {
             });
             const d = await r.json();
             if (!d.error) {
-              console.log('[Facebook] ✅ Thumbnail photo post success — id:', d.id);
+              console.log('[Facebook] ✅ TV thumbnail posted — id:', d.id);
               return { ok: true };
             }
             console.warn('[Facebook] Hosted photo failed:', d.error?.message);
           } else {
-            console.warn('[Facebook] imgbb upload failed:', imgbbData.error?.message);
+            console.warn('[Facebook] Telegra.ph upload failed:', JSON.stringify(tphData));
           }
         }
       } catch(e) {
@@ -24902,23 +24894,24 @@ function _draw(article, bg) {
   ctx.fillStyle = '#fff'; ctx.font = 'bold 24px Oswald,Arial';
   ctx.textAlign = 'left'; ctx.fillText('\u25CF LIVE', 30, 51);
 
-  /* Brand */
-  ctx.textAlign = 'center';
-  var parts = [['TELUGU ','#ffffff'],['SCOOP','#f0c040'],[' LIVE','#ffffff']];
-  var tw = 0;
-  ctx.font = 'bold 42px Oswald,Arial';
-  parts.forEach(function(p){ tw += ctx.measureText(p[0]).width; });
-  var bx = TN_W/2 - tw/2;
-  ctx.textAlign = 'left';
-  parts.forEach(function(p){
-    ctx.fillStyle = p[1]; ctx.font = 'bold 42px Oswald,Arial'; ctx.fillText(p[0], bx, 60);
+  /* Brand — measure once, draw once, no gaps */
+  var BFONT = 'bold 40px Arial,sans-serif';
+  ctx.font = BFONT; ctx.textAlign = 'left';
+  var bp = [['TELUGU ','#ffffff'],['SCOOP','#f0c040'],[' LIVE','#ffffff']];
+  var btw = 0; bp.forEach(function(p){ btw += ctx.measureText(p[0]).width; });
+  var bx = TN_W/2 - btw/2;
+  bp.forEach(function(p){
+    ctx.fillStyle = p[1]; ctx.fillText(p[0], bx, 58);
     bx += ctx.measureText(p[0]).width;
   });
 
-  /* Tagline */
-  ctx.fillStyle = 'rgba(255,255,255,0.72)';
-  ctx.font = '20px Arial'; ctx.textAlign = 'center';
+  /* Tagline — Telugu font */
+  ctx.shadowBlur = 0; ctx.shadowOffsetX = 0; ctx.shadowOffsetY = 0;
+  ctx.fillStyle = 'rgba(255,255,255,0.88)';
+  ctx.font = 'bold 19px NotoTelugu,Noto Sans Telugu,Arial Unicode MS,sans-serif';
+  ctx.textAlign = 'center';
   ctx.fillText('\u0C24\u0C46\u0C32\u0C41\u0C17\u0C41 \u0C35\u0C3E\u0C30\u0C4D\u0C24\u0C32\u0C41  \u2022  REAL TIME', TN_W/2, 86);
+  ctx.shadowBlur = 3; ctx.shadowOffsetX = 1; ctx.shadowOffsetY = 1;
 
   /* Category badge */
   var cat = (article.category || 'news').toLowerCase();
@@ -24946,9 +24939,9 @@ function _draw(article, bg) {
   ctx.fillStyle = '#111'; ctx.textAlign = 'left';
   ctx.fillText('BREAKING NEWS', 26, TN_H-99);
 
-  /* Headline */
-  ctx.shadowBlur = 4; ctx.shadowColor = 'rgba(0,0,0,0.8)';
-  ctx.fillStyle = '#fff'; ctx.font = 'bold 40px Arial';
+  /* Headline — Telugu font so article titles render correctly */
+  ctx.shadowBlur = 5; ctx.shadowColor = 'rgba(0,0,0,0.9)';
+  ctx.fillStyle = '#fff'; ctx.font = 'bold 38px NotoTelugu,Noto Sans Telugu,Arial Unicode MS,Arial,sans-serif';
   _wrap(ctx, article.title || '', lblW + 30, TN_H-112, TN_W - lblW - 50, 42, 2);
 
   /* Ticker */
@@ -24960,7 +24953,8 @@ function _draw(article, bg) {
   ctx.fillStyle = '#0D2B5E'; ctx.font = 'bold 19px Oswald,Arial';
   ctx.textAlign = 'center'; ctx.fillText('\uD83D\uDCFA TSL', 52, TN_H-16);
   ctx.fillStyle = '#fff'; ctx.font = '18px Arial'; ctx.textAlign = 'left';
-  ctx.fillText('TELUGU SCOOP LIVE  \u2022  \u0C24\u0C46\u0C32\u0C41\u0C17\u0C41 \u0C35\u0C3E\u0C30\u0C4D\u0C24\u0C32\u0C41  \u2022  REAL TIME  \u2022  BREAKING NEWS', 112, TN_H-16);
+  ctx.font = '16px NotoTelugu,Noto Sans Telugu,Arial Unicode MS,Arial,sans-serif';
+  ctx.fillText('TELUGU SCOOP LIVE  •  తెలుగు వార్తలు  •  REAL TIME  •  BREAKING NEWS', 112, TN_H-16);
 
   /* Watermark */
   ctx.fillStyle = 'rgba(255,255,255,0.28)';
@@ -25014,17 +25008,23 @@ function _doUpload(sb, data, artId, resolve) {
 /* Returns a Blob of the canvas image — no Supabase needed */
 window.generateArticleThumbnailBlob = function(article) {
   return new Promise(function(resolve) {
-    _loadBg(function(bg) {
-      try {
-        var canvas = _draw(article, bg);
-        canvas.toBlob(function(blob) {
-          resolve(blob || null);
-        }, 'image/jpeg', 0.97);
-      } catch(e) {
-        console.warn('[TN] Draw err:', e.message);
-        resolve(null);
-      }
-    }, article); /* pass article so correct variant is chosen */
+    /* Load Noto Sans Telugu font so Telugu text renders correctly */
+    var fontLoaded = false;
+    function doRender() {
+      _loadBg(function(bg) {
+        try {
+          var canvas = _draw(article, bg);
+          canvas.toBlob(function(blob) { resolve(blob || null); }, 'image/jpeg', 0.97);
+        } catch(e) { console.warn('[TN] Draw err:', e.message); resolve(null); }
+      }, article);
+    }
+    if (fontLoaded || !document.fonts) { doRender(); return; }
+    var f1 = new FontFace('NotoTelugu', 'url(https://fonts.gstatic.com/s/notosanstelugu/v27/0FlxVOGZlE2Rrtr-HmgkMWJNjJ5_RyT8o8c74rlK8_Qqgwz6P6lSdo.woff2)');
+    f1.load().then(function(loaded) {
+      document.fonts.add(loaded);
+      fontLoaded = true;
+      doRender();
+    }).catch(function() { doRender(); }); /* fallback if font fails */
   });
 };
 
