@@ -23759,10 +23759,10 @@ async function postToTelegram(article) {
 
   const text = _postBody(article);
   const articleUrl = _articleUrl(article);
-  const replyMarkup = { inline_keyboard: [[{ text: '\uD83D\uDCD6 Read Full Article', url: articleUrl }]] };
+  const replyMarkup = { inline_keyboard: [[{ text: '📖 Read Full Article', url: articleUrl }]] };
 
   try {
-    // Try 1: canvas blob upload directly to Telegram (no Supabase needed)
+    // Try canvas blob upload directly to Telegram
     if (typeof window.generateArticleThumbnailBlob === 'function') {
       try {
         const blob = await Promise.race([
@@ -23783,8 +23783,7 @@ async function postToTelegram(article) {
         }
       } catch(blobErr) { console.warn('[TG] Blob err:', blobErr.message); }
     }
-
-    // Try 2: fallback URL
+    // Fallback: URL-based photo
     const imgUrl = article.image;
     if (imgUrl && imgUrl.startsWith('http')) {
       const r = await fetch('https://api.telegram.org/bot' + token + '/sendPhoto', {
@@ -23794,41 +23793,24 @@ async function postToTelegram(article) {
       });
       const d = await r.json();
       if (d.ok) return { ok: true, platform: 'telegram' };
-      // Photo failed — fall back to text
     }
-    // Text-only with HTML parse mode and inline button
-    const articleUrl = _articleUrl(article);
-    const r2 = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+    // Text-only fallback
+    const r2 = await fetch('https://api.telegram.org/bot' + token + '/sendMessage', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        chat_id: chatId,
-        text: text,
-        parse_mode: 'HTML',
-        disable_web_page_preview: false,
-        reply_markup: {
-          inline_keyboard: [[
-            { text: '📖 Read Full Article', url: articleUrl }
-          ]]
-        }
+        chat_id: chatId, text: text, parse_mode: 'HTML',
+        disable_web_page_preview: false, reply_markup: replyMarkup
       })
     });
     const d2 = await r2.json();
-    if (!d2.ok) {
-      // Give actionable error based on Telegram error code
-      let errMsg = d2.description || 'Unknown Telegram error';
-      if (errMsg.includes('chat not found'))     errMsg = 'Chat not found — bot is NOT in the channel. Add bot as Admin to your channel first, then use Auto-Find Chat ID.';
-      if (errMsg.includes('Unauthorized'))       errMsg = 'Unauthorized — bot token is invalid. Get a fresh token from @BotFather.';
-      if (errMsg.includes('bot was kicked'))     errMsg = 'Bot was kicked from the channel — re-add it as Admin.';
-      if (errMsg.includes('have no rights'))     errMsg = 'Bot has no rights to post — make it Admin with "Post Messages" permission.';
-      if (errMsg.includes('PEER_ID_INVALID'))    errMsg = 'Invalid Chat ID — use Auto-Find Chat ID button to get the correct numeric ID.';
-      return { ok: false, platform: 'telegram', error: errMsg };
-    }
+    if (!d2.ok) return { ok: false, platform: 'telegram', error: d2.description };
     return { ok: true, platform: 'telegram' };
   } catch(e) {
     return { ok: false, platform: 'telegram', error: e.message };
   }
 }
+
 
 // ══════════════════════════════════════════════════════
 //  FACEBOOK PAGE — with retry + logging
@@ -24057,31 +24039,55 @@ window.autoPostToSocials = async function autoPostToSocials(article) {
 
   console.log('[AutoPost] Article:', article.title.substring(0, 60));
 
-  const runners = [
-    postToTelegram(article),
-    postToFacebook(article)
-  ];
+  console.log('[AutoPost] Article:', article.title.substring(0, 60));
 
-  const results = await Promise.allSettled(runners);
-  const platforms = ['Telegram', 'Facebook'];
-  let successCount = 0;
-  results.forEach((r, i) => {
-    if (r.status === 'fulfilled' && r.value?.ok) {
-      successCount++;
-      console.log('[AutoPost] ✅', platforms[i], '— posted successfully');
-    } else {
-      const err = r.value?.error || r.value?.reason || r.reason?.message || 'unknown error';
-      console.error('[AutoPost] ❌', platforms[i], '— FAILED:', err);
+  // ── Try Netlify function first (HD thumbnail) — fall back to direct posting ──
+  let netlifyOk = false;
+  try {
+    const res = await fetch('/.netlify/functions/autopost', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        article, tg_token:tgToken||null, tg_chat_id:tgChat||null,
+        fb_token:fbToken||null, fb_page_id:fbPageId||null
+      })
+    });
+    if (res.ok) {
+      const data = await res.json();
+      const count = (data.results?.telegram?.ok?1:0) + (data.results?.facebook?.ok?1:0);
+      console.log('[AutoPost] Netlify function result:', JSON.stringify(data.results));
+      if (count > 0) {
+        netlifyOk = true;
+        if (typeof toast === 'function') toast('📣 Posted to ' + count + ' platform' + (count>1?'s':''), 'success');
+      }
     }
-  });
+  } catch(e) {
+    console.log('[AutoPost] Netlify function not available, using direct posting:', e.message);
+  }
 
-  console.log('[AutoPost] ── Done:', successCount, '/', results.length, 'platforms succeeded ──');
-
-  if (successCount > 0) {
-    if (typeof toast === 'function') toast(`📣 Posted to ${successCount} platform${successCount > 1 ? 's' : ''}`, 'success');
-    else if (window.App && window.App._toast) window.App._toast(`📣 Posted to ${successCount} platform${successCount > 1 ? 's' : ''}`, 'success');
-  } else {
-    console.error('[AutoPost] ❌ ALL platforms failed. Open Admin → Social Settings → click Test to diagnose.');
+  // ── Direct posting fallback (always works) ──
+  if (!netlifyOk) {
+    const runners = [
+      postToTelegram(article),
+      postToFacebook(article)
+    ];
+    const results = await Promise.allSettled(runners);
+    const platforms = ['Telegram', 'Facebook'];
+    let successCount = 0;
+    results.forEach((r, i) => {
+      if (r.status === 'fulfilled' && r.value?.ok) {
+        successCount++;
+        console.log('[AutoPost] ✅', platforms[i], '— posted successfully');
+      } else {
+        const err = r.value?.error || r.value?.reason || r.reason?.message || 'unknown error';
+        console.error('[AutoPost] ❌', platforms[i], '— FAILED:', err);
+      }
+    });
+    if (successCount > 0) {
+      if (typeof toast === 'function') toast('📣 Posted to ' + successCount + ' platform' + (successCount>1?'s':''), 'success');
+    } else {
+      console.error('[AutoPost] ❌ ALL platforms failed.');
+    }
   }
 };
 // Ensure window.autoPostToSocials is always accessible from main app scripts
