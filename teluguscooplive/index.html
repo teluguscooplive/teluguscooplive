@@ -1134,7 +1134,7 @@ body,input,button,select,textarea{font-family:'Plus Jakarta Sans',system-ui,sans
      Targets: screens ≤ 768px
 ═══════════════════════════════════════════════════════ -->
 <style id="ts-mobile-ui-fix">
-@media (max-width: 768px) {
+@media (max-width: 1080px) {
 
   /* ── 1. BOTTOM NAV OVERLAP FIX ─────────────────── */
   body {
@@ -14995,96 +14995,69 @@ Write exactly 5 paragraphs, minimum 600 words. No section labels. Zero repetitio
   transform: scale(1.12) !important;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1080px) {
   #mobileBottomNav { display: block !important; }
   body { padding-bottom: calc(66px + env(safe-area-inset-bottom, 0px)) !important; }
   .toast-container { bottom: 74px !important; }
   #pushNotifBar { bottom: 74px !important; }
 }
-@media (min-width: 769px) {
+@media (min-width: 1081px) {
   #mobileBottomNav { display: none !important; }
 }
 </style>
 <style id="tsl-mobile-header-fix">
-/* ═══════════════════════════════════════════════
-   MOBILE HEADER — Single definitive fix
-   Only affects ≤768px. Desktop untouched.
-   ═══════════════════════════════════════════════ */
-@media (max-width: 768px) {
-  /* nav-top row */
+/* MOBILE HEADER FIX — ≤1080px only */
+@media (max-width: 1080px) {
   .nav-top {
     display: flex !important;
     align-items: center !important;
     padding: 0 8px !important;
     height: 56px !important;
-    min-height: 56px !important;
     overflow: visible !important;
     gap: 4px !important;
     box-sizing: border-box !important;
     width: 100% !important;
   }
-
-  /* Logo anchor: takes space but caps to prevent overflow */
+  /* Logo: grows to fill space, never clips */
   .tsl-nav-logo {
     flex: 1 1 0 !important;
     min-width: 0 !important;
-    max-width: calc(100vw - 152px) !important;
-    overflow: hidden !important;
+    overflow: visible !important;
     gap: 5px !important;
   }
-
-  /* Circle icon: fixed 36px */
+  /* Circle icon fixed size */
   .tsl-nav-logo > img:first-child {
     height: 36px !important;
     width: 36px !important;
     min-width: 36px !important;
     flex-shrink: 0 !important;
   }
-
-  /* Text block */
+  /* Text container — visible, no clipping */
   .tsl-nav-logo > div {
-    min-width: 0 !important;
-    overflow: hidden !important;
     flex: 1 1 0 !important;
+    min-width: 0 !important;
+    overflow: visible !important;
   }
-
-  /* Brand text: fluid */
+  /* Brand text fluid */
   .tsl-brand-text {
-    font-size: clamp(13px, 3.6vw, 20px) !important;
+    font-size: clamp(13px, 3.6vw, 22px) !important;
   }
-
-  /* Tagline: single line, no wrap, small */
+  /* Tagline on its own line */
   .tsl-tagline {
     display: block !important;
-    white-space: nowrap !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
+    white-space: normal !important;
     font-size: 8px !important;
   }
-
-  /* Mic: hide on mobile */
+  /* Mic icon hidden on mobile */
   .tsl-news-mic { display: none !important; }
-
-  /* Nav actions: fixed width, never shrink */
+  /* Nav actions: fixed right */
   .nav-actions {
     flex: 0 0 auto !important;
-    display: flex !important;
-    align-items: center !important;
     gap: 4px !important;
-    margin-left: 0 !important;
   }
-
-  /* Buttons compact */
-  .search-btn { width: 32px !important; height: 32px !important; flex-shrink: 0 !important; }
-  .notif-bell-btn { flex-shrink: 0 !important; padding: 4px !important; font-size: 16px !important; }
-  .btn-login { padding: 5px 9px !important; font-size: 11px !important; flex-shrink: 0 !important; white-space: nowrap !important; }
+  .search-btn { width: 32px !important; height: 32px !important; }
+  .btn-login { padding: 5px 9px !important; font-size: 11px !important; flex-shrink: 0 !important; }
   .btn-subscribe { display: none !important; }
-}
-
-@media (max-width: 380px) {
-  .tsl-brand-text { font-size: 13px !important; }
-  .tsl-nav-logo > img:first-child { height: 30px !important; width: 30px !important; min-width: 30px !important; }
-  .btn-login { font-size: 10px !important; padding: 4px 7px !important; }
 }
 </style>
 </head><body>
@@ -23023,7 +22996,7 @@ window.TeluguRewriter = TeluguRewriter;
     }
     /* Show on mobile (< 1024px OR mobile UA), hide on desktop */
     var w = window.innerWidth || document.documentElement.clientWidth || screen.width;
-    var isMobile = w < 1024 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile/i.test(navigator.userAgent);
+    var isMobile = w < 1081 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile/i.test(navigator.userAgent);
     if (isMobile) {
       nav.style.setProperty('display', 'block', 'important');
     } else {
@@ -23128,13 +23101,13 @@ window.TeluguRewriter = TeluguRewriter;
   border-radius: 10px;
 }
 
-@media (max-width: 1023px) {
+@media (max-width: 1080px) {
   #mobileBottomNav { display: block !important; }
   body { padding-bottom: calc(68px + env(safe-area-inset-bottom, 0px)) !important; }
   .toast-container { bottom: 76px !important; }
   #pushNotifBar { bottom: 76px !important; }
 }
-@media (min-width: 1024px) {
+@media (min-width: 1081px) {
   #mobileBottomNav { display: none !important; }
 }
 </style>
@@ -23610,7 +23583,7 @@ body { background: #0A0E1A !important; }
 }
 
 /* ── FIX 5: Mobile Bottom Nav — reduce size ── */
-@media (max-width: 768px) {
+@media (max-width: 1080px) {
   #mobileBottomNav {
     /* slightly smaller height */
     height: auto !important;
