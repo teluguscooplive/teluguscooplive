@@ -1,10 +1,12 @@
 # ════════════════════════════════════════════════════════════
 # TeluguScoopLive — Netlify Configuration
 # ════════════════════════════════════════════════════════════
-
 [build]
   publish = "."
   functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
 
 # ── Route /sitemap-news.xml to the live function ─────────
 [[redirects]]
