@@ -4150,11 +4150,11 @@ window.mbnSetActive = function() {};
 <nav class="navbar">
   <div class="nav-top" style="display:flex;align-items:center;justify-content:space-between;overflow:visible;gap:4px;">
     <!-- ── SITE LOGO — left-aligned, single instance ── -->
-    <a class="tsl-nav-logo" href="/" onclick="App.filterCategory('home'); return false;" style="cursor:pointer;text-decoration:none;display:flex;align-items:center;gap:6px;flex-shrink:1;min-width:0;" title="TeluguScoopLive">
+    <a class="tsl-nav-logo" href="/" onclick="App.filterCategory('home'); return false;" style="cursor:pointer;text-decoration:none;display:flex;align-items:center;gap:6px;flex:1;min-width:0;overflow:hidden;" title="TeluguScoopLive">
       <img src="data:image/png;base64,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" alt="TeluguScoopLive" style="height:44px;width:44px;min-width:44px;object-fit:contain;display:block;border-radius:0;flex-shrink:0;" loading="eager">
       <div style="display:flex;flex-direction:column;justify-content:center;line-height:1.1;flex-shrink:1;min-width:0;">
         <div style="white-space:nowrap;line-height:1;"><span class="tsl-brand-text" style="font-family:'DM Serif Display',Georgia,serif;font-size:clamp(14px,4vw,30px);font-weight:700;color:#8B0000;letter-spacing:0.01em;">Telugu</span><span class="tsl-brand-text" style="font-family:'DM Serif Display',Georgia,serif;font-size:clamp(14px,4vw,30px);font-weight:700;color:#8B0000;letter-spacing:0.01em;">Scoop</span><span class="tsl-brand-text" style="font-family:'DM Serif Display',Georgia,serif;font-size:clamp(14px,4vw,30px);font-weight:700;color:#0D2B5E;letter-spacing:0.01em;">Live</span></div>
-        <div class="tsl-tagline" style="font-family:'Plus Jakarta Sans',sans-serif;font-size:9px;color:#444;letter-spacing:0.12em;text-transform:uppercase;font-weight:700;margin-top:2px;white-space:normal;">తెలుగు వార్తలు • REAL TIME</div>
+        <div class="tsl-tagline" style="font-family:'Plus Jakarta Sans',sans-serif;font-size:9px;color:#444;letter-spacing:0.12em;text-transform:uppercase;font-weight:700;margin-top:2px;white-space:nowrap;">తెలుగు వార్తలు • REAL TIME</div>
       </div>
       <img src="data:image/png;base64,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" alt="NEWS" class="tsl-news-mic" style="height:48px;width:48px;object-fit:contain;display:block;border-radius:0;flex-shrink:0;margin-left:6px;" loading="eager">
     </a>
@@ -14842,30 +14842,8 @@ Write exactly 5 paragraphs, minimum 600 words. No section labels. Zero repetitio
 }
 </style>
 
-<style id="tsl-logo-fix">
-.tsl-nav-logo-text,.tsl-nav-logo-name,.tsl-nav-logo-tagline,
-.nav-brand-center,.nav-brand-row,.nct-telugu,.nct-scoop,
-.nct-live,.nct-space,.nav-brand-tagline,.logo{display:none!important}
-.tsl-nav-logo img{border-radius:0!important;}
-@media(max-width:768px){
-  .tsl-nav-logo>img:first-child{height:44px!important;width:44px!important;}
-  .tsl-nav-logo span[style*="font-size:24px"]{font-size:15px!important;}
-  .tsl-nav-logo>img:last-child{height:36px!important;width:36px!important;margin-left:4px!important;}
-  .tsl-nav-logo{gap:6px!important;}
-}
-</style>
-<style id="tsl-logo-fix">
-.tsl-nav-logo-text,.tsl-nav-logo-name,.tsl-nav-logo-tagline,
-.nav-brand-center,.nav-brand-row,.nct-telugu,.nct-scoop,
-.nct-live,.nct-space,.nav-brand-tagline,.logo{display:none!important}
-.tsl-nav-logo img{border-radius:0!important;}
-@media(max-width:768px){
-  .tsl-nav-logo>img:first-child{height:44px!important;width:44px!important;}
-  .tsl-nav-logo span[style*="font-size:24px"]{font-size:15px!important;}
-  .tsl-nav-logo>img:last-child{height:36px!important;width:36px!important;margin-left:4px!important;}
-  .tsl-nav-logo{gap:6px!important;}
-}
-</style>
+
+
 <style id="tn-generator-css">
 @keyframes tnScroll {
   0%   { transform: translateX(100%); }
@@ -14875,157 +14853,37 @@ Write exactly 5 paragraphs, minimum 600 words. No section labels. Zero repetitio
 #adminTabThumbnail.active { background: #d97706 !important; color: #fff !important; }
 #tnCanvas { user-select:none; }
 </style>
-<style id="tsl-mobile-nav-fix">
-/* ── Mobile nav fix: only ≤768px, only logo/title alignment ── */
+
+
+<style id="tsl-final-mobile-fix">
+/* ══════════════════════════════════════════════════
+   FINAL MOBILE FIX — logo + bottom nav
+   Only affects ≤768px. Desktop untouched.
+   ══════════════════════════════════════════════════ */
+
+/* ── HEADER ── */
 @media (max-width: 768px) {
-
-  /* Navbar full width, no overflow */
-  .navbar {
-    width: 100% !important;
-    max-width: 100vw !important;
-    overflow-x: hidden !important;
-  }
-
-  /* nav-top: start from left edge, no extra padding */
   .nav-top {
     display: flex !important;
     align-items: center !important;
     justify-content: flex-start !important;
     padding: 0 8px !important;
-    margin: 0 !important;
-    height: 54px !important;
-    min-height: 54px !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-    overflow: visible !important;
-    gap: 4px !important;
-  }
-
-  /* Logo: from left, shrinks naturally, no max-width cap */
-  .tsl-nav-logo {
-    flex: 0 1 auto !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    min-width: 0 !important;
-    overflow: visible !important;
-    gap: 5px !important;
-  }
-
-  /* Circle icon: 38px */
-  .tsl-nav-logo > img:first-child {
-    height: 38px !important;
-    width: 38px !important;
-    min-width: 38px !important;
-    flex-shrink: 0 !important;
-  }
-
-  /* Text wrapper: visible, no clipping */
-  .tsl-nav-logo > div {
-    overflow: visible !important;
-    min-width: 0 !important;
-    flex-shrink: 1 !important;
-  }
-
-  /* Brand text: fluid size */
-  .tsl-brand-text {
-    font-size: clamp(13px, 3.8vw, 22px) !important;
-  }
-
-  /* Tagline: hidden on mobile */
-  .tsl-tagline { display: block !important; }
-
-  /* NEWS mic: hidden on mobile */
-  .tsl-news-mic { display: none !important; }
-
-  /* Nav-actions: pinned right, never shrink */
-  .nav-actions {
-    flex: 0 0 auto !important;
-    margin-left: auto !important;
-    padding: 0 !important;
-    gap: 4px !important;
-  }
-
-  /* Search */
-  .search-btn {
-    width: 32px !important;
-    height: 32px !important;
-    flex-shrink: 0 !important;
-  }
-
-  /* Notification bell */
-  .notif-bell-btn {
-    display: inline-flex !important;
-    flex-shrink: 0 !important;
-    padding: 4px !important;
-  }
-
-  /* Login */
-  .btn-login {
-    display: inline-flex !important;
-    padding: 5px 9px !important;
-    font-size: 11px !important;
-    white-space: nowrap !important;
-    flex-shrink: 0 !important;
-  }
-
-  /* Subscribe */
-  .btn-subscribe {
-    padding: 5px 8px !important;
-    font-size: 11px !important;
-    flex-shrink: 0 !important;
-    white-space: nowrap !important;
-  }
-  .btn-sub-full  { display: none !important; }
-  .btn-sub-short { display: inline !important; }
-}
-
-/* Extra small phones */
-@media (max-width: 400px) {
-  .tsl-brand-text { font-size: 13px !important; }
-  .tsl-nav-logo > img:first-child {
-    height: 32px !important;
-    width: 32px !important;
-    min-width: 32px !important;
-  }
-  .btn-subscribe { display: none !important; }
-}
-</style>
-<style id="tsl-header-final-fix">
-/* ═══════════════════════════════════════
-   FINAL MOBILE HEADER FIX — ≤768px only
-   Overrides all previous conflicting rules
-   ❌ Does NOT touch desktop
-   ❌ Does NOT move or remove any icons
-   ✅ Only fixes logo/title/tagline container
-   ═══════════════════════════════════════ */
-@media (max-width: 768px) {
-
-  /* 1. nav-top: full width flex row, 8px padding */
-  .nav-top {
-    display: flex !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    justify-content: flex-start !important;
-    padding: 0 8px !important;
-    gap: 6px !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-    overflow: visible !important;
     height: 56px !important;
-    min-height: 56px !important;
+    overflow: visible !important;
+    gap: 4px !important;
+    box-sizing: border-box !important;
   }
 
-  /* 2. Logo anchor: takes all remaining space */
+  /* Logo: takes all space left of icons */
   .tsl-nav-logo {
-    flex: 1 1 0% !important;
+    flex: 1 1 0 !important;
     min-width: 0 !important;
     overflow: visible !important;
-    display: flex !important;
-    align-items: center !important;
     gap: 5px !important;
+    align-items: center !important;
   }
 
-  /* 3. Circle icon: fixed, never shrinks */
+  /* Circle icon: fixed small size */
   .tsl-nav-logo > img:first-child {
     height: 36px !important;
     width: 36px !important;
@@ -15033,47 +14891,200 @@ Write exactly 5 paragraphs, minimum 600 words. No section labels. Zero repetitio
     flex-shrink: 0 !important;
   }
 
-  /* 4. Text block: expands, no clipping */
+  /* Text block */
   .tsl-nav-logo > div {
-    flex: 1 1 0% !important;
+    flex: 1 1 0 !important;
     min-width: 0 !important;
-    width: 100% !important;
     overflow: visible !important;
   }
 
-  /* 5. Brand title: allow wrap, no cut */
+  /* Brand spans: fluid size, no wrap */
   .tsl-brand-text {
-    font-size: clamp(13px, 3.8vw, 22px) !important;
-    white-space: normal !important;
+    font-size: clamp(13px, 3.6vw, 22px) !important;
+    white-space: nowrap !important;
   }
 
-  /* 6. Tagline: visible, wraps to next line */
+  /* Tagline: nowrap, small */
   .tsl-tagline {
     display: block !important;
-    white-space: normal !important;
+    white-space: nowrap !important;
+    font-size: 8px !important;
     overflow: visible !important;
-    text-overflow: clip !important;
+  }
+
+  /* Mic icon: hide on mobile */
+  .tsl-news-mic { display: none !important; }
+
+  /* Nav actions: never shrink */
+  .nav-actions {
+    flex: 0 0 auto !important;
+    gap: 4px !important;
+    align-items: center !important;
+  }
+
+  .search-btn { width: 32px !important; height: 32px !important; flex-shrink: 0 !important; }
+  .notif-bell-btn { display: inline-flex !important; flex-shrink: 0 !important; padding: 4px !important; }
+  .btn-login { display: inline-flex !important; padding: 5px 9px !important; font-size: 11px !important; flex-shrink: 0 !important; white-space: nowrap !important; }
+  .btn-subscribe { display: none !important; }
+}
+
+/* ── BOTTOM NAV ── */
+#mobileBottomNav {
+  display: none;
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  width: 100%;
+  background: #fff;
+  border-top: 2px solid #e5e7eb;
+  box-shadow: 0 -2px 12px rgba(0,0,0,0.10);
+  z-index: 99999;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+#mobileBottomNav .mbn-inner {
+  display: flex;
+  flex-direction: row;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding: 5px 6px 4px;
+  gap: 2px;
+  align-items: stretch;
+}
+#mobileBottomNav .mbn-inner::-webkit-scrollbar { display: none; }
+
+#mobileBottomNav .mbn-btn {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 1 0 auto !important;
+  min-width: 54px !important;
+  padding: 4px 6px 3px !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 10px !important;
+  cursor: pointer !important;
+  gap: 2px !important;
+  -webkit-tap-highlight-color: transparent !important;
+  transition: background 0.15s !important;
+}
+
+#mobileBottomNav .mbn-ico {
+  font-size: 20px !important;
+  line-height: 1.1 !important;
+  display: block !important;
+}
+
+#mobileBottomNav .mbn-lbl {
+  font-size: 9px !important;
+  font-weight: 600 !important;
+  color: #6b7280 !important;
+  display: block !important;
+  white-space: nowrap !important;
+}
+
+#mobileBottomNav .mbn-btn.mbn-active {
+  background: rgba(232,25,44,0.07) !important;
+}
+#mobileBottomNav .mbn-btn.mbn-active .mbn-lbl {
+  color: #E8192C !important;
+  font-weight: 700 !important;
+}
+#mobileBottomNav .mbn-btn.mbn-active .mbn-ico {
+  transform: scale(1.12) !important;
+}
+
+@media (max-width: 768px) {
+  #mobileBottomNav { display: block !important; }
+  body { padding-bottom: calc(66px + env(safe-area-inset-bottom, 0px)) !important; }
+  .toast-container { bottom: 74px !important; }
+  #pushNotifBar { bottom: 74px !important; }
+}
+@media (min-width: 769px) {
+  #mobileBottomNav { display: none !important; }
+}
+</style>
+<style id="tsl-mobile-header-fix">
+/* ═══════════════════════════════════════════════
+   MOBILE HEADER — Single definitive fix
+   Only affects ≤768px. Desktop untouched.
+   ═══════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  /* nav-top row */
+  .nav-top {
+    display: flex !important;
+    align-items: center !important;
+    padding: 0 8px !important;
+    height: 56px !important;
+    min-height: 56px !important;
+    overflow: visible !important;
+    gap: 4px !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+  }
+
+  /* Logo anchor: takes space but caps to prevent overflow */
+  .tsl-nav-logo {
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+    max-width: calc(100vw - 152px) !important;
+    overflow: hidden !important;
+    gap: 5px !important;
+  }
+
+  /* Circle icon: fixed 36px */
+  .tsl-nav-logo > img:first-child {
+    height: 36px !important;
+    width: 36px !important;
+    min-width: 36px !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* Text block */
+  .tsl-nav-logo > div {
+    min-width: 0 !important;
+    overflow: hidden !important;
+    flex: 1 1 0 !important;
+  }
+
+  /* Brand text: fluid */
+  .tsl-brand-text {
+    font-size: clamp(13px, 3.6vw, 20px) !important;
+  }
+
+  /* Tagline: single line, no wrap, small */
+  .tsl-tagline {
+    display: block !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
     font-size: 8px !important;
   }
 
-  /* 7. Icons: fixed width, never shrink, never grow */
+  /* Mic: hide on mobile */
+  .tsl-news-mic { display: none !important; }
+
+  /* Nav actions: fixed width, never shrink */
   .nav-actions {
     flex: 0 0 auto !important;
-    flex-shrink: 0 !important;
-    flex-grow: 0 !important;
-    margin-left: 0 !important;
     display: flex !important;
     align-items: center !important;
     gap: 4px !important;
+    margin-left: 0 !important;
   }
 
-  /* 8. News mic: smaller on mobile so tagline is fully visible */
-  .tsl-news-mic {
-    height: 22px !important;
-    width: 22px !important;
-    min-width: 22px !important;
-    margin-left: 2px !important;
-  }
+  /* Buttons compact */
+  .search-btn { width: 32px !important; height: 32px !important; flex-shrink: 0 !important; }
+  .notif-bell-btn { flex-shrink: 0 !important; padding: 4px !important; font-size: 16px !important; }
+  .btn-login { padding: 5px 9px !important; font-size: 11px !important; flex-shrink: 0 !important; white-space: nowrap !important; }
+  .btn-subscribe { display: none !important; }
+}
+
+@media (max-width: 380px) {
+  .tsl-brand-text { font-size: 13px !important; }
+  .tsl-nav-logo > img:first-child { height: 30px !important; width: 30px !important; min-width: 30px !important; }
+  .btn-login { font-size: 10px !important; padding: 4px 7px !important; }
 }
 </style>
 </head><body>
@@ -15179,6 +15190,7 @@ Write exactly 5 paragraphs, minimum 600 words. No section labels. Zero repetitio
   }
 }
 </style>
+
 </body>
 
 
@@ -23003,14 +23015,21 @@ window.TeluguRewriter = TeluguRewriter;
   function showNav() {
     var nav = document.getElementById('mobileBottomNav');
     if (!nav) return;
-    var isMobile = window.innerWidth <= 768;
+    /* Use 1024 threshold — covers all phones and tablets */
+    var isMobile = window.innerWidth < 1024 || /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
     var adminEl = document.getElementById('adminModal');
     var adminOpen = adminEl && adminEl.classList.contains('open');
 
-    if (!isMobile || adminOpen) {
+    if (adminOpen) {
       nav.style.setProperty('display', 'none', 'important');
     } else {
-      nav.style.setProperty('display', 'block', 'important');
+      /* Always show on mobile, always hide on desktop */
+      if (isMobile) {
+        nav.style.setProperty('display', 'block', 'important');
+        nav.style.setProperty('visibility', 'visible', 'important');
+      } else {
+        nav.style.setProperty('display', 'none', 'important');
+      }
     }
   }
 
@@ -23111,13 +23130,13 @@ window.TeluguRewriter = TeluguRewriter;
   border-radius: 10px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1023px) {
   #mobileBottomNav { display: block !important; }
   body { padding-bottom: calc(68px + env(safe-area-inset-bottom, 0px)) !important; }
   .toast-container { bottom: 76px !important; }
   #pushNotifBar { bottom: 76px !important; }
 }
-@media (min-width: 769px) {
+@media (min-width: 1024px) {
   #mobileBottomNav { display: none !important; }
 }
 </style>
@@ -25149,211 +25168,7 @@ if (!_patch()) {
 </script>
 
 
-<style id="mobile-header-popup-fixes">
-/* ═══════════════════════════════════════════════════════════
-   MOBILE-ONLY FIXES — Header, Popups, Profile, Edit Button
-   Desktop layout is completely untouched (all inside media queries)
-   ═══════════════════════════════════════════════════════════ */
 
-@media (max-width: 768px) {
-
-  /* ── FIX 1: Header — Title LEFT, Icons RIGHT, no overlap ── */
-  .nav-top {
-    display: flex !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    padding: 0 12px !important;
-    height: 56px !important;
-    min-height: 56px !important;
-    position: relative !important;
-    gap: 0 !important;
-  }
-
-  /* ── Title: hidden — image logo is used instead ── */
-  .nav-brand-center {
-    display: none !important;
-  }
-
-  .nav-brand-row {
-    display: flex !important;
-    align-items: baseline !important;
-    gap: 0 !important;
-    overflow: visible !important;
-    flex-wrap: nowrap !important;
-  }
-
-  /* Hide TS span completely */
-  .nct-ts {
-    display: none !important;
-  }
-
-  /* TELUGU + SCOOP — readable, never clipped */
-  .nct-telugu, .nct-scoop {
-    font-size: 18px !important;
-    overflow: visible !important;
-    text-overflow: unset !important;
-    white-space: nowrap !important;
-  }
-
-  /* Tagline — clear, visible below title, no ellipsis */
-  .nav-brand-tagline {
-    font-size: 9px !important;
-    white-space: nowrap !important;
-    overflow: visible !important;
-    text-overflow: unset !important;
-    max-width: none !important;
-    display: block !important;
-    margin-top: 1px !important;
-    opacity: 0.75 !important;
-    letter-spacing: 0.06em !important;
-  }
-
-  /* Actions: right-aligned, never wrap, never overflow into title */
-  .nav-actions {
-    display: flex !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    gap: 4px !important;
-    flex-shrink: 0 !important;
-    flex-grow: 0 !important;
-    margin-left: 0 !important;
-    position: static !important;
-    z-index: 10 !important;
-  }
-
-  /* Login button — compact on mobile */
-  .btn-login {
-    padding: 5px 10px !important;
-    font-size: 11px !important;
-    white-space: nowrap !important;
-    flex-shrink: 0 !important;
-  }
-
-  /* Subscribe button — hide full text, show short */
-  .btn-sub-full { display: none !important; }
-  .btn-sub-short { display: inline !important; }
-  .btn-subscribe {
-    padding: 5px 10px !important;
-    font-size: 11px !important;
-    white-space: nowrap !important;
-    flex-shrink: 0 !important;
-  }
-
-  /* Search button */
-  .search-btn {
-    width: 34px !important;
-    height: 34px !important;
-    font-size: 14px !important;
-    flex-shrink: 0 !important;
-    padding: 0 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-  }
-
-  /* Notification bell */
-  #notifBellBtn {
-    padding: 4px !important;
-    font-size: 17px !important;
-    flex-shrink: 0 !important;
-    width: 34px !important;
-    height: 34px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-  }
-
-  /* User avatar / profile button */
-  .user-avatar {
-    width: 34px !important;
-    height: 34px !important;
-    font-size: 12px !important;
-    flex-shrink: 0 !important;
-  }
-
-  /* ── FIX 2: Notification panel — full width below header ── */
-  #notifPanel {
-    position: fixed !important;
-    top: 56px !important;        /* below the 56px header */
-    right: 8px !important;
-    left: 8px !important;
-    width: auto !important;
-    max-width: calc(100vw - 16px) !important;
-    max-height: 70vh !important;
-    z-index: 99999 !important;
-    border-radius: 14px !important;
-  }
-
-  /* ── FIX 3: Search overlay — full screen on mobile, clears header ── */
-  #searchOverlay {
-    z-index: 99998 !important;
-  }
-  .search-box {
-    top: 56px !important;
-    border-radius: 0 0 16px 16px !important;
-  }
-
-  /* ── FIX 4: User dropdown — right-aligned, below header, no overflow ── */
-  .user-menu {
-    position: static !important;
-    overflow: visible !important;
-  }
-  .user-dropdown {
-    position: fixed !important;      /* fixed so it's never clipped by overflow:hidden parents */
-    top: 56px !important;
-    right: 8px !important;
-    left: auto !important;
-    min-width: 180px !important;
-    max-width: calc(100vw - 16px) !important;
-    z-index: 99999 !important;
-    border-radius: 12px !important;
-    box-shadow: 0 8px 40px rgba(0,0,0,0.25) !important;
-  }
-
-  /* ── FIX 5: FanZone Edit button — touch-friendly ── */
-  .rf-action-btn {
-    padding: 5px 12px !important;
-    font-size: 11px !important;
-    border-radius: 20px !important;
-    touch-action: manipulation !important;
-    -webkit-tap-highlight-color: transparent !important;
-    cursor: pointer !important;
-    min-height: 32px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-  }
-  .rf-action-btn.edit {
-    background: rgba(201,168,76,0.15) !important;
-    border: 1px solid rgba(201,168,76,0.4) !important;
-    color: #92740a !important;
-  }
-
-  /* Edit textarea in FanZone — readable on mobile */
-  [id^="edit-area-"] textarea,
-  [id^="edit-ta-"] {
-    font-size: 14px !important;        /* prevent iOS zoom on focus */
-    background: #f8fafc !important;
-    color: #1a1a2e !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-    min-height: 90px !important;
-  }
-  [id^="edit-area-"] div {
-    flex-wrap: wrap !important;
-    gap: 6px !important;
-  }
-  [id^="edit-area-"] button {
-    min-height: 36px !important;
-    touch-action: manipulation !important;
-    -webkit-tap-highlight-color: transparent !important;
-  }
-}
-
-/* ── Profile dropdown click fix — works on both mobile & desktop ── */
-/* Make s */
-</style>
 
 <style id="ts-final-mobile-overrides">
 /* ═══════════════════════════════════════════════════════════════
