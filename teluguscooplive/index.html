@@ -141,38 +141,207 @@
 <link rel="alternate" type="application/rss+xml" title="TeluguScoopLive — Politics" href="/rss/politics">
 <link rel="alternate" type="application/rss+xml" title="TeluguScoopLive — Cinema" href="/rss/cinema">
 <link rel="alternate" type="application/atom+xml" title="TeluguScoopLive — Atom Feed" href="/feed.atom">
-<!-- PWA manifest — professional app icon, fast launch -->
-<link rel="manifest" href="data:application/json,{
-  %22name%22:%22TeluguScoopLive%22,
-  %22short_name%22:%22TSL%20News%22,
-  %22description%22:%22Breaking%20News%2C%20Cinema%2C%20Politics%20%26%20Cricket%20in%20Telugu%22,
-  %22start_url%22:%22/%22,
-  %22display%22:%22standalone%22,
-  %22background_color%22:%22%231a2f5e%22,
-  %22theme_color%22:%22%23E8192C%22,
-  %22orientation%22:%22portrait-primary%22,
-  %22lang%22:%22te%22,
-  %22scope%22:%22/%22,
-  %22icons%22:[
-    {%22src%22:%22/icons/icon-192x192.png%22,%22sizes%22:%22192x192%22,%22type%22:%22image/png%22,%22purpose%22:%22any%20maskable%22},
-    {%22src%22:%22/icons/icon-512x512.png%22,%22sizes%22:%22512x512%22,%22type%22:%22image/png%22,%22purpose%22:%22any%20maskable%22}
-  ]
-}">
-<!-- Apple Touch Icon — inline SVG data URI (no external file needed) -->
-<link rel="apple-touch-icon" sizes="180x180" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxODAgMTgwIiB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCI+CiAgPHJlY3Qgd2lkdGg9IjE4MCIgaGVpZ2h0PSIxODAiIHJ4PSIzNiIgZmlsbD0iIzFhMmY1ZSIvPgogIDxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxODAiIGhlaWdodD0iNyIgcng9IjMuNSIgZmlsbD0iI0U4MTkyQyIvPgogIDxyZWN0IHg9IjAiIHk9IjE3MyIgd2lkdGg9IjE4MCIgaGVpZ2h0PSI3IiByeD0iMy41IiBmaWxsPSIjRTgxOTJDIi8+CiAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoOTAsNDgpIj4KICAgIDxnIHN0cm9rZT0iI2Y1OWUwYiIgc3Ryb2tlLXdpZHRoPSIzIiBzdHJva2UtbGluZWNhcD0icm91bmQiIG9wYWNpdHk9IjAuOSI+CiAgICAgIDxsaW5lIHgxPSIwIiB5MT0iLTMwIiB4Mj0iMCIgeTI9Ii00MCIvPgogICAgICA8bGluZSB4MT0iMjEiIHkxPSItMjEiIHgyPSIyOCIgeTI9Ii0yOCIvPgogICAgICA8bGluZSB4MT0iMzAiIHkxPSIwIiB4Mj0iNDAiIHkyPSIwIi8+CiAgICAgIDxsaW5lIHgxPSItMjEiIHkxPSItMjEiIHgyPSItMjgiIHkyPSItMjgiLz4KICAgICAgPGxpbmUgeDE9Ii0zMCIgeTE9IjAiIHgyPSItNDAiIHkyPSIwIi8+CiAgICA8L2c+CiAgICA8cGF0aCBkPSJNLTIwIDAgQTIwIDIwIDAgMCAxIDIwIDAiIGZpbGw9IiNmNTllMGIiIG9wYWNpdHk9IjAuOTUiLz4KICAgIDxjaXJjbGUgY3g9IjAiIGN5PSIwIiByPSIxNCIgZmlsbD0iI2Y1OWUwYiIvPgogICAgPGNpcmNsZSBjeD0iMCIgY3k9IjAiIHI9IjkiIGZpbGw9IiNmZGU2OGEiLz4KICA8L2c+CiAgPHRleHQgeD0iOTAiIHk9IjExOCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9Ikdlb3JnaWEsc2VyaWYiIGZvbnQtc2l6ZT0iNDgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNmZmZmZmYiIGxldHRlci1zcGFjaW5nPSIzIj5UU0w8L3RleHQ+CiAgPHRleHQgeD0iOTAiIHk9IjE0NCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTMiIGZvbnQtd2VpZ2h0PSI2MDAiIGZpbGw9IiNmNTllMGIiIGxldHRlci1zcGFjaW5nPSIxLjUiPlRFTFVHVSBTQ09PUDwvdGV4dD4KICA8dGV4dCB4PSI5MCIgeT0iMTYyIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMSIgZm9udC13ZWlnaHQ9IjQwMCIgZmlsbD0iIzk0YTNiOCIgbGV0dGVyLXNwYWNpbmc9IjIiPkxJVkU8L3RleHQ+Cjwvc3ZnPg==">
-<link rel="apple-touch-icon" sizes="152x152" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxODAgMTgwIiB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCI+CiAgPHJlY3Qgd2lkdGg9IjE4MCIgaGVpZ2h0PSIxODAiIHJ4PSIzNiIgZmlsbD0iIzFhMmY1ZSIvPgogIDxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxODAiIGhlaWdodD0iNyIgcng9IjMuNSIgZmlsbD0iI0U4MTkyQyIvPgogIDxyZWN0IHg9IjAiIHk9IjE3MyIgd2lkdGg9IjE4MCIgaGVpZ2h0PSI3IiByeD0iMy41IiBmaWxsPSIjRTgxOTJDIi8+CiAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoOTAsNDgpIj4KICAgIDxnIHN0cm9rZT0iI2Y1OWUwYiIgc3Ryb2tlLXdpZHRoPSIzIiBzdHJva2UtbGluZWNhcD0icm91bmQiIG9wYWNpdHk9IjAuOSI+CiAgICAgIDxsaW5lIHgxPSIwIiB5MT0iLTMwIiB4Mj0iMCIgeTI9Ii00MCIvPgogICAgICA8bGluZSB4MT0iMjEiIHkxPSItMjEiIHgyPSIyOCIgeTI9Ii0yOCIvPgogICAgICA8bGluZSB4MT0iMzAiIHkxPSIwIiB4Mj0iNDAiIHkyPSIwIi8+CiAgICAgIDxsaW5lIHgxPSItMjEiIHkxPSItMjEiIHgyPSItMjgiIHkyPSItMjgiLz4KICAgICAgPGxpbmUgeDE9Ii0zMCIgeTE9IjAiIHgyPSItNDAiIHkyPSIwIi8+CiAgICA8L2c+CiAgICA8cGF0aCBkPSJNLTIwIDAgQTIwIDIwIDAgMCAxIDIwIDAiIGZpbGw9IiNmNTllMGIiIG9wYWNpdHk9IjAuOTUiLz4KICAgIDxjaXJjbGUgY3g9IjAiIGN5PSIwIiByPSIxNCIgZmlsbD0iI2Y1OWUwYiIvPgogICAgPGNpcmNsZSBjeD0iMCIgY3k9IjAiIHI9IjkiIGZpbGw9IiNmZGU2OGEiLz4KICA8L2c+CiAgPHRleHQgeD0iOTAiIHk9IjExOCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9Ikdlb3JnaWEsc2VyaWYiIGZvbnQtc2l6ZT0iNDgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNmZmZmZmYiIGxldHRlci1zcGFjaW5nPSIzIj5UU0w8L3RleHQ+CiAgPHRleHQgeD0iOTAiIHk9IjE0NCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTMiIGZvbnQtd2VpZ2h0PSI2MDAiIGZpbGw9IiNmNTllMGIiIGxldHRlci1zcGFjaW5nPSIxLjUiPlRFTFVHVSBTQ09PUDwvdGV4dD4KICA8dGV4dCB4PSI5MCIgeT0iMTYyIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMSIgZm9udC13ZWlnaHQ9IjQwMCIgZmlsbD0iIzk0YTNiOCIgbGV0dGVyLXNwYWNpbmc9IjIiPkxJVkU8L3RleHQ+Cjwvc3ZnPg==">
-<link rel="apple-touch-icon" sizes="144x144" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxODAgMTgwIiB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCI+CiAgPHJlY3Qgd2lkdGg9IjE4MCIgaGVpZ2h0PSIxODAiIHJ4PSIzNiIgZmlsbD0iIzFhMmY1ZSIvPgogIDxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxODAiIGhlaWdodD0iNyIgcng9IjMuNSIgZmlsbD0iI0U4MTkyQyIvPgogIDxyZWN0IHg9IjAiIHk9IjE3MyIgd2lkdGg9IjE4MCIgaGVpZ2h0PSI3IiByeD0iMy41IiBmaWxsPSIjRTgxOTJDIi8+CiAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoOTAsNDgpIj4KICAgIDxnIHN0cm9rZT0iI2Y1OWUwYiIgc3Ryb2tlLXdpZHRoPSIzIiBzdHJva2UtbGluZWNhcD0icm91bmQiIG9wYWNpdHk9IjAuOSI+CiAgICAgIDxsaW5lIHgxPSIwIiB5MT0iLTMwIiB4Mj0iMCIgeTI9Ii00MCIvPgogICAgICA8bGluZSB4MT0iMjEiIHkxPSItMjEiIHgyPSIyOCIgeTI9Ii0yOCIvPgogICAgICA8bGluZSB4MT0iMzAiIHkxPSIwIiB4Mj0iNDAiIHkyPSIwIi8+CiAgICAgIDxsaW5lIHgxPSItMjEiIHkxPSItMjEiIHgyPSItMjgiIHkyPSItMjgiLz4KICAgICAgPGxpbmUgeDE9Ii0zMCIgeTE9IjAiIHgyPSItNDAiIHkyPSIwIi8+CiAgICA8L2c+CiAgICA8cGF0aCBkPSJNLTIwIDAgQTIwIDIwIDAgMCAxIDIwIDAiIGZpbGw9IiNmNTllMGIiIG9wYWNpdHk9IjAuOTUiLz4KICAgIDxjaXJjbGUgY3g9IjAiIGN5PSIwIiByPSIxNCIgZmlsbD0iI2Y1OWUwYiIvPgogICAgPGNpcmNsZSBjeD0iMCIgY3k9IjAiIHI9IjkiIGZpbGw9IiNmZGU2OGEiLz4KICA8L2c+CiAgPHRleHQgeD0iOTAiIHk9IjExOCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9Ikdlb3JnaWEsc2VyaWYiIGZvbnQtc2l6ZT0iNDgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNmZmZmZmYiIGxldHRlci1zcGFjaW5nPSIzIj5UU0w8L3RleHQ+CiAgPHRleHQgeD0iOTAiIHk9IjE0NCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTMiIGZvbnQtd2VpZ2h0PSI2MDAiIGZpbGw9IiNmNTllMGIiIGxldHRlci1zcGFjaW5nPSIxLjUiPlRFTFVHVSBTQ09PUDwvdGV4dD4KICA8dGV4dCB4PSI5MCIgeT0iMTYyIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMSIgZm9udC13ZWlnaHQ9IjQwMCIgZmlsbD0iIzk0YTNiOCIgbGV0dGVyLXNwYWNpbmc9IjIiPkxJVkU8L3RleHQ+Cjwvc3ZnPg==">
-<link rel="apple-touch-icon" sizes="120x120" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxODAgMTgwIiB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCI+CiAgPHJlY3Qgd2lkdGg9IjE4MCIgaGVpZ2h0PSIxODAiIHJ4PSIzNiIgZmlsbD0iIzFhMmY1ZSIvPgogIDxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxODAiIGhlaWdodD0iNyIgcng9IjMuNSIgZmlsbD0iI0U4MTkyQyIvPgogIDxyZWN0IHg9IjAiIHk9IjE3MyIgd2lkdGg9IjE4MCIgaGVpZ2h0PSI3IiByeD0iMy41IiBmaWxsPSIjRTgxOTJDIi8+CiAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoOTAsNDgpIj4KICAgIDxnIHN0cm9rZT0iI2Y1OWUwYiIgc3Ryb2tlLXdpZHRoPSIzIiBzdHJva2UtbGluZWNhcD0icm91bmQiIG9wYWNpdHk9IjAuOSI+CiAgICAgIDxsaW5lIHgxPSIwIiB5MT0iLTMwIiB4Mj0iMCIgeTI9Ii00MCIvPgogICAgICA8bGluZSB4MT0iMjEiIHkxPSItMjEiIHgyPSIyOCIgeTI9Ii0yOCIvPgogICAgICA8bGluZSB4MT0iMzAiIHkxPSIwIiB4Mj0iNDAiIHkyPSIwIi8+CiAgICAgIDxsaW5lIHgxPSItMjEiIHkxPSItMjEiIHgyPSItMjgiIHkyPSItMjgiLz4KICAgICAgPGxpbmUgeDE9Ii0zMCIgeTE9IjAiIHgyPSItNDAiIHkyPSIwIi8+CiAgICA8L2c+CiAgICA8cGF0aCBkPSJNLTIwIDAgQTIwIDIwIDAgMCAxIDIwIDAiIGZpbGw9IiNmNTllMGIiIG9wYWNpdHk9IjAuOTUiLz4KICAgIDxjaXJjbGUgY3g9IjAiIGN5PSIwIiByPSIxNCIgZmlsbD0iI2Y1OWUwYiIvPgogICAgPGNpcmNsZSBjeD0iMCIgY3k9IjAiIHI9IjkiIGZpbGw9IiNmZGU2OGEiLz4KICA8L2c+CiAgPHRleHQgeD0iOTAiIHk9IjExOCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9Ikdlb3JnaWEsc2VyaWYiIGZvbnQtc2l6ZT0iNDgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNmZmZmZmYiIGxldHRlci1zcGFjaW5nPSIzIj5UU0w8L3RleHQ+CiAgPHRleHQgeD0iOTAiIHk9IjE0NCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTMiIGZvbnQtd2VpZ2h0PSI2MDAiIGZpbGw9IiNmNTllMGIiIGxldHRlci1zcGFjaW5nPSIxLjUiPlRFTFVHVSBTQ09PUDwvdGV4dD4KICA8dGV4dCB4PSI5MCIgeT0iMTYyIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMSIgZm9udC13ZWlnaHQ9IjQwMCIgZmlsbD0iIzk0YTNiOCIgbGV0dGVyLXNwYWNpbmc9IjIiPkxJVkU8L3RleHQ+Cjwvc3ZnPg==">
-<!-- Favicon inline SVG -->
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA2NCA2NCc+PHJlY3Qgd2lkdGg9JzY0JyBoZWlnaHQ9JzY0JyByeD0nMTInIGZpbGw9JyMxYTJmNWUnLz48cmVjdCB4PScwJyB5PScwJyB3aWR0aD0nNjQnIGhlaWdodD0nNCcgcng9JzInIGZpbGw9JyNFODE5MkMnLz48cmVjdCB4PScwJyB5PSc2MCcgd2lkdGg9JzY0JyBoZWlnaHQ9JzQnIHJ4PScyJyBmaWxsPScjRTgxOTJDJy8+PHRleHQgeD0nMzInIHk9JzQ0JyB0ZXh0LWFuY2hvcj0nbWlkZGxlJyBmb250LWZhbWlseT0nR2VvcmdpYSxzZXJpZicgZm9udC1zaXplPScyOCcgZm9udC13ZWlnaHQ9JzcwMCcgZmlsbD0nI2ZmZmZmZic+VFM8L3RleHQ+PC9zdmc+">
+<!-- PWA — manifest injected as blob URL by JS below (data: URIs block install) -->
+<link rel="manifest" id="tsl-manifest-link" href="">
+<!-- Apple Touch Icon — inline SVG -->
+<link rel="apple-touch-icon" sizes="180x180" id="tsl-apple-icon" href="">
+<!-- Favicon SVG inline -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%231a2f5e'/%3E%3Crect x='0' y='0' width='64' height='4' rx='2' fill='%23E8192C'/%3E%3Crect x='0' y='60' width='64' height='4' rx='2' fill='%23E8192C'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-family='Georgia,serif' font-size='28' font-weight='700' fill='%23ffffff'%3ETS%3C/text%3E%3C/svg%3E">
 <meta name="theme-color" content="#E8192C">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="TSL News">
-<!-- PWA Splash screen background matches launch screen -->
 <meta name="msapplication-TileColor" content="#1a2f5e">
-<meta name="msapplication-TileImage" content="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxODAgMTgwIiB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCI+CiAgPHJlY3Qgd2lkdGg9IjE4MCIgaGVpZ2h0PSIxODAiIHJ4PSIzNiIgZmlsbD0iIzFhMmY1ZSIvPgogIDxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxODAiIGhlaWdodD0iNyIgcng9IjMuNSIgZmlsbD0iI0U4MTkyQyIvPgogIDxyZWN0IHg9IjAiIHk9IjE3MyIgd2lkdGg9IjE4MCIgaGVpZ2h0PSI3IiByeD0iMy41IiBmaWxsPSIjRTgxOTJDIi8+CiAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoOTAsNDgpIj4KICAgIDxnIHN0cm9rZT0iI2Y1OWUwYiIgc3Ryb2tlLXdpZHRoPSIzIiBzdHJva2UtbGluZWNhcD0icm91bmQiIG9wYWNpdHk9IjAuOSI+CiAgICAgIDxsaW5lIHgxPSIwIiB5MT0iLTMwIiB4Mj0iMCIgeTI9Ii00MCIvPgogICAgICA8bGluZSB4MT0iMjEiIHkxPSItMjEiIHgyPSIyOCIgeTI9Ii0yOCIvPgogICAgICA8bGluZSB4MT0iMzAiIHkxPSIwIiB4Mj0iNDAiIHkyPSIwIi8+CiAgICAgIDxsaW5lIHgxPSItMjEiIHkxPSItMjEiIHgyPSItMjgiIHkyPSItMjgiLz4KICAgICAgPGxpbmUgeDE9Ii0zMCIgeTE9IjAiIHgyPSItNDAiIHkyPSIwIi8+CiAgICA8L2c+CiAgICA8cGF0aCBkPSJNLTIwIDAgQTIwIDIwIDAgMCAxIDIwIDAiIGZpbGw9IiNmNTllMGIiIG9wYWNpdHk9IjAuOTUiLz4KICAgIDxjaXJjbGUgY3g9IjAiIGN5PSIwIiByPSIxNCIgZmlsbD0iI2Y1OWUwYiIvPgogICAgPGNpcmNsZSBjeD0iMCIgY3k9IjAiIHI9IjkiIGZpbGw9IiNmZGU2OGEiLz4KICA8L2c+CiAgPHRleHQgeD0iOTAiIHk9IjExOCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9Ikdlb3JnaWEsc2VyaWYiIGZvbnQtc2l6ZT0iNDgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNmZmZmZmYiIGxldHRlci1zcGFjaW5nPSIzIj5UU0w8L3RleHQ+CiAgPHRleHQgeD0iOTAiIHk9IjE0NCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTMiIGZvbnQtd2VpZ2h0PSI2MDAiIGZpbGw9IiNmNTllMGIiIGxldHRlci1zcGFjaW5nPSIxLjUiPlRFTFVHVSBTQ09PUDwvdGV4dD4KICA8dGV4dCB4PSI5MCIgeT0iMTYyIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMSIgZm9udC13ZWlnaHQ9IjQwMCIgZmlsbD0iIzk0YTNiOCIgbGV0dGVyLXNwYWNpbmc9IjIiPkxJVkU8L3RleHQ+Cjwvc3ZnPg==">
+<script>
+// ── PWA INSTALL ENGINE ──────────────────────────────────────────────────────
+// Generates icons via Canvas, creates a real blob: manifest URL (data: URIs
+// are rejected by Chrome for PWA install), registers an inline Service Worker
+// via a blob URL (no external sw.js file needed).
+(function() {
+  'use strict';
+
+  // ── 1. Generate icon PNG via Canvas ────────────────────────────────────
+  function makeTSLIcon(size) {
+    try {
+      var c = document.createElement('canvas');
+      c.width = c.height = size;
+      var ctx = c.getContext('2d');
+      var s = size;
+
+      // Dark navy rounded background
+      var grd = ctx.createLinearGradient(0,0,s,s);
+      grd.addColorStop(0,'#1a2f5e'); grd.addColorStop(1,'#0d1b3e');
+      ctx.fillStyle = grd;
+      var r = s * 0.2;
+      ctx.beginPath();
+      ctx.moveTo(r,0); ctx.lineTo(s-r,0); ctx.quadraticCurveTo(s,0,s,r);
+      ctx.lineTo(s,s-r); ctx.quadraticCurveTo(s,s,s-r,s);
+      ctx.lineTo(r,s); ctx.quadraticCurveTo(0,s,0,s-r);
+      ctx.lineTo(0,r); ctx.quadraticCurveTo(0,0,r,0);
+      ctx.closePath(); ctx.fill();
+
+      // Red accent bars
+      ctx.fillStyle = '#E8192C';
+      ctx.fillRect(0, 0, s, s*0.045);
+      ctx.fillRect(0, s - s*0.045, s, s*0.045);
+
+      // Rising sun
+      var cx = s*0.5, cy = s*0.27, sr = s*0.095;
+      // Rays
+      ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = s*0.019; ctx.lineCap = 'round';
+      [[0,-1],[0.7,-0.7],[1,0],[-0.7,-0.7],[-1,0]].forEach(function(ray) {
+        ctx.beginPath();
+        ctx.moveTo(cx + ray[0]*sr*1.6, cy + ray[1]*sr*1.6);
+        ctx.lineTo(cx + ray[0]*sr*2.2, cy + ray[1]*sr*2.2);
+        ctx.stroke();
+      });
+      // Sun arc + circle
+      ctx.beginPath(); ctx.arc(cx, cy, sr, Math.PI, 0);
+      ctx.fillStyle = '#f59e0b'; ctx.fill();
+      ctx.beginPath(); ctx.arc(cx, cy, sr, 0, Math.PI*2);
+      ctx.fillStyle = '#f59e0b'; ctx.fill();
+      ctx.beginPath(); ctx.arc(cx, cy, sr*0.58, 0, Math.PI*2);
+      ctx.fillStyle = '#fde68a'; ctx.fill();
+
+      // TSL bold text
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold ' + Math.round(s*0.275) + 'px Georgia,serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText('TSL', s*0.5, s*0.635);
+
+      // Tagline
+      ctx.fillStyle = '#f59e0b';
+      ctx.font = 'bold ' + Math.round(s*0.072) + 'px Arial,sans-serif';
+      ctx.fillText('TELUGU SCOOP', s*0.5, s*0.815);
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = Math.round(s*0.062) + 'px Arial,sans-serif';
+      ctx.fillText('LIVE', s*0.5, s*0.9);
+
+      return c.toDataURL('image/png');
+    } catch(e) { return null; }
+  }
+
+  // ── 2. Register inline Service Worker (no sw.js file needed) ────────────
+  function registerInlineSW() {
+    if (!('serviceWorker' in navigator)) return;
+    // Minimal SW: cache-first for assets, network-first for API
+    var swCode = [
+      '"use strict";',
+      'var CACHE="tsl-v2";',
+      'var ASSETS=["/","index.html"];',
+      'self.addEventListener("install",function(e){',
+      '  self.skipWaiting();',
+      '  e.waitUntil(caches.open(CACHE).then(function(c){',
+      '    return c.addAll(ASSETS).catch(function(){});',
+      '  }));',
+      '});',
+      'self.addEventListener("activate",function(e){',
+      '  e.waitUntil(clients.claim());',
+      '});',
+      'self.addEventListener("fetch",function(e){',
+      '  var url=e.request.url;',
+      '  if(url.includes("supabase.co")||url.includes("api.telegram")||url.includes("googleapis")){',
+      '    return; /* let network handle API calls */',
+      '  }',
+      '  e.respondWith(',
+      '    caches.match(e.request).then(function(cached){',
+      '      return cached||fetch(e.request).then(function(res){',
+      '        if(res&&res.status===200&&res.type==="basic"){',
+      '          var c=res.clone();',
+      '          caches.open(CACHE).then(function(cache){cache.put(e.request,c);});',
+      '        }',
+      '        return res;',
+      '      }).catch(function(){ return cached||new Response("Offline",{status:503}); });',
+      '    })',
+      '  );',
+      '});'
+    ].join('\n');
+
+    try {
+      var swBlob = new Blob([swCode], {type:'text/javascript'});
+      var swUrl  = URL.createObjectURL(swBlob);
+      // Only register on real HTTPS domain (required for SW)
+      var host = window.location.hostname;
+      var isHttps = window.location.protocol === 'https:';
+      var isLocal = host === 'localhost' || host === '127.0.0.1';
+      if (isHttps || isLocal) {
+        navigator.serviceWorker.register(swUrl, {scope:'/'})
+          .then(function(reg){ console.log('[TSL SW] Registered scope:', reg.scope); })
+          .catch(function(e){ console.warn('[TSL SW] blob SW failed, trying /sw.js:', e.message);
+            // Fallback to external sw.js if it exists
+            navigator.serviceWorker.register('/sw.js').catch(function(){});
+          });
+      }
+    } catch(e) { console.warn('[TSL SW] SW setup failed:', e.message); }
+  }
+
+  // ── 3. Build manifest blob URL with real canvas icon data URIs ──────────
+  function buildManifest() {
+    try {
+      var icon192 = makeTSLIcon(192);
+      var icon512 = makeTSLIcon(512);
+      if (!icon192) return;
+
+      var manifest = {
+        name: 'TeluguScoopLive',
+        short_name: 'TSL News',
+        description: 'Breaking News, Cinema, Politics & Cricket in Telugu',
+        start_url: '/',
+        scope: '/',
+        display: 'standalone',
+        background_color: '#1a2f5e',
+        theme_color: '#E8192C',
+        orientation: 'portrait-primary',
+        lang: 'te',
+        icons: [
+          {src: icon192, sizes: '192x192', type: 'image/png', purpose: 'any maskable'},
+          {src: icon512 || icon192, sizes: '512x512', type: 'image/png', purpose: 'any maskable'}
+        ]
+      };
+
+      var blob = new Blob([JSON.stringify(manifest)], {type:'application/json'});
+      var url  = URL.createObjectURL(blob);
+
+      // Replace manifest link
+      var link = document.getElementById('tsl-manifest-link');
+      if (link) link.href = url;
+      else {
+        var nl = document.createElement('link');
+        nl.rel = 'manifest'; nl.id = 'tsl-manifest-link'; nl.href = url;
+        document.head.appendChild(nl);
+      }
+
+      // Set apple-touch-icon
+      var al = document.getElementById('tsl-apple-icon');
+      if (al) al.href = icon192;
+
+      // Set msapplication tile
+      var ms = document.querySelector('meta[name="msapplication-TileImage"]');
+      if (!ms) {
+        ms = document.createElement('meta');
+        ms.name = 'msapplication-TileImage';
+        document.head.appendChild(ms);
+      }
+      ms.content = icon192;
+
+      console.log('[TSL PWA] Manifest blob URL set:', url.substring(0,40));
+    } catch(e) { console.warn('[TSL PWA] Manifest build failed:', e.message); }
+  }
+
+  // ── 4. Run everything ───────────────────────────────────────────────────
+  function initPWA() {
+    buildManifest();
+    registerInlineSW();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initPWA);
+  } else {
+    initPWA();
+  }
+})();
+</script>
 <link rel="canonical" href="https://teluguscooplive.netlify.app/" id="canonicalUrl">
 <!-- Critical fonts: DM Sans + Space Mono load first (used in visible UI), rest load async -->
 <!-- Critical UI fonts: DM Sans + DM Serif Display + Space Mono — used in above-fold elements -->
@@ -4091,6 +4260,13 @@ window.mbnSetActive = function() {};
 </div>
 <script>
 (function(){
+  // Auto-hide after March 27, 2026 (day ends at midnight IST = 18:30 UTC March 27)
+  var expiryDate = new Date('2026-03-28T00:00:00+05:30'); // midnight IST March 28 = end of March 27
+  var now = new Date();
+  if (now >= expiryDate) {
+    // Banner expired — hide permanently, no need to show
+    return;
+  }
   if (!localStorage.getItem('tsl_ramanavami_banner_dismissed')) {
     var b = document.getElementById('ramaNavamiBanner');
     if (b) b.style.display = 'block';
@@ -15207,8 +15383,8 @@ Write exactly 5 paragraphs, minimum 600 words. No section labels. Zero repetitio
     }
 
     try {
-      // Pollinations.ai — free, no API key, high quality — Professional TV news anchor style
-      const tvNewsPrompt = `A highly professional news studio scene with a confident and elegant female news anchor, realistic and natural appearance, wearing formal attire blazer or saree, in a modern high-end newsroom. Background clean minimal broadcast studio with soft lighting subtle digital news screens no clutter. Anchor positioned slightly left with empty space for headline text on right side, balanced layout like international news channels. Soft studio lighting natural skin tones no harsh shadows. Ultra realistic sharp 4K quality premium broadcast look clean and minimal. Serious trustworthy professional news reporting tone. Landscape 16:9 clean background for text overlay. No loud colors no over dramatic expressions no cheap breaking news graphics no cartoonish faces. Context: ${catContext}`;
+      // Pollinations.ai — professional TV news anchor style (prompt kept short to stay under URL limit)
+      const tvNewsPrompt = `professional female news anchor, modern broadcast studio, soft lighting, 4K, 16:9, ${catContext}, premium news channel, clean minimal background, ultra realistic`;
       const prompt = encodeURIComponent(tvNewsPrompt);
       const seed = Math.floor(Math.random() * 999999);
       const imageUrl = `https://image.pollinations.ai/prompt/${prompt}?width=1200&height=630&seed=${seed}&nologo=true&enhance=true&model=flux`;
@@ -17256,21 +17432,7 @@ body{background:#ECEEF5!important;font-family:'Plus Jakarta Sans', system-ui, sa
 </script>
 
   <!-- Service Worker Registration -->
-  <script>
-    if ('serviceWorker' in navigator) {
-      // Only register on real deployed domain — skip on localhost/preview environments
-      const isRealDomain = !window.location.hostname.includes('localhost') &&
-                           !window.location.hostname.includes('claudeusercontent') &&
-                           !window.location.hostname.includes('127.0.0.1');
-      if (isRealDomain) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js')
-            .then(reg => console.log('[SW] Registered:', reg.scope))
-            .catch(() => { /* sw.js not deployed — silently skip */ });
-        });
-      }
-    }
-  </script>
+  <!-- SW registered by PWA engine in <head> -->
 
 
 <script>
@@ -23567,6 +23729,33 @@ function _articleUrl(article) {
 }
 
 // ── Format Breaking News post body ──────────────────
+// Reliable fallback images per category — always works for Telegram/Facebook
+const _AUTO_POST_FALLBACKS = {
+  politics:    'https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=1200&h=630&fit=crop',
+  cinema:      'https://images.unsplash.com/photo-1485846234645-a62644f84728?w=1200&h=630&fit=crop',
+  cricket:     'https://images.unsplash.com/photo-1531415074968-036ba1b575da?w=1200&h=630&fit=crop',
+  sports:      'https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=1200&h=630&fit=crop',
+  telangana:   'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=1200&h=630&fit=crop',
+  andhra:      'https://images.unsplash.com/photo-1556742044-3c52d6e88c62?w=1200&h=630&fit=crop',
+  national:    'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=1200&h=630&fit=crop',
+  business:    'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=1200&h=630&fit=crop',
+  technology:  'https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&h=630&fit=crop',
+  health:      'https://images.unsplash.com/photo-1538108149393-fbbd81895907?w=1200&h=630&fit=crop',
+  _default:    'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=1200&h=630&fit=crop'
+};
+
+// Returns a guaranteed-working image URL for auto-posting
+function _safePostImage(article) {
+  const img = article.image || '';
+  // Accept if it's a real external URL (not pollinations — those can time out or be too long)
+  if (img && img.startsWith('http') && !img.includes('pollinations.ai') && !img.includes('image.pollinations')) {
+    return img;
+  }
+  // Fallback to reliable Unsplash by category
+  const cat = (article.category || '').toLowerCase();
+  return _AUTO_POST_FALLBACKS[cat] || _AUTO_POST_FALLBACKS['_default'];
+}
+
 function _postBody(article) {
   const title   = (article.title   || '').trim();
   const excerpt = (article.excerpt || article.summary || '').trim();
@@ -23594,11 +23783,11 @@ async function postToTelegram(article) {
   }
 
   const text = _postBody(article);
-  const imgUrl = article.image;
+  const imgUrl = _safePostImage(article); // always returns a working image URL
 
   try {
-    // Try sendPhoto first if image available
-    if (imgUrl && imgUrl.startsWith('http')) {
+    // Try sendPhoto first
+    if (imgUrl) {
       const r = await fetch(`https://api.telegram.org/bot${token}/sendPhoto`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -23694,7 +23883,7 @@ async function postToFacebook(article) {
   // Strip HTML tags from post body (FB doesn't render them)
   const text   = _postBody(article).replace(/<[^>]+>/g, '');
   const url    = _articleUrl(article);
-  const imgUrl = article.image;
+  const imgUrl = _safePostImage(article); // always returns a working image URL
 
   // ── Helper: one attempt ──────────────────────────────
   async function _attempt() {
@@ -24830,8 +25019,8 @@ _patchPublishHooks();
 @media (max-width: 768px) {
 
   .nav-top {
-    height: 64px !important;
-    min-height: 64px !important;
+    height: 68px !important;
+    min-height: 68px !important;
     padding: 0 10px !important;
     gap: 0 !important;
     display: flex !important;
@@ -24840,26 +25029,26 @@ _patchPublishHooks();
   }
 
   .tsl-nav-logo {
-    gap: 8px !important;
+    gap: 9px !important;
     display: flex !important;
     align-items: center !important;
   }
 
   .tsl-nav-logo-img {
-    height: 48px !important;
-    width: 48px !important;
-    min-width: 48px !important;
-    max-height: 48px !important;
+    height: 54px !important;
+    width: 54px !important;
+    min-width: 54px !important;
+    max-height: 54px !important;
   }
 
   .tsl-nav-logo-name {
-    font-size: 20px !important;
+    font-size: 24px !important;
     font-weight: 700 !important;
   }
 
   .tsl-nav-logo-tagline {
-    font-size: 8.5px !important;
-    letter-spacing: 0.02em !important;
+    font-size: 10.5px !important;
+    letter-spacing: 0.03em !important;
     color: #1e293b !important;
     display: block !important;
   }
@@ -24893,16 +25082,16 @@ _patchPublishHooks();
    ══════════════════════════════════════ */
 @media (max-width: 380px) {
   .tsl-nav-logo-img {
-    height: 36px !important;
-    width: 36px !important;
-    min-width: 36px !important;
+    height: 44px !important;
+    width: 44px !important;
+    min-width: 44px !important;
   }
   .tsl-nav-logo-name {
-    font-size: 15px !important;
+    font-size: 19px !important;
   }
   .tsl-nav-logo-tagline {
     display: block !important;
-    font-size: 7.5px !important;
+    font-size: 9px !important;
     letter-spacing: 0.02em !important;
     color: #1e293b !important;
   }
@@ -24918,111 +25107,3 @@ _patchPublishHooks();
 }
 </style>
 
-<!-- ▼ PWA ICON GENERATOR — creates crisp home-screen icon via Canvas if PNG missing ▼ -->
-<script>
-(function(){
-  // Generate icon PNG via Canvas and cache in localStorage for service worker / manifest override
-  function generateTSLIcon(size) {
-    try {
-      var c = document.createElement('canvas');
-      c.width = c.height = size;
-      var ctx = c.getContext('2d');
-      var s = size;
-      // Background
-      var grd = ctx.createLinearGradient(0,0,s,s);
-      grd.addColorStop(0,'#1a2f5e'); grd.addColorStop(1,'#0d1b3e');
-      ctx.fillStyle = grd;
-      var r = s*0.2;
-      ctx.beginPath();
-      ctx.moveTo(r,0); ctx.lineTo(s-r,0); ctx.quadraticCurveTo(s,0,s,r);
-      ctx.lineTo(s,s-r); ctx.quadraticCurveTo(s,s,s-r,s);
-      ctx.lineTo(r,s); ctx.quadraticCurveTo(0,s,0,s-r);
-      ctx.lineTo(0,r); ctx.quadraticCurveTo(0,0,r,0);
-      ctx.closePath(); ctx.fill();
-      // Red top bar
-      ctx.fillStyle='#E8192C';
-      ctx.fillRect(0,0,s,s*0.045);
-      ctx.fillRect(0,s-s*0.045,s,s*0.045);
-      // Sun
-      var cx=s*0.5, cy=s*0.28, sr=s*0.1;
-      ctx.strokeStyle='#f59e0b'; ctx.lineWidth=s*0.02; ctx.lineCap='round';
-      var rays=[[0,-1],[0.7,-0.7],[1,0],[-0.7,-0.7],[-1,0]];
-      rays.forEach(function(ray){
-        ctx.beginPath();
-        ctx.moveTo(cx+ray[0]*sr*1.5, cy+ray[1]*sr*1.5);
-        ctx.lineTo(cx+ray[0]*sr*2.1, cy+ray[1]*sr*2.1);
-        ctx.stroke();
-      });
-      ctx.beginPath(); ctx.arc(cx,cy,sr,Math.PI,0); ctx.fillStyle='#f59e0b'; ctx.fill();
-      ctx.beginPath(); ctx.arc(cx,cy,sr,0,Math.PI*2); ctx.fillStyle='#f59e0b'; ctx.fill();
-      ctx.beginPath(); ctx.arc(cx,cy,sr*0.6,0,Math.PI*2); ctx.fillStyle='#fde68a'; ctx.fill();
-      // TSL text
-      ctx.fillStyle='#ffffff';
-      ctx.font = 'bold '+Math.round(s*0.28)+'px Georgia,serif';
-      ctx.textAlign='center'; ctx.textBaseline='middle';
-      ctx.fillText('TSL', s*0.5, s*0.64);
-      // Tagline
-      ctx.fillStyle='#f59e0b';
-      ctx.font = 'bold '+Math.round(s*0.075)+'px Arial,sans-serif';
-      ctx.letterSpacing='2px';
-      ctx.fillText('TELUGU SCOOP', s*0.5, s*0.82);
-      ctx.fillStyle='#94a3b8';
-      ctx.font = Math.round(s*0.065)+'px Arial,sans-serif';
-      ctx.fillText('LIVE', s*0.5, s*0.91);
-      return c.toDataURL('image/png');
-    } catch(e){ return null; }
-  }
-
-  // Patch manifest icons with canvas-generated data URIs (works for Chrome PWA install)
-  function patchManifest() {
-    try {
-      var icon192 = generateTSLIcon(192);
-      var icon512 = generateTSLIcon(512);
-      if (!icon192 || !icon512) return;
-
-      var manifestData = {
-        name: 'TeluguScoopLive',
-        short_name: 'TSL News',
-        description: 'Breaking News, Cinema, Politics & Cricket in Telugu',
-        start_url: '/',
-        display: 'standalone',
-        background_color: '#1a2f5e',
-        theme_color: '#E8192C',
-        orientation: 'portrait-primary',
-        lang: 'te',
-        scope: '/',
-        icons: [
-          { src: icon192, sizes: '192x192', type: 'image/png', purpose: 'any maskable' },
-          { src: icon512, sizes: '512x512', type: 'image/png', purpose: 'any maskable' }
-        ]
-      };
-
-      var blob = new Blob([JSON.stringify(manifestData)], {type:'application/json'});
-      var url = URL.createObjectURL(blob);
-      // Replace the manifest link with the canvas-icon version
-      var existing = document.querySelector('link[rel="manifest"]');
-      if (existing) { existing.href = url; }
-      else {
-        var link = document.createElement('link');
-        link.rel = 'manifest'; link.href = url;
-        document.head.appendChild(link);
-      }
-      // Also set apple-touch-icon dynamically
-      var appleLink = document.querySelector('link[rel="apple-touch-icon"]');
-      if (appleLink) appleLink.href = icon192;
-      else {
-        var al = document.createElement('link');
-        al.rel='apple-touch-icon'; al.sizes='180x180'; al.href=icon192;
-        document.head.appendChild(al);
-      }
-    } catch(e){ /* silent fail */ }
-  }
-
-  if(document.readyState==='loading'){
-    document.addEventListener('DOMContentLoaded', patchManifest);
-  } else {
-    patchManifest();
-  }
-})();
-</script>
-<!-- ▲ PWA ICON GENERATOR ▲ -->
