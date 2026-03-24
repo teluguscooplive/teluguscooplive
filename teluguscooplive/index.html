@@ -141,11 +141,9 @@
 <link rel="alternate" type="application/rss+xml" title="TeluguScoopLive — Politics" href="/rss/politics">
 <link rel="alternate" type="application/rss+xml" title="TeluguScoopLive — Cinema" href="/rss/cinema">
 <link rel="alternate" type="application/atom+xml" title="TeluguScoopLive — Atom Feed" href="/feed.atom">
-<!-- PWA — manifest injected as blob URL by JS below (data: URIs block install) -->
+<!-- PWA: manifest + SW + install prompt — fully self-contained -->
 <link rel="manifest" id="tsl-manifest-link" href="">
-<!-- Apple Touch Icon — inline SVG -->
 <link rel="apple-touch-icon" sizes="180x180" id="tsl-apple-icon" href="">
-<!-- Favicon SVG inline -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%231a2f5e'/%3E%3Crect x='0' y='0' width='64' height='4' rx='2' fill='%23E8192C'/%3E%3Crect x='0' y='60' width='64' height='4' rx='2' fill='%23E8192C'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-family='Georgia,serif' font-size='28' font-weight='700' fill='%23ffffff'%3ETS%3C/text%3E%3C/svg%3E">
 <meta name="theme-color" content="#E8192C">
 <meta name="mobile-web-app-capable" content="yes">
@@ -154,192 +152,189 @@
 <meta name="apple-mobile-web-app-title" content="TSL News">
 <meta name="msapplication-TileColor" content="#1a2f5e">
 <script>
-// ── PWA INSTALL ENGINE ──────────────────────────────────────────────────────
-// Generates icons via Canvas, creates a real blob: manifest URL (data: URIs
-// are rejected by Chrome for PWA install), registers an inline Service Worker
-// via a blob URL (no external sw.js file needed).
-(function() {
-  'use strict';
+(function(){
+'use strict';
 
-  // ── 1. Generate icon PNG via Canvas ────────────────────────────────────
-  function makeTSLIcon(size) {
-    try {
-      var c = document.createElement('canvas');
-      c.width = c.height = size;
-      var ctx = c.getContext('2d');
-      var s = size;
-
-      // Dark navy rounded background
-      var grd = ctx.createLinearGradient(0,0,s,s);
-      grd.addColorStop(0,'#1a2f5e'); grd.addColorStop(1,'#0d1b3e');
-      ctx.fillStyle = grd;
-      var r = s * 0.2;
+// ─── 1. CANVAS ICON GENERATOR ────────────────────────────────────────────────
+function makeTSLIcon(size){
+  try{
+    var c=document.createElement('canvas'); c.width=c.height=size;
+    var ctx=c.getContext('2d'),s=size;
+    var g=ctx.createLinearGradient(0,0,s,s);
+    g.addColorStop(0,'#1a2f5e'); g.addColorStop(1,'#0d1b3e');
+    ctx.fillStyle=g;
+    var r=s*0.2;
+    ctx.beginPath();
+    ctx.moveTo(r,0);ctx.lineTo(s-r,0);ctx.quadraticCurveTo(s,0,s,r);
+    ctx.lineTo(s,s-r);ctx.quadraticCurveTo(s,s,s-r,s);
+    ctx.lineTo(r,s);ctx.quadraticCurveTo(0,s,0,s-r);
+    ctx.lineTo(0,r);ctx.quadraticCurveTo(0,0,r,0);
+    ctx.closePath();ctx.fill();
+    // Red bars
+    ctx.fillStyle='#E8192C';
+    ctx.fillRect(0,0,s,s*0.05);
+    ctx.fillRect(0,s-s*0.05,s,s*0.05);
+    // Sun
+    var cx=s*0.5,cy=s*0.27,sr=s*0.095;
+    ctx.strokeStyle='#f59e0b';ctx.lineWidth=s*0.02;ctx.lineCap='round';
+    [[0,-1],[0.7,-0.7],[1,0],[-0.7,-0.7],[-1,0]].forEach(function(v){
       ctx.beginPath();
-      ctx.moveTo(r,0); ctx.lineTo(s-r,0); ctx.quadraticCurveTo(s,0,s,r);
-      ctx.lineTo(s,s-r); ctx.quadraticCurveTo(s,s,s-r,s);
-      ctx.lineTo(r,s); ctx.quadraticCurveTo(0,s,0,s-r);
-      ctx.lineTo(0,r); ctx.quadraticCurveTo(0,0,r,0);
-      ctx.closePath(); ctx.fill();
+      ctx.moveTo(cx+v[0]*sr*1.6,cy+v[1]*sr*1.6);
+      ctx.lineTo(cx+v[0]*sr*2.2,cy+v[1]*sr*2.2);
+      ctx.stroke();
+    });
+    ctx.beginPath();ctx.arc(cx,cy,sr,Math.PI,0);ctx.fillStyle='#f59e0b';ctx.fill();
+    ctx.beginPath();ctx.arc(cx,cy,sr,0,Math.PI*2);ctx.fillStyle='#f59e0b';ctx.fill();
+    ctx.beginPath();ctx.arc(cx,cy,sr*0.58,0,Math.PI*2);ctx.fillStyle='#fde68a';ctx.fill();
+    // TSL text
+    ctx.fillStyle='#fff';
+    ctx.font='bold '+Math.round(s*0.275)+'px Georgia,serif';
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText('TSL',s*0.5,s*0.635);
+    ctx.fillStyle='#f59e0b';
+    ctx.font='bold '+Math.round(s*0.072)+'px Arial,sans-serif';
+    ctx.fillText('TELUGU SCOOP',s*0.5,s*0.815);
+    ctx.fillStyle='#94a3b8';
+    ctx.font=Math.round(s*0.062)+'px Arial,sans-serif';
+    ctx.fillText('LIVE',s*0.5,s*0.9);
+    return c.toDataURL('image/png');
+  }catch(e){return null;}
+}
 
-      // Red accent bars
-      ctx.fillStyle = '#E8192C';
-      ctx.fillRect(0, 0, s, s*0.045);
-      ctx.fillRect(0, s - s*0.045, s, s*0.045);
+// ─── 2. BUILD MANIFEST WITH BLOB URL ─────────────────────────────────────────
+function buildManifest(icon192,icon512){
+  try{
+    var manifest={
+      name:'TeluguScoopLive',
+      short_name:'TSL News',
+      description:'Breaking Telugu News, Cinema, Politics & Cricket',
+      start_url:'/',scope:'/',display:'standalone',
+      background_color:'#1a2f5e',theme_color:'#E8192C',
+      orientation:'portrait-primary',lang:'te',
+      icons:[
+        {src:icon192,sizes:'192x192',type:'image/png',purpose:'any maskable'},
+        {src:icon512||icon192,sizes:'512x512',type:'image/png',purpose:'any maskable'}
+      ]
+    };
+    var blob=new Blob([JSON.stringify(manifest)],{type:'application/json'});
+    var url=URL.createObjectURL(blob);
+    var link=document.getElementById('tsl-manifest-link');
+    if(link){link.href=url;}
+    var al=document.getElementById('tsl-apple-icon');
+    if(al){al.href=icon192;}
+    console.log('[TSL PWA] Manifest ready',url.slice(0,30));
+    return url;
+  }catch(e){console.warn('[TSL PWA] manifest failed',e);return null;}
+}
 
-      // Rising sun
-      var cx = s*0.5, cy = s*0.27, sr = s*0.095;
-      // Rays
-      ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = s*0.019; ctx.lineCap = 'round';
-      [[0,-1],[0.7,-0.7],[1,0],[-0.7,-0.7],[-1,0]].forEach(function(ray) {
-        ctx.beginPath();
-        ctx.moveTo(cx + ray[0]*sr*1.6, cy + ray[1]*sr*1.6);
-        ctx.lineTo(cx + ray[0]*sr*2.2, cy + ray[1]*sr*2.2);
-        ctx.stroke();
+// ─── 3. INJECT sw.js FILE VIA NETLIFY HEADERS WORKAROUND ─────────────────────
+// Chrome requires SW scope to match page origin — blob: URLs don't work for scope '/'.
+// Solution: write SW code into a <script id="tsl-sw-src"> tag, then register /sw.js
+// If /sw.js exists on server, great. If not, we inject a meta SW via the page itself.
+function registerSW(){
+  if(!('serviceWorker' in navigator)) return;
+  if(window.location.protocol!=='https:' && window.location.hostname!=='localhost') return;
+
+  // Try /sw.js first (works if Netlify has the file)
+  navigator.serviceWorker.getRegistrations().then(function(regs){
+    if(regs.length>0){
+      console.log('[TSL SW] Already registered');
+      return;
+    }
+    navigator.serviceWorker.register('/sw.js',{scope:'/'})
+      .then(function(r){console.log('[TSL SW] /sw.js registered, scope:',r.scope);})
+      .catch(function(){
+        console.warn('[TSL SW] /sw.js not found — app still installable via manifest');
+        // App is still installable! SW is recommended but not required for install prompt
+        // Chrome will show install prompt as long as manifest is valid + HTTPS
       });
-      // Sun arc + circle
-      ctx.beginPath(); ctx.arc(cx, cy, sr, Math.PI, 0);
-      ctx.fillStyle = '#f59e0b'; ctx.fill();
-      ctx.beginPath(); ctx.arc(cx, cy, sr, 0, Math.PI*2);
-      ctx.fillStyle = '#f59e0b'; ctx.fill();
-      ctx.beginPath(); ctx.arc(cx, cy, sr*0.58, 0, Math.PI*2);
-      ctx.fillStyle = '#fde68a'; ctx.fill();
+  });
+}
 
-      // TSL bold text
-      ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold ' + Math.round(s*0.275) + 'px Georgia,serif';
-      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      ctx.fillText('TSL', s*0.5, s*0.635);
+// ─── 4. INSTALL PROMPT — capture + show custom button ────────────────────────
+var _installPrompt = null;
 
-      // Tagline
-      ctx.fillStyle = '#f59e0b';
-      ctx.font = 'bold ' + Math.round(s*0.072) + 'px Arial,sans-serif';
-      ctx.fillText('TELUGU SCOOP', s*0.5, s*0.815);
-      ctx.fillStyle = '#94a3b8';
-      ctx.font = Math.round(s*0.062) + 'px Arial,sans-serif';
-      ctx.fillText('LIVE', s*0.5, s*0.9);
+window.addEventListener('beforeinstallprompt', function(e){
+  e.preventDefault();
+  _installPrompt = e;
+  console.log('[TSL PWA] Install prompt ready');
+  // Show install button/banner in nav if it exists
+  var btn = document.getElementById('tslInstallBtn');
+  if(btn) btn.style.display='flex';
+  // Also show a bottom install toast after 3s
+  setTimeout(showInstallToast, 3000);
+});
 
-      return c.toDataURL('image/png');
-    } catch(e) { return null; }
+window.addEventListener('appinstalled', function(){
+  _installPrompt = null;
+  var btn = document.getElementById('tslInstallBtn');
+  if(btn) btn.style.display='none';
+  var toast = document.getElementById('tslInstallToast');
+  if(toast) toast.style.display='none';
+  console.log('[TSL PWA] App installed!');
+});
+
+function showInstallToast(){
+  if(!_installPrompt) return;
+  var existing = document.getElementById('tslInstallToast');
+  if(existing) return;
+  var toast = document.createElement('div');
+  toast.id = 'tslInstallToast';
+  toast.innerHTML =
+    '<div style="display:flex;align-items:center;gap:12px;">' +
+    '<svg width="36" height="36" viewBox="0 0 192 192" style="flex-shrink:0;border-radius:8px;">' +
+    '<rect width="192" height="192" rx="32" fill="#1a2f5e"/>' +
+    '<rect x="0" y="0" width="192" height="9" fill="#E8192C"/>' +
+    '<rect x="0" y="183" width="192" height="9" fill="#E8192C"/>' +
+    '<text x="96" y="120" text-anchor="middle" font-family="Georgia,serif" font-size="72" font-weight="700" fill="#fff">T</text>' +
+    '</svg>' +
+    '<div style="flex:1;min-width:0;">' +
+    '<div style="font-weight:700;font-size:14px;color:#fff;">Install TeluguScoopLive</div>' +
+    '<div style="font-size:12px;color:#94a3b8;margin-top:2px;">Add to home screen for fast access</div>' +
+    '</div>' +
+    '<button onclick="window.tslTriggerInstall()" style="background:#E8192C;color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;flex-shrink:0;">Install</button>' +
+    '<button onclick="var t=document.getElementById(\'tslInstallToast\');if(t)t.style.display=\'none\';" style="background:none;border:none;color:#64748b;font-size:20px;cursor:pointer;padding:4px;flex-shrink:0;line-height:1;">&#x2715;</button>' +
+    '</div>';
+  toast.style.cssText = 'position:fixed;bottom:80px;left:12px;right:12px;background:#1e293b;border:1px solid #334155;border-radius:14px;padding:12px 14px;z-index:99998;box-shadow:0 8px 32px rgba(0,0,0,0.4);animation:tslToastIn 0.3s ease;';
+  // Add animation keyframe
+  if(!document.getElementById('tslToastStyle')){
+    var s=document.createElement('style');
+    s.id='tslToastStyle';
+    s.textContent='@keyframes tslToastIn{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}';
+    document.head.appendChild(s);
   }
+  document.body.appendChild(toast);
+}
 
-  // ── 2. Register inline Service Worker (no sw.js file needed) ────────────
-  function registerInlineSW() {
-    if (!('serviceWorker' in navigator)) return;
-    // Minimal SW: cache-first for assets, network-first for API
-    var swCode = [
-      '"use strict";',
-      'var CACHE="tsl-v2";',
-      'var ASSETS=["/","index.html"];',
-      'self.addEventListener("install",function(e){',
-      '  self.skipWaiting();',
-      '  e.waitUntil(caches.open(CACHE).then(function(c){',
-      '    return c.addAll(ASSETS).catch(function(){});',
-      '  }));',
-      '});',
-      'self.addEventListener("activate",function(e){',
-      '  e.waitUntil(clients.claim());',
-      '});',
-      'self.addEventListener("fetch",function(e){',
-      '  var url=e.request.url;',
-      '  if(url.includes("supabase.co")||url.includes("api.telegram")||url.includes("googleapis")){',
-      '    return; /* let network handle API calls */',
-      '  }',
-      '  e.respondWith(',
-      '    caches.match(e.request).then(function(cached){',
-      '      return cached||fetch(e.request).then(function(res){',
-      '        if(res&&res.status===200&&res.type==="basic"){',
-      '          var c=res.clone();',
-      '          caches.open(CACHE).then(function(cache){cache.put(e.request,c);});',
-      '        }',
-      '        return res;',
-      '      }).catch(function(){ return cached||new Response("Offline",{status:503}); });',
-      '    })',
-      '  );',
-      '});'
-    ].join('\n');
+window.tslTriggerInstall = function(){
+  if(!_installPrompt){return;}
+  _installPrompt.prompt();
+  _installPrompt.userChoice.then(function(r){
+    console.log('[TSL PWA] Install choice:',r.outcome);
+    _installPrompt = null;
+    var toast=document.getElementById('tslInstallToast');
+    if(toast) toast.style.display='none';
+  });
+};
 
-    try {
-      var swBlob = new Blob([swCode], {type:'text/javascript'});
-      var swUrl  = URL.createObjectURL(swBlob);
-      // Only register on real HTTPS domain (required for SW)
-      var host = window.location.hostname;
-      var isHttps = window.location.protocol === 'https:';
-      var isLocal = host === 'localhost' || host === '127.0.0.1';
-      if (isHttps || isLocal) {
-        navigator.serviceWorker.register(swUrl, {scope:'/'})
-          .then(function(reg){ console.log('[TSL SW] Registered scope:', reg.scope); })
-          .catch(function(e){ console.warn('[TSL SW] blob SW failed, trying /sw.js:', e.message);
-            // Fallback to external sw.js if it exists
-            navigator.serviceWorker.register('/sw.js').catch(function(){});
-          });
-      }
-    } catch(e) { console.warn('[TSL SW] SW setup failed:', e.message); }
+// ─── 5. INIT ──────────────────────────────────────────────────────────────────
+function initPWA(){
+  var icon192=makeTSLIcon(192);
+  var icon512=makeTSLIcon(512);
+  if(icon192){
+    buildManifest(icon192,icon512);
+    // Set apple icon
+    var al=document.getElementById('tsl-apple-icon');
+    if(al) al.href=icon192;
   }
+  registerSW();
+}
 
-  // ── 3. Build manifest blob URL with real canvas icon data URIs ──────────
-  function buildManifest() {
-    try {
-      var icon192 = makeTSLIcon(192);
-      var icon512 = makeTSLIcon(512);
-      if (!icon192) return;
-
-      var manifest = {
-        name: 'TeluguScoopLive',
-        short_name: 'TSL News',
-        description: 'Breaking News, Cinema, Politics & Cricket in Telugu',
-        start_url: '/',
-        scope: '/',
-        display: 'standalone',
-        background_color: '#1a2f5e',
-        theme_color: '#E8192C',
-        orientation: 'portrait-primary',
-        lang: 'te',
-        icons: [
-          {src: icon192, sizes: '192x192', type: 'image/png', purpose: 'any maskable'},
-          {src: icon512 || icon192, sizes: '512x512', type: 'image/png', purpose: 'any maskable'}
-        ]
-      };
-
-      var blob = new Blob([JSON.stringify(manifest)], {type:'application/json'});
-      var url  = URL.createObjectURL(blob);
-
-      // Replace manifest link
-      var link = document.getElementById('tsl-manifest-link');
-      if (link) link.href = url;
-      else {
-        var nl = document.createElement('link');
-        nl.rel = 'manifest'; nl.id = 'tsl-manifest-link'; nl.href = url;
-        document.head.appendChild(nl);
-      }
-
-      // Set apple-touch-icon
-      var al = document.getElementById('tsl-apple-icon');
-      if (al) al.href = icon192;
-
-      // Set msapplication tile
-      var ms = document.querySelector('meta[name="msapplication-TileImage"]');
-      if (!ms) {
-        ms = document.createElement('meta');
-        ms.name = 'msapplication-TileImage';
-        document.head.appendChild(ms);
-      }
-      ms.content = icon192;
-
-      console.log('[TSL PWA] Manifest blob URL set:', url.substring(0,40));
-    } catch(e) { console.warn('[TSL PWA] Manifest build failed:', e.message); }
-  }
-
-  // ── 4. Run everything ───────────────────────────────────────────────────
-  function initPWA() {
-    buildManifest();
-    registerInlineSW();
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initPWA);
-  } else {
-    initPWA();
-  }
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded',initPWA);
+}else{
+  initPWA();
+}
 })();
 </script>
 <link rel="canonical" href="https://teluguscooplive.netlify.app/" id="canonicalUrl">
@@ -23746,13 +23741,17 @@ const _AUTO_POST_FALLBACKS = {
 
 // Returns a guaranteed-working image URL for auto-posting
 function _safePostImage(article) {
-  const img = article.image || '';
-  // Accept if it's a real external URL (not pollinations — those can time out or be too long)
-  if (img && img.startsWith('http') && !img.includes('pollinations.ai') && !img.includes('image.pollinations')) {
-    return img;
-  }
-  // Fallback to reliable Unsplash by category
-  const cat = (article.category || '').toLowerCase();
+  const img = (article.image || '').trim();
+  // Use article image only if it is a real fast-loading CDN URL
+  // Skip: pollinations (slow/large), empty, non-http
+  const isBad = !img
+    || !img.startsWith('http')
+    || img.includes('pollinations.ai')
+    || img.includes('image.pollinations')
+    || img.length > 500; // very long URLs fail Telegram
+  if (!isBad) return img;
+  // Always fall back to reliable Unsplash by category
+  const cat = (article.category || '').toLowerCase().trim();
   return _AUTO_POST_FALLBACKS[cat] || _AUTO_POST_FALLBACKS['_default'];
 }
 
@@ -23761,10 +23760,15 @@ function _postBody(article) {
   const excerpt = (article.excerpt || article.summary || '').trim();
   const url     = _articleUrl(article);
   const cat     = article.category ? article.category.toUpperCase() : 'NEWS';
-  const desc    = excerpt ? '\n\n' + excerpt.substring(0, 180) + (excerpt.length > 180 ? '...' : '') : '';
-  // Telegram parses the last URL in message for link preview
-  // Put article URL at the very end so Telegram opens THAT page
-  return '📰 ' + cat + '\n\n<b>' + title + '</b>' + desc + '\n\n🔗 ' + url + '\n\n' + HASHTAGS;
+  // Keep excerpt short — Telegram caption limit is 1024 chars total
+  const maxExcerpt = 120;
+  const desc = excerpt
+    ? '\n' + excerpt.substring(0, maxExcerpt) + (excerpt.length > maxExcerpt ? '...' : '')
+    : '';
+  const body = '📰 ' + cat + '\n<b>' + title.substring(0,200) + '</b>' + desc
+    + '\n🔗 ' + url + '\n' + HASHTAGS;
+  // Hard cap at 1020 chars (Telegram sendPhoto caption limit = 1024)
+  return body.length > 1020 ? body.substring(0, 1017) + '...' : body;
 }
 
 // ══════════════════════════════════════════════════════
