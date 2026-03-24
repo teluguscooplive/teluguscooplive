@@ -1,114 +1,65 @@
-/* ═══════════════════════════════════════════════════════════
-   TeluguScoopLive — Service Worker v1.0
-   Strategy: Network-first for news (always fresh),
-             Cache-first for static assets (fonts, icons)
-   ═══════════════════════════════════════════════════════════ */
+/* TeluguScoopLive — Service Worker v3
+   Deploy this file as /sw.js at the root of your Netlify site.
+   This enables PWA install prompt on Android/Chrome. */
+'use strict';
 
-const CACHE_NAME = 'tsl-v1';
-const CACHE_DURATION_STATIC = 7 * 24 * 60 * 60; // 7 days
+var CACHE_NAME = 'tsl-cache-v3';
+var OFFLINE_URL = '/';
 
-// Assets to pre-cache on install
-const PRECACHE_ASSETS = [
-  '/',
-  '/manifest.json',
-  '/offline.html',
-];
-
-// Static asset hosts — cache aggressively
-const STATIC_HOSTS = [
-  'fonts.gstatic.com',
-  'fonts.googleapis.com',
-  'cdn.jsdelivr.net',
-];
-
-// ── Install: pre-cache shell ──────────────────────────────
-self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(PRECACHE_ASSETS).catch(() => {}))
-      .then(() => self.skipWaiting())
+// Install — cache the shell
+self.addEventListener('install', function(e) {
+  self.skipWaiting();
+  e.waitUntil(
+    caches.open(CACHE_NAME).then(function(cache) {
+      return cache.addAll([OFFLINE_URL]).catch(function() {});
+    })
   );
 });
 
-// ── Activate: clean old caches ────────────────────────────
-self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(keys
-        .filter(k => k !== CACHE_NAME)
-        .map(k => caches.delete(k))
-      )
-    ).then(() => self.clients.claim())
+// Activate — clean old caches
+self.addEventListener('activate', function(e) {
+  e.waitUntil(
+    caches.keys().then(function(keys) {
+      return Promise.all(
+        keys.filter(function(k) { return k !== CACHE_NAME; })
+            .map(function(k) { return caches.delete(k); })
+      );
+    }).then(function() { return self.clients.claim(); })
   );
 });
 
-// ── Fetch: smart routing ──────────────────────────────────
-self.addEventListener('fetch', event => {
-  const { request } = event;
-  const url = new URL(request.url);
+// Fetch — network first, cache fallback
+self.addEventListener('fetch', function(e) {
+  var url = e.request.url;
 
-  // Skip non-GET and cross-origin API calls
-  if (request.method !== 'GET') return;
-  if (url.hostname.includes('supabase.co')) return;
-  if (url.hostname.includes('cricapi.com')) return;
-  if (url.hostname.includes('groq.com')) return;
-  if (url.hostname.includes('telegram.org')) return;
-
-  // Static assets (fonts, CDN) → Cache-first
-  if (STATIC_HOSTS.some(h => url.hostname.includes(h))) {
-    event.respondWith(cacheFirst(request));
+  // Always use network for: API calls, Supabase, Telegram, fonts, analytics
+  if (url.includes('supabase.co') ||
+      url.includes('api.telegram.org') ||
+      url.includes('googleapis.com') ||
+      url.includes('googletagmanager') ||
+      url.includes('pollinations.ai') ||
+      url.includes('api.groq.com') ||
+      url.includes('graph.facebook.com') ||
+      url.includes('unsplash.com') ||
+      e.request.method !== 'GET') {
     return;
   }
 
-  // Unsplash images → Cache-first (images don't change)
-  if (url.hostname.includes('unsplash.com')) {
-    event.respondWith(cacheFirst(request));
-    return;
-  }
-
-  // HTML pages → Network-first (always get fresh news)
-  if (request.headers.get('accept')?.includes('text/html')) {
-    event.respondWith(networkFirst(request));
-    return;
-  }
-
-  // Everything else → Network-first
-  event.respondWith(networkFirst(request));
+  e.respondWith(
+    fetch(e.request).then(function(response) {
+      // Cache successful responses for the app shell
+      if (response && response.status === 200 && response.type === 'basic') {
+        var copy = response.clone();
+        caches.open(CACHE_NAME).then(function(cache) {
+          cache.put(e.request, copy);
+        });
+      }
+      return response;
+    }).catch(function() {
+      // Network failed — serve from cache
+      return caches.match(e.request).then(function(cached) {
+        return cached || caches.match(OFFLINE_URL);
+      });
+    })
+  );
 });
-
-// ── Cache-first strategy ──────────────────────────────────
-async function cacheFirst(request) {
-  const cached = await caches.match(request);
-  if (cached) return cached;
-  try {
-    const response = await fetch(request);
-    if (response.ok) {
-      const cache = await caches.open(CACHE_NAME);
-      cache.put(request, response.clone());
-    }
-    return response;
-  } catch {
-    return new Response('Offline', { status: 503 });
-  }
-}
-
-// ── Network-first strategy ────────────────────────────────
-async function networkFirst(request) {
-  try {
-    const response = await fetch(request);
-    if (response.ok) {
-      const cache = await caches.open(CACHE_NAME);
-      cache.put(request, response.clone());
-    }
-    return response;
-  } catch {
-    const cached = await caches.match(request);
-    if (cached) return cached;
-    // Fallback for HTML
-    if (request.headers.get('accept')?.includes('text/html')) {
-      const offline = await caches.match('/offline.html');
-      if (offline) return offline;
-    }
-    return new Response('Offline', { status: 503 });
-  }
-}
