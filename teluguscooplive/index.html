@@ -12929,7 +12929,7 @@ ORDER BY tablename, cmd;
     const cat = article.category || 'national';
     if (isTeluguTitle) {
       const paras = [
-        `${article.title}. ఈ వార్త ఆంధ్రప్రదేశ్ మరియు తెలంగాణ అంతటా లక్షలాది తెలుగు పాఠకుల దృష్టిని ఆకర్షించింది.`,
+        `${article.title}.`,
         `${cap(cat)} రంగంలో ముఖ్యమైన పరిణామాలు చోటుచేసుకున్నాయి. సంబంధిత వర్గాలు ఈ విషయంపై స్పందించాయి.`,
         `నిపుణులు మరియు ప్రముఖులు వివిధ అభిప్రాయాలు వ్యక్తం చేశారు. సోషల్ మీడియాలో ఈ అంశంపై విస్తృత చర్చ జరుగుతోంది.`,
         `మరిన్ని వివరాలు త్వరలో వెల్లడవుతాయని అంచనా. TeluguScoop ఈ అంశంపై తాజా అప్‌డేట్‌లు అందిస్తూనే ఉంటుంది.`,
@@ -12937,7 +12937,7 @@ ORDER BY tablename, cmd;
       return paras.map(p => `<p style="margin-bottom:16px;">${p}</p>`).join('');
     }
     const paras = [
-      `${article.title}. This developing story has captured the attention of millions of Telugu readers across Andhra Pradesh and Telangana.`,
+      `${article.title}.`,
       `Sources close to the matter confirm that this announcement comes after weeks of deliberation by key stakeholders. The decision is expected to have significant impact on the ${cat} landscape in the coming months.`,
       `Community members and experts have expressed a range of opinions. Several prominent voices in the ${cat} community have already begun weighing in on social media platforms.`,
       `More details are expected to emerge in the coming hours. TeluguScoop will continue to provide live updates as this story develops. Stay tuned for comprehensive coverage.`,
@@ -14855,12 +14855,12 @@ Write exactly 5 paragraphs, minimum 600 words. No section labels. Zero repetitio
 /* Mobile */
 @media (max-width: 768px) {
   .tsl-nav-logo-img {
-    height: 44px !important;
-    width: 44px !important;
-    min-width: 44px !important;
-    max-height: 44px !important;
+    height: 48px !important;
+    width: 48px !important;
+    min-width: 48px !important;
+    max-height: 48px !important;
   }
-  .tsl-nav-logo-name { font-size: 17px !important; }
+  .tsl-nav-logo-name { font-size: 20px !important; font-weight: 700 !important; }
   .tsl-nav-logo-tagline { font-size: 8.5px !important; letter-spacing: 0.02em !important; color: #1e293b !important; display: block !important; }
 }
 @media (max-width: 380px) {
@@ -14870,6 +14870,23 @@ Write exactly 5 paragraphs, minimum 600 words. No section labels. Zero repetitio
     min-width: 38px !important;
   }
   .tsl-nav-logo-name { font-size: 15px !important; }
+  .tsl-nav-logo-tagline { display: block !important; font-size: 7.5px !important; color: #1e293b !important; }
+}
+</style>
+<style id="mobile-header-fix">
+/* ── MOBILE HEADER FIX: 48px logo, 20px title, flex vertical align ── */
+@media (max-width: 768px) {
+  .nav-top { display: flex !important; align-items: center !important; height: 60px !important; min-height: 60px !important; }
+  .tsl-nav-logo { display: flex !important; align-items: center !important; gap: 8px !important; flex-shrink: 0 !important; }
+  .tsl-nav-logo-img { height: 48px !important; width: 48px !important; min-width: 48px !important; max-height: 48px !important; }
+  .tsl-nav-logo-text { display: flex !important; flex-direction: column !important; justify-content: center !important; gap: 2px !important; }
+  .tsl-nav-logo-name { font-size: 20px !important; font-weight: 700 !important; line-height: 1.1 !important; }
+  .tsl-nav-logo-tagline { font-size: 8.5px !important; color: #1e293b !important; display: block !important; }
+  .nav-actions { display: flex !important; align-items: center !important; gap: 6px !important; flex-shrink: 0 !important; margin-left: auto !important; }
+}
+@media (max-width: 380px) {
+  .tsl-nav-logo-img { height: 42px !important; width: 42px !important; min-width: 42px !important; }
+  .tsl-nav-logo-name { font-size: 17px !important; font-weight: 700 !important; }
   .tsl-nav-logo-tagline { display: block !important; font-size: 7.5px !important; color: #1e293b !important; }
 }
 </style>
@@ -23480,84 +23497,248 @@ function _articleUrl(article) {
   return base + '/?article=' + String(ref);
 }
 
-// ── Format Breaking News post body ──────────────────
+// ══════════════════════════════════════════════════════
+//  TV-QUALITY THUMBNAIL GENERATOR  (Canvas → JPEG blob)
+//  Generates a 1280×720 broadcast-style card and sends as
+//  a real image file — always a rich visual on Telegram/FB
+// ══════════════════════════════════════════════════════
+
+const _CAT_COLORS = {
+  politics:   { bg: '#C8102E', label: 'POLITICS'   },
+  cinema:     { bg: '#7C3AED', label: 'CINEMA'     },
+  sports:     { bg: '#0EA5E9', label: 'SPORTS'     },
+  cricket:    { bg: '#16A34A', label: 'CRICKET'    },
+  telangana:  { bg: '#EA580C', label: 'TELANGANA'  },
+  andhra:     { bg: '#0369A1', label: 'ANDHRA'     },
+  localnews:  { bg: '#DC2626', label: 'LOCAL NEWS' },
+  national:   { bg: '#1D4ED8', label: 'NATIONAL'   },
+  business:   { bg: '#059669', label: 'BUSINESS'   },
+  technology: { bg: '#6D28D9', label: 'TECHNOLOGY' },
+  health:     { bg: '#0F766E', label: 'HEALTH'     },
+  education:  { bg: '#B45309', label: 'EDUCATION'  },
+  _default:   { bg: '#C8102E', label: 'NEWS'       }
+};
+
+function _loadImg(url) {
+  return new Promise(resolve => {
+    if (!url || !url.startsWith('http')) return resolve(null);
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload  = () => resolve(img);
+    img.onerror = () => resolve(null);
+    if (url.includes('unsplash.com')) {
+      url = url.replace(/[?&]w=\d+/g,'').replace(/[?&]h=\d+/g,'').replace(/[?&]fit=[^&]*/g,'');
+      url += (url.includes('?') ? '&' : '?') + 'w=1280&h=720&fit=crop&q=92&auto=format';
+    }
+    img.src = url;
+    setTimeout(() => resolve(null), 6000);
+  });
+}
+
+function _wrapText(ctx, text, maxWidth) {
+  const words = text.split(' ');
+  const lines = [];
+  let line = '';
+  for (const word of words) {
+    const test = line ? line + ' ' + word : word;
+    if (ctx.measureText(test).width > maxWidth && line) { lines.push(line); line = word; }
+    else line = test;
+  }
+  if (line) lines.push(line);
+  return lines;
+}
+
+function _roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.arcTo(x + w, y, x + w, y + r, r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+  ctx.lineTo(x + r, y + h);
+  ctx.arcTo(x, y + h, x, y + h - r, r);
+  ctx.lineTo(x, y + r);
+  ctx.arcTo(x, y, x + r, y, r);
+  ctx.closePath();
+}
+
+async function _buildTVThumbnail(article) {
+  const W = 1280, H = 720;
+  const canvas = document.createElement('canvas');
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+
+  const cat    = (article.category || '_default').toLowerCase();
+  const info   = _CAT_COLORS[cat] || _CAT_COLORS._default;
+  const accent = info.bg;
+  const title  = (article.title || '').trim();
+  const excerpt= (article.excerpt || article.summary || '').trim();
+  const ts     = new Date().toLocaleString('en-IN',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:true});
+
+  // 1. Background photo
+  const photo = await _loadImg(article.image);
+  if (photo) {
+    const sc = Math.max(W / photo.width, H / photo.height);
+    ctx.drawImage(photo, (W - photo.width*sc)/2, (H - photo.height*sc)/2, photo.width*sc, photo.height*sc);
+  } else {
+    const grd = ctx.createLinearGradient(0,0,W,H);
+    grd.addColorStop(0,'#0d1b3e'); grd.addColorStop(1,'#1a3060');
+    ctx.fillStyle = grd; ctx.fillRect(0,0,W,H);
+  }
+
+  // 2. Full-frame cinematic dark overlay
+  const vig = ctx.createRadialGradient(W/2,H/2,H*0.15,W/2,H/2,H*0.9);
+  vig.addColorStop(0,'rgba(0,0,0,0.15)'); vig.addColorStop(1,'rgba(0,0,0,0.75)');
+  ctx.fillStyle = vig; ctx.fillRect(0,0,W,H);
+
+  // 3. Strong bottom panel gradient
+  const grad = ctx.createLinearGradient(0,H*0.38,0,H);
+  grad.addColorStop(0,'rgba(0,0,0,0)');
+  grad.addColorStop(0.3,'rgba(0,0,0,0.85)');
+  grad.addColorStop(1,'rgba(0,0,0,0.98)');
+  ctx.fillStyle = grad; ctx.fillRect(0,0,W,H);
+
+  // 4. Left accent stripe
+  ctx.fillStyle = accent; ctx.fillRect(0,0,7,H);
+
+  // 5. Category badge (top-left)
+  ctx.font = 'bold 17px Arial';
+  const badgeTxt = '⚡ ' + info.label;
+  const bw = ctx.measureText(badgeTxt).width + 32;
+  _roundRect(ctx, 26, 26, bw, 38, 6);
+  ctx.fillStyle = accent; ctx.fill();
+  ctx.fillStyle = '#fff';
+  ctx.fillText(badgeTxt, 40, 51);
+
+  // 6. LIVE badge (top-right)
+  _roundRect(ctx, W - 130, 26, 104, 38, 6);
+  ctx.fillStyle = '#E8192C'; ctx.fill();
+  ctx.font = 'bold 16px Arial';
+  ctx.fillStyle = '#fff';
+  ctx.textAlign = 'center';
+  ctx.fillText('● LIVE NEWS', W - 78, 51);
+  ctx.textAlign = 'left';
+
+  // 7. Headline (large bold)
+  const padX = 36, maxW = W - 72;
+  ctx.font = 'bold 58px Arial';
+  ctx.fillStyle = '#FFFFFF';
+  ctx.shadowColor = 'rgba(0,0,0,0.95)'; ctx.shadowBlur = 10; ctx.shadowOffsetY = 3;
+  const titleLines = _wrapText(ctx, title, maxW).slice(0,3);
+  if (titleLines.length === 3 && _wrapText(ctx, title, maxW).length > 3) titleLines[2] += '…';
+  const lh = 72;
+  const baseY = H - 56 - 34 - 18 - (excerpt ? 38 : 0) - titleLines.length * lh - 8;
+  titleLines.forEach((ln, i) => ctx.fillText(ln, padX, baseY + i * lh));
+  ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
+
+  // 8. Sub-headline / excerpt
+  if (excerpt) {
+    ctx.font = '27px Arial';
+    ctx.fillStyle = 'rgba(255,255,255,0.84)';
+    const excLines = _wrapText(ctx, excerpt, maxW).slice(0,2);
+    const eBase = baseY + titleLines.length * lh + 12;
+    excLines.forEach((ln, i) => ctx.fillText(ln, padX, eBase + i * 36));
+  }
+
+  // 9. Lower-third brand bar
+  ctx.fillStyle = accent; ctx.fillRect(0, H - 52, W, 52);
+
+  // Site name (left)
+  ctx.font = 'bold 22px Arial';
+  ctx.fillStyle = '#fff';
+  ctx.fillText('📺  TeluguScoopLive', 26, H - 17);
+
+  // Timestamp (center)
+  ctx.font = '16px Arial';
+  ctx.fillStyle = 'rgba(255,255,255,0.78)';
+  ctx.textAlign = 'center';
+  ctx.fillText(ts, W/2, H - 17);
+
+  // Domain (right)
+  ctx.font = '16px Arial';
+  ctx.fillStyle = 'rgba(255,255,255,0.85)';
+  ctx.textAlign = 'right';
+  ctx.fillText('teluguscooplive.netlify.app', W - 26, H - 17);
+  ctx.textAlign = 'left';
+
+  return new Promise(resolve => canvas.toBlob(b => resolve(b), 'image/jpeg', 0.94));
+}
+
+async function _sendTgBlob(token, chatId, blob, caption, keyboard) {
+  const form = new FormData();
+  form.append('chat_id', chatId);
+  form.append('photo',   blob, 'news.jpg');
+  form.append('caption', caption);
+  form.append('parse_mode', 'HTML');
+  if (keyboard) form.append('reply_markup', JSON.stringify(keyboard));
+  const r = await fetch(`https://api.telegram.org/bot${token}/sendPhoto`, { method:'POST', body:form });
+  return r.json();
+}
+
+// ── Format Breaking News caption ─────────────────────
 function _postBody(article) {
   const title   = (article.title   || '').trim();
   const excerpt = (article.excerpt || article.summary || '').trim();
   const url     = _articleUrl(article);
-  const cat     = article.category ? article.category.toUpperCase() : 'NEWS';
-  const desc    = excerpt ? '\n\n' + excerpt.substring(0, 180) + (excerpt.length > 180 ? '...' : '') : '';
-  // Telegram parses the last URL in message for link preview
-  // Put article URL at the very end so Telegram opens THAT page
-  return '📰 ' + cat + '\n\n<b>' + title + '</b>' + desc + '\n\n🔗 ' + url + '\n\n' + HASHTAGS;
+  const cat     = (article.category || 'news').toUpperCase();
+  const info    = _CAT_COLORS[(article.category||'').toLowerCase()] || _CAT_COLORS._default;
+  const desc    = excerpt ? '\n' + excerpt.substring(0,160) + (excerpt.length>160?'…':'') : '';
+  return '⚡ <b>' + info.label + ' | ' + cat + '</b>\n\n<b>' + title + '</b>' + desc +
+         '\n\n🔗 ' + url + '\n\n#TeluguNews #TeluguScoopLive #BreakingNews';
 }
 
 // ══════════════════════════════════════════════════════
-//  TELEGRAM
+//  TELEGRAM — TV thumbnail → raw URL → text fallback
 // ══════════════════════════════════════════════════════
 async function postToTelegram(article) {
   const token  = _sk('tg_token');
   const chatId = _sk('tg_chat_id');
-  if (!token || !chatId) return { ok: false, reason: 'No Telegram token/chat_id configured' };
+  if (!token || !chatId) return { ok:false, reason:'No Telegram token/chat_id configured' };
 
-  const text = _postBody(article);
-  const imgUrl = article.image;
+  const caption  = _postBody(article);
+  const keyboard = { inline_keyboard:[[{ text:'📖 Read Full Article', url:_articleUrl(article) }]] };
 
   try {
-    // Try sendPhoto first if image available
+    // Step 1 — Canvas TV thumbnail (best quality)
+    let blob = null;
+    try { blob = await _buildTVThumbnail(article); } catch(e) { console.warn('[TG] canvas err:', e.message); }
+    if (blob) {
+      const d = await _sendTgBlob(token, chatId, blob, caption, keyboard);
+      if (d.ok) { console.log('[TG] ✅ TV thumbnail sent'); return { ok:true, platform:'telegram' }; }
+      console.warn('[TG] blob upload failed:', d.description);
+    }
+    // Step 2 — Raw image URL
+    const imgUrl = article.image;
     if (imgUrl && imgUrl.startsWith('http')) {
       const r = await fetch(`https://api.telegram.org/bot${token}/sendPhoto`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          chat_id: chatId,
-          photo: imgUrl,
-          caption: text,
-          parse_mode: 'HTML',
-          reply_markup: {
-            inline_keyboard: [[
-              { text: '📖 Read Full Article', url: _articleUrl(article) }
-            ]]
-          }
-        })
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ chat_id:chatId, photo:imgUrl, caption, parse_mode:'HTML', reply_markup:keyboard })
       });
       const d = await r.json();
-      if (d.ok) return { ok: true, platform: 'telegram' };
-      // Photo failed — fall back to text
+      if (d.ok) { console.log('[TG] ✅ raw URL sent'); return { ok:true, platform:'telegram' }; }
+      console.warn('[TG] raw URL failed:', d.description);
     }
-    // Text-only with HTML parse mode and inline button
-    const articleUrl = _articleUrl(article);
+    // Step 3 — Text only
     const r2 = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        chat_id: chatId,
-        text: text,
-        parse_mode: 'HTML',
-        disable_web_page_preview: false,
-        reply_markup: {
-          inline_keyboard: [[
-            { text: '📖 Read Full Article', url: articleUrl }
-          ]]
-        }
-      })
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ chat_id:chatId, text:caption, parse_mode:'HTML', disable_web_page_preview:false, reply_markup:keyboard })
     });
     const d2 = await r2.json();
     if (!d2.ok) {
-      // Give actionable error based on Telegram error code
-      let errMsg = d2.description || 'Unknown Telegram error';
-      if (errMsg.includes('chat not found'))     errMsg = 'Chat not found — bot is NOT in the channel. Add bot as Admin to your channel first, then use Auto-Find Chat ID.';
-      if (errMsg.includes('Unauthorized'))       errMsg = 'Unauthorized — bot token is invalid. Get a fresh token from @BotFather.';
-      if (errMsg.includes('bot was kicked'))     errMsg = 'Bot was kicked from the channel — re-add it as Admin.';
-      if (errMsg.includes('have no rights'))     errMsg = 'Bot has no rights to post — make it Admin with "Post Messages" permission.';
-      if (errMsg.includes('PEER_ID_INVALID'))    errMsg = 'Invalid Chat ID — use Auto-Find Chat ID button to get the correct numeric ID.';
-      return { ok: false, platform: 'telegram', error: errMsg };
+      let msg = d2.description || 'Unknown Telegram error';
+      if (msg.includes('chat not found'))  msg = 'Chat not found — add bot as Admin first.';
+      if (msg.includes('Unauthorized'))    msg = 'Invalid token — get fresh one from @BotFather.';
+      if (msg.includes('bot was kicked'))  msg = 'Bot was kicked — re-add as Admin.';
+      if (msg.includes('have no rights'))  msg = 'Bot needs Admin + Post Messages permission.';
+      if (msg.includes('PEER_ID_INVALID')) msg = 'Invalid Chat ID — use Auto-Find Chat ID.';
+      return { ok:false, platform:'telegram', error:msg };
     }
-    return { ok: true, platform: 'telegram' };
+    return { ok:true, platform:'telegram' };
   } catch(e) {
-    return { ok: false, platform: 'telegram', error: e.message };
+    return { ok:false, platform:'telegram', error:e.message };
   }
 }
+
 
 // ══════════════════════════════════════════════════════
 //  FACEBOOK PAGE — with retry + logging
@@ -23597,9 +23778,24 @@ async function postToFacebook(article) {
   const url    = _articleUrl(article);
   const imgUrl = article.image;
 
-  // ── Helper: one attempt ──────────────────────────────
+  // ── Helper: one attempt (TV thumbnail first) ────────
   async function _attempt() {
-    // Try photo post if image available
+    // Try TV thumbnail blob upload first (best quality)
+    let thumbBlob = null;
+    try { thumbBlob = await _buildTVThumbnail(article); } catch(e) {}
+    if (thumbBlob) {
+      try {
+        const form = new FormData();
+        form.append('source',  thumbBlob, 'news.jpg');
+        form.append('caption', text);
+        form.append('access_token', token);
+        const r = await fetch(`https://graph.facebook.com/v19.0/${pageId}/photos`, { method:'POST', body:form });
+        const d = await r.json();
+        if (!d.error) { console.log('[Facebook] ✅ TV thumbnail post — id:', d.id); return { ok:true }; }
+        console.warn('[Facebook] Blob photo failed:', d.error?.message, '— trying URL');
+      } catch(e) { console.warn('[Facebook] Blob exception:', e.message); }
+    }
+    // Fallback — raw image URL
     if (imgUrl && imgUrl.startsWith('http')) {
       try {
         const r = await fetch(`https://graph.facebook.com/v19.0/${pageId}/photos`, {
@@ -23607,31 +23803,23 @@ async function postToFacebook(article) {
           body: new URLSearchParams({ caption: text, url: imgUrl, access_token: token })
         });
         const d = await r.json();
-        if (!d.error) {
-          console.log('[Facebook] ✅ Photo post success — id:', d.id);
-          return { ok: true };
-        }
-        console.warn('[Facebook] Photo post failed:', d.error?.message, '— falling back to feed post');
-      } catch(e) {
-        console.warn('[Facebook] Photo post exception:', e.message, '— falling back to feed post');
-      }
+        if (!d.error) { console.log('[Facebook] ✅ URL photo post — id:', d.id); return { ok:true }; }
+        console.warn('[Facebook] URL photo failed:', d.error?.message, '— feed fallback');
+      } catch(e) { console.warn('[Facebook] URL photo exception:', e.message); }
     }
-    // Feed post (link)
+    // Feed post (link preview)
     const r2 = await fetch(`https://graph.facebook.com/v19.0/${pageId}/feed`, {
       method: 'POST',
       body: new URLSearchParams({ message: text, link: url, access_token: token })
     });
     const d2 = await r2.json();
-    if (d2.id) {
-      console.log('[Facebook] ✅ Feed post success — id:', d2.id);
-      return { ok: true };
-    }
+    if (d2.id) { console.log('[Facebook] ✅ Feed post — id:', d2.id); return { ok:true }; }
     let errMsg = d2.error?.message || 'Unknown Facebook error';
-    if (errMsg.includes('OAuthException') || d2.error?.code === 190) errMsg = 'Token expired or invalid — generate a new Page Access Token in Meta Developer Console.';
-    if (d2.error?.code === 200) errMsg = 'Missing permission pages_manage_posts — re-authorise the app with correct permissions.';
-    if (d2.error?.code === 100) errMsg = 'Invalid Page ID — go to Admin → Social Settings and enter the numeric Page ID (found in Facebook Page → About).';
-    console.error('[Facebook] ✗ Feed post failed:', errMsg, '| code:', d2.error?.code);
-    return { ok: false, error: errMsg };
+    if (errMsg.includes('OAuthException') || d2.error?.code === 190) errMsg = 'Token expired — regenerate Page Access Token in Meta Developer Console.';
+    if (d2.error?.code === 200) errMsg = 'Missing permission pages_manage_posts — re-authorise app.';
+    if (d2.error?.code === 100) errMsg = 'Invalid Page ID — enter numeric Page ID in Admin → Social Settings.';
+    console.error('[Facebook] ✗ All attempts failed:', errMsg, '| code:', d2.error?.code);
+    return { ok:false, error:errMsg };
   }
 
   // ── Retry up to 2 times ──────────────────────────────
@@ -24731,25 +24919,31 @@ _patchPublishHooks();
 @media (max-width: 768px) {
 
   .nav-top {
-    height: 56px !important;
-    min-height: 56px !important;
+    height: 64px !important;
+    min-height: 64px !important;
     padding: 0 10px !important;
     gap: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
   }
 
   .tsl-nav-logo {
-    gap: 7px !important;
+    gap: 8px !important;
+    display: flex !important;
+    align-items: center !important;
   }
 
   .tsl-nav-logo-img {
-    height: 40px !important;
-    width: 40px !important;
-    min-width: 40px !important;
-    max-height: 40px !important;
+    height: 48px !important;
+    width: 48px !important;
+    min-width: 48px !important;
+    max-height: 48px !important;
   }
 
   .tsl-nav-logo-name {
-    font-size: 17px !important;
+    font-size: 20px !important;
+    font-weight: 700 !important;
   }
 
   .tsl-nav-logo-tagline {
@@ -24777,6 +24971,9 @@ _patchPublishHooks();
   .nav-actions {
     gap: 5px !important;
     margin-left: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    flex-shrink: 0 !important;
   }
 }
 
