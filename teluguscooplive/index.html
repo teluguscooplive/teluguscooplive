@@ -25821,3 +25821,200 @@ img:not([src]), img[src=""] { opacity: 0; }
 })();
 </script>
 <!-- ▲▲▲ TSL FINAL PERFORMANCE + UI POLISH PATCH ▲▲▲ -->
+
+<!-- ▼▼▼ TSL RENDERING QUALITY FIX — Logo · Tagline · Ticker ▼▼▼ -->
+<style id="tsl-quality-fix">
+
+/* ═══════════════════════════════════════════════════════════════
+   1. LOGO TITLE — crisp 3D text, no blur, sharp sub-pixel render
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Force GPU compositing + sub-pixel AA on the whole logo text column */
+.tsl-nav-logo-text {
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+  text-rendering: optimizeLegibility !important;
+  transform: translateZ(0) !important;          /* own compositor layer */
+  backface-visibility: hidden !important;
+  -webkit-backface-visibility: hidden !important;
+}
+
+/* Site-name wrapper — crisp, no inherited blur */
+.tsl-nav-logo-name {
+  font-family: 'DM Serif Display', Georgia, serif !important;
+  font-size: 22px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.01em !important;
+  line-height: 1 !important;
+  display: block !important;
+  white-space: nowrap !important;
+  /* Elevate onto its own paint layer so it never inherits blur */
+  will-change: transform !important;
+  transform: translateZ(0) !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+  filter: none !important;            /* remove any accidental blur */
+}
+
+/* Telugu — sharp blue 3D */
+.tsl-nav-logo-name .t1 {
+  color: #4f8ef7 !important;
+  text-shadow:
+    1px 1px 0 #1a3a8f,
+    2px 2px 0 #15317a,
+    3px 3px 0 #102966,
+    0 4px 7px rgba(10,30,100,0.45),
+    0 -1px 0 rgba(180,215,255,0.55) !important;
+  display: inline-block !important;
+  transform: translateZ(0) !important;
+  -webkit-font-smoothing: antialiased !important;
+  filter: none !important;
+}
+
+/* Scoop — sharp amber 3D */
+.tsl-nav-logo-name .t2 {
+  color: #f5a623 !important;
+  text-shadow:
+    1px 1px 0 #7a4a00,
+    2px 2px 0 #643d00,
+    3px 3px 0 #4e3000,
+    0 4px 7px rgba(80,40,0,0.45),
+    0 -1px 0 rgba(255,235,160,0.60) !important;
+  display: inline-block !important;
+  transform: translateZ(0) !important;
+  -webkit-font-smoothing: antialiased !important;
+  filter: none !important;
+}
+
+/* Live — sharp red 3D */
+.tsl-nav-logo-name .t3 {
+  color: #ff3a4e !important;
+  text-shadow:
+    1px 1px 0 #8b000d,
+    2px 2px 0 #720009,
+    3px 3px 0 #590006,
+    0 4px 7px rgba(120,0,10,0.45),
+    0 -1px 0 rgba(255,180,190,0.55),
+    0 0 16px rgba(232,25,44,0.28) !important;
+  display: inline-block !important;
+  transform: translateZ(0) !important;
+  -webkit-font-smoothing: antialiased !important;
+  filter: none !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   2. TAGLINE — clearly visible, sharp, properly spaced
+   ═══════════════════════════════════════════════════════════════ */
+.tsl-nav-logo-tagline {
+  font-family: 'DM Sans', system-ui, sans-serif !important;
+  font-size: 9.5px !important;
+  font-weight: 700 !important;
+  font-style: italic !important;
+  color: #1e3a5f !important;             /* dark navy — high contrast on white header */
+  letter-spacing: 0.06em !important;
+  text-transform: none !important;
+  white-space: nowrap !important;
+  display: block !important;
+  margin-top: 4px !important;
+  line-height: 1.2 !important;
+  /* Subtle emboss — readable, not blurry */
+  text-shadow:
+    0  1px 0 rgba(255,255,255,0.85),
+    0 -1px 0 rgba(0,0,0,0.12),
+    0  0  5px rgba(50,100,200,0.18) !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+  filter: none !important;
+}
+
+/* Mobile tagline — keep visible, slightly smaller */
+@media (max-width: 768px) {
+  .tsl-nav-logo-tagline {
+    font-size: 9px !important;
+    margin-top: 3px !important;
+    color: #1e3a5f !important;
+    display: block !important;
+  }
+  .tsl-nav-logo-name {
+    font-size: 24px !important;
+  }
+}
+@media (max-width: 380px) {
+  .tsl-nav-logo-tagline {
+    font-size: 8px !important;
+    letter-spacing: 0.04em !important;
+    display: block !important;
+    color: #1e3a5f !important;
+  }
+  .tsl-nav-logo-name {
+    font-size: 20px !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   3. BREAKING NEWS TICKER — slow smooth scroll, sharp crisp text
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Slow the scroll from 90s → 160s for comfortable reading */
+#tsl-3d-ticker .t3-track {
+  animation: t3-scroll-crisp 160s linear infinite !important;
+  /* Crisp GPU compositing — no filter, no blur inheritance */
+  will-change: transform !important;
+  transform: translate3d(0, 0, 0) !important;
+  backface-visibility: hidden !important;
+  -webkit-backface-visibility: hidden !important;
+  perspective: 1000px !important;
+  -webkit-perspective: 1000px !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+  filter: none !important;           /* remove any blur bleeding from parent */
+}
+#tsl-3d-ticker .t3-track.paused {
+  animation-play-state: paused !important;
+}
+
+/* Identical keyframe name avoids fighting the original */
+@keyframes t3-scroll-crisp {
+  0%   { transform: translate3d(0,    0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
+}
+
+/* Remove ANY blur effect from ticker items */
+#tsl-3d-ticker .t3-item {
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  font-size: 13.5px !important;
+  filter: none !important;                /* no blur */
+  /* High-contrast readable shadow — no glow smear */
+  text-shadow:
+    0 1px 2px rgba(0,0,0,0.75),
+    0 0 0 transparent !important;        /* remove soft glow blur */
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+  will-change: auto !important;
+}
+
+/* Ticker track wrapper — no filter, no mask blur */
+#tsl-3d-ticker .t3-track-wrap {
+  filter: none !important;
+  -webkit-filter: none !important;
+}
+
+/* Whole ticker — ensure no filter bleeds in */
+#tsl-3d-ticker {
+  filter: none !important;
+  -webkit-filter: none !important;
+}
+
+/* Mobile: slightly slower for smaller viewport */
+@media (max-width: 600px) {
+  #tsl-3d-ticker .t3-track {
+    animation-duration: 130s !important;
+  }
+  #tsl-3d-ticker .t3-item {
+    font-size: 12px !important;
+  }
+}
+
+</style>
+<!-- ▲▲▲ TSL RENDERING QUALITY FIX ▲▲▲ -->
