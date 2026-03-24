@@ -1,64 +1,86 @@
-/* TeluguScoopLive — Service Worker v3
-   Deploy this file as /sw.js at the root of your Netlify site.
-   This enables PWA install prompt on Android/Chrome. */
+/* TeluguScoopLive — Service Worker v4
+   Handles: /manifest.json interception, app shell caching, offline fallback
+   Deploy at root: /sw.js */
 'use strict';
 
-var CACHE_NAME = 'tsl-cache-v3';
-var OFFLINE_URL = '/';
+var CACHE = 'tsl-v4';
 
-// Install — cache the shell
+var MANIFEST = JSON.stringify({
+  name: 'TeluguScoopLive',
+  short_name: 'TSL News',
+  description: 'Breaking Telugu News, Cinema, Politics & Cricket',
+  start_url: '/',
+  scope: '/',
+  display: 'standalone',
+  background_color: '#1a2f5e',
+  theme_color: '#E8192C',
+  orientation: 'portrait-primary',
+  lang: 'te',
+  icons: [
+    { src: '/icons/icon-192x192.png', sizes: '192x192', type: 'image/png', purpose: 'any maskable' },
+    { src: '/icons/icon-512x512.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' }
+  ]
+});
+
 self.addEventListener('install', function(e) {
   self.skipWaiting();
   e.waitUntil(
-    caches.open(CACHE_NAME).then(function(cache) {
-      return cache.addAll([OFFLINE_URL]).catch(function() {});
+    caches.open(CACHE).then(function(c) {
+      return c.addAll(['/']).catch(function() {});
     })
   );
 });
 
-// Activate — clean old caches
 self.addEventListener('activate', function(e) {
   e.waitUntil(
     caches.keys().then(function(keys) {
       return Promise.all(
-        keys.filter(function(k) { return k !== CACHE_NAME; })
+        keys.filter(function(k) { return k !== CACHE; })
             .map(function(k) { return caches.delete(k); })
       );
     }).then(function() { return self.clients.claim(); })
   );
 });
 
-// Fetch — network first, cache fallback
 self.addEventListener('fetch', function(e) {
   var url = e.request.url;
 
-  // Always use network for: API calls, Supabase, Telegram, fonts, analytics
+  // Intercept /manifest.json — serve dynamic manifest with correct headers
+  if (url.endsWith('/manifest.json') || url.includes('/manifest.json?')) {
+    e.respondWith(new Response(MANIFEST, {
+      headers: {
+        'Content-Type': 'application/manifest+json',
+        'Access-Control-Allow-Origin': '*'
+      }
+    }));
+    return;
+  }
+
+  // Skip API, CDN, non-GET
   if (url.includes('supabase.co') ||
       url.includes('api.telegram.org') ||
       url.includes('googleapis.com') ||
       url.includes('googletagmanager') ||
       url.includes('pollinations.ai') ||
-      url.includes('api.groq.com') ||
-      url.includes('graph.facebook.com') ||
       url.includes('unsplash.com') ||
+      url.includes('graph.facebook.com') ||
+      url.includes('api.groq.com') ||
+      url.includes('cdn.jsdelivr.net') ||
       e.request.method !== 'GET') {
     return;
   }
 
+  // Cache first, network fallback
   e.respondWith(
-    fetch(e.request).then(function(response) {
-      // Cache successful responses for the app shell
-      if (response && response.status === 200 && response.type === 'basic') {
-        var copy = response.clone();
-        caches.open(CACHE_NAME).then(function(cache) {
-          cache.put(e.request, copy);
-        });
-      }
-      return response;
-    }).catch(function() {
-      // Network failed — serve from cache
-      return caches.match(e.request).then(function(cached) {
-        return cached || caches.match(OFFLINE_URL);
+    caches.match(e.request).then(function(cached) {
+      return cached || fetch(e.request).then(function(res) {
+        if (res && res.status === 200 && res.type === 'basic') {
+          var copy = res.clone();
+          caches.open(CACHE).then(function(c) { c.put(e.request, copy); });
+        }
+        return res;
+      }).catch(function() {
+        return cached || new Response('Offline', { status: 503 });
       });
     })
   );
