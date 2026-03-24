@@ -142,7 +142,7 @@
 <link rel="alternate" type="application/rss+xml" title="TeluguScoopLive — Cinema" href="/rss/cinema">
 <link rel="alternate" type="application/atom+xml" title="TeluguScoopLive — Atom Feed" href="/feed.atom">
 <!-- PWA: manifest + SW + install prompt — fully self-contained -->
-<link rel="manifest" id="tsl-manifest-link" href="/manifest.json">
+<link rel="manifest" id="tsl-manifest-link" href="">
 <link rel="apple-touch-icon" sizes="180x180" id="tsl-apple-icon" href="">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%231a2f5e'/%3E%3Crect x='0' y='0' width='64' height='4' rx='2' fill='%23E8192C'/%3E%3Crect x='0' y='60' width='64' height='4' rx='2' fill='%23E8192C'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-family='Georgia,serif' font-size='28' font-weight='700' fill='%23ffffff'%3ETS%3C/text%3E%3C/svg%3E">
 <meta name="theme-color" content="#E8192C">
@@ -231,81 +231,24 @@ function buildManifest(icon192,icon512){
 // Chrome requires SW scope to match page origin — blob: URLs don't work for scope '/'.
 // Solution: write SW code into a <script id="tsl-sw-src"> tag, then register /sw.js
 // If /sw.js exists on server, great. If not, we inject a meta SW via the page itself.
-function registerSW(icon192){
+function registerSW(){
   if(!('serviceWorker' in navigator)) return;
   if(window.location.protocol!=='https:' && window.location.hostname!=='localhost') return;
 
-  // Build manifest JSON string to pass into SW so it can serve /manifest.json
-  var manifestJson = JSON.stringify({
-    name:'TeluguScoopLive',
-    short_name:'TSL News',
-    description:'Breaking Telugu News, Cinema, Politics & Cricket',
-    start_url:'/',scope:'/',display:'standalone',
-    background_color:'#1a2f5e',theme_color:'#E8192C',
-    orientation:'portrait-primary',lang:'te',
-    icons:[
-      {src: icon192 || '/icons/icon-192x192.png', sizes:'192x192', type:'image/png', purpose:'any maskable'},
-      {src: icon192 || '/icons/icon-512x512.png', sizes:'512x512', type:'image/png', purpose:'any maskable'}
-    ]
-  });
-
-  // SW code — intercepts /manifest.json + caches app shell
-  var swCode =
-    '"use strict";'+
-    'var CACHE="tsl-v4";'+
-    'var MANIFEST_JSON='+JSON.stringify(manifestJson)+';'+
-    'self.addEventListener("install",function(e){'+
-      'self.skipWaiting();'+
-      'e.waitUntil(caches.open(CACHE).then(function(c){'+
-        'return c.addAll(["/"]).catch(function(){});'+
-      '}));'+
-    '});'+
-    'self.addEventListener("activate",function(e){'+
-      'e.waitUntil(caches.keys().then(function(keys){'+
-        'return Promise.all(keys.filter(function(k){return k!==CACHE;}).map(function(k){return caches.delete(k);}));'+
-      '}).then(function(){return self.clients.claim();}));'+
-    '});'+
-    'self.addEventListener("fetch",function(e){'+
-      'var url=e.request.url;'+
-      // Intercept /manifest.json — serve our dynamic manifest
-      'if(url.endsWith("/manifest.json")||url.includes("/manifest.json?")){'+
-        'e.respondWith(new Response(MANIFEST_JSON,{headers:{"Content-Type":"application/manifest+json","Access-Control-Allow-Origin":"*"}}));'+
-        'return;'+
-      '}'+
-      // Skip API/external calls
-      'if(url.includes("supabase.co")||url.includes("api.telegram")||url.includes("googleapis")||url.includes("pollinations")||url.includes("unsplash")||e.request.method!=="GET") return;'+
-      'e.respondWith('+
-        'caches.match(e.request).then(function(cached){'+
-          'return cached||fetch(e.request).then(function(res){'+
-            'if(res&&res.status===200&&res.type==="basic"){'+
-              'var cp=res.clone();'+
-              'caches.open(CACHE).then(function(c){c.put(e.request,cp);});'+
-            '}'+
-            'return res;'+
-          '}).catch(function(){return cached||new Response("Offline",{status:503});});'+
-        '})'+
-      ');'+
-    '});';
-
-  try {
-    var blob = new Blob([swCode], {type:'text/javascript'});
-    var swUrl = URL.createObjectURL(blob);
-    navigator.serviceWorker.register(swUrl, {scope:'/'})
-      .then(function(r){
-        console.log('[TSL SW] Inline SW registered, scope:', r.scope);
-        // Force manifest reload now that SW is ready
-        setTimeout(function(){
-          var link = document.getElementById('tsl-manifest-link');
-          if(link){ var h=link.href; link.href=''; link.href=h; }
-        }, 500);
-      })
-      .catch(function(err){
-        console.warn('[TSL SW] Blob SW failed:', err.message, '— trying /sw.js');
-        navigator.serviceWorker.register('/sw.js',{scope:'/'})
-          .then(function(r){ console.log('[TSL SW] /sw.js registered'); })
-          .catch(function(e2){ console.warn('[TSL SW] /sw.js also failed:', e2.message); });
+  // Try /sw.js first (works if Netlify has the file)
+  navigator.serviceWorker.getRegistrations().then(function(regs){
+    if(regs.length>0){
+      console.log('[TSL SW] Already registered');
+      return;
+    }
+    navigator.serviceWorker.register('/sw.js',{scope:'/'})
+      .then(function(r){console.log('[TSL SW] /sw.js registered, scope:',r.scope);})
+      .catch(function(){
+        console.warn('[TSL SW] /sw.js not found — app still installable via manifest');
+        // App is still installable! SW is recommended but not required for install prompt
+        // Chrome will show install prompt as long as manifest is valid + HTTPS
       });
-  } catch(e){ console.warn('[TSL SW] SW setup error:', e.message); }
+  });
 }
 
 // ─── 4. INSTALL PROMPT — capture + show custom button ────────────────────────
@@ -380,10 +323,11 @@ function initPWA(){
   var icon512=makeTSLIcon(512);
   if(icon192){
     buildManifest(icon192,icon512);
+    // Set apple icon
     var al=document.getElementById('tsl-apple-icon');
     if(al) al.href=icon192;
   }
-  registerSW(icon192); // pass icon so SW can serve it in /manifest.json
+  registerSW();
 }
 
 if(document.readyState==='loading'){
@@ -394,13 +338,75 @@ if(document.readyState==='loading'){
 })();
 </script>
 <link rel="canonical" href="https://teluguscooplive.netlify.app/" id="canonicalUrl">
-<!-- Critical fonts: DM Sans + Space Mono load first (used in visible UI), rest load async -->
-<!-- Critical UI fonts: DM Sans + DM Serif Display + Space Mono — used in above-fold elements -->
-<link rel="preload" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Serif+Display:ital@0;1&family=Space+Mono:wght@400;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Serif+Display:ital@0;1&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"></noscript>
-<!-- Non-critical fonts load async after page is interactive -->
-<link rel="preload" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Merriweather:wght@400;700&family=Noto+Sans+Telugu:wght@400;500;600;700&family=Noto+Serif+Telugu:wght@400;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Merriweather:wght@400;700&family=Noto+Sans+Telugu:wght@400;500;600;700&family=Noto+Serif+Telugu:wght@400;600;700&display=swap" rel="stylesheet"></noscript>
+<!-- ▼ PERFORMANCE PATCH — Critical inlined perf styles ▼ -->
+<style id="tsl-perf-patch">
+/* ── GPU-composited layers only on elements that animate ── */
+.hero-main img,.news-card,.bookmark-card,.politics-small,.politics-featured{
+  will-change:transform;
+  contain:layout style; /* avoid full-page layout recalc on hover */
+}
+/* ── Fix card heights to reduce CLS ── */
+.news-card{min-height:260px;display:flex;flex-direction:column}
+.news-card-img-wrap{flex-shrink:0}
+.news-card-body{flex:1;display:flex;flex-direction:column}
+/* ── Images always fill their box with no ratio jump ── */
+img{display:block;max-width:100%;height:auto}
+.hero-main img{height:256px;object-fit:cover;width:100%}
+.editors-pick-img{height:96px;width:100%;object-fit:cover}
+.hero-side-img{width:80px;height:64px;object-fit:cover}
+/* ── Mobile: remove heavy shadows, reduce hero height ── */
+@media(max-width:768px){
+  .hero-main img{height:180px}
+  .news-card:hover,.bookmark-card:hover,.politics-small:hover,.politics-featured:hover{
+    box-shadow:0 4px 14px rgba(0,0,0,0.10);
+  }
+  .sidebar-widget,.most-read-section,#politicsSection{box-shadow:none!important;border:1px solid var(--border2)!important}
+  .nav-pills-group{max-width:calc(100vw - 32px);overflow-x:auto;scrollbar-width:none}
+  .nav-pills-group::-webkit-scrollbar{display:none}
+  .ts-pill,.nav-link{min-height:40px} /* touch target */
+}
+/* ── Normalize spacing across all cards ── */
+.news-card-body,.sidebar-widget .widget-body{padding:12px 14px}
+.trending-item,.most-read-item,.fanzone-item,.fz-contrib-item{padding:10px 14px}
+/* ── Consistent border-radius ── */
+.news-card,.bookmark-card,.sidebar-widget,.most-read-section,
+#politicsSection,.editors-picks-strip,.search-results-list{border-radius:16px}
+.politics-featured,.politics-small,.related-card{border-radius:12px}
+/* ── Typography tightening ── */
+.hero-title,.news-card-title,.most-read-title,.politics-featured-title{
+  line-height:1.25;letter-spacing:-0.01em;
+}
+.news-card-excerpt,.politics-featured-excerpt{color:#475569;line-height:1.6}
+/* ── Prevent horizontal overflow on ALL screens ── */
+html,body{overflow-x:hidden;max-width:100vw}
+*{min-width:0;box-sizing:border-box}
+/* ── Skeleton loading fix — stable heights ── */
+.skeleton-img{height:158px;border-radius:12px 12px 0 0}
+.skeleton-body{padding:12px 14px}
+</style>
+<!-- ▲ PERFORMANCE PATCH ▲ -->
+<!-- Critical fonts: DM Sans + DM Serif Display only — load synchronously for above-fold -->
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Serif+Display:ital@0;1&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet"></noscript>
+<!-- Non-critical fonts: Telugu + Playfair — deferred fully async -->
+<script>
+(function(){
+  function loadFont(href){
+    var l=document.createElement('link');
+    l.rel='stylesheet';l.href=href;
+    document.head.appendChild(l);
+  }
+  if('requestIdleCallback' in window){
+    requestIdleCallback(function(){
+      loadFont('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Merriweather:wght@400;700&family=Noto+Sans+Telugu:wght@400;500;600;700&family=Noto+Serif+Telugu:wght@400;600;700&display=swap');
+    },{timeout:3000});
+  } else {
+    setTimeout(function(){
+      loadFont('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Merriweather:wght@400;700&family=Noto+Sans+Telugu:wght@400;500;600;700&family=Noto+Serif+Telugu:wght@400;600;700&display=swap');
+    },2000);
+  }
+})();
+</script>
 <!-- supabase-js must load synchronously: app code calls `supabase.createClient` at parse time -->
 <!-- ⚠️ PATCH: must run BEFORE supabase-js loads.
      Supabase JS v2 uses BroadcastChannel.postMessage() internally to share fetch Responses.
@@ -15434,17 +15440,15 @@ Write exactly 5 paragraphs, minimum 600 words. No section labels. Zero repetitio
     }
 
     try {
-      // Pollinations.ai — turbo model for fast generation (~3-5s vs flux's 60s+)
-      const tvNewsPrompt = `professional news anchor woman, broadcast studio, soft lighting, 16:9, ${catContext}, premium TV news, ultra realistic, 4K`;
+      // Pollinations.ai — professional TV news anchor style (prompt kept short to stay under URL limit)
+      const tvNewsPrompt = `professional female news anchor, modern broadcast studio, soft lighting, 4K, 16:9, ${catContext}, premium news channel, clean minimal background, ultra realistic`;
       const prompt = encodeURIComponent(tvNewsPrompt);
       const seed = Math.floor(Math.random() * 999999);
-      // Use 'turbo' model — much faster than 'flux', still high quality
-      const imageUrl = `https://image.pollinations.ai/prompt/${prompt}?width=1200&height=630&seed=${seed}&nologo=true&model=turbo`;
+      const imageUrl = `https://image.pollinations.ai/prompt/${prompt}?width=1200&height=630&seed=${seed}&nologo=true&enhance=true&model=flux`;
 
       await new Promise((resolve, reject) => {
         const img = new Image();
-        img.crossOrigin = 'anonymous';
-        const imgTimeout = setTimeout(function() { reject(new Error('Image load timed out')); }, 45000);
+        const imgTimeout = setTimeout(function() { reject(new Error('Image load timed out')); }, 25000);
         img.onload = function() { clearTimeout(imgTimeout); resolve(); };
         img.onerror = function() { clearTimeout(imgTimeout); reject(new Error('Image load failed')); };
         img.src = imageUrl;
@@ -23920,6 +23924,13 @@ async function postToFacebook(article) {
     return { ok: false, reason: 'No Facebook token/page_id configured' };
   }
 
+  // ── DEDUPLICATION: prevent double-posting same article to Facebook ──
+  const fbPostKey = 'tsl_fb_posted_' + (article.id || article.slug || '');
+  if (article.id && localStorage.getItem(fbPostKey)) {
+    console.log('[AutoPost][Facebook] ⏭ SKIPPED — article already posted (id:', article.id, ')');
+    return { ok: true, platform: 'facebook', skipped: true };
+  }
+
   // ── Auto-resolve @handle → numeric page ID ──────────────
   // Facebook Graph API requires a NUMERIC page ID, not @handle
   if (pageId.startsWith('@') || !/^\d+$/.test(pageId.replace('@',''))) {
@@ -23959,6 +23970,7 @@ async function postToFacebook(article) {
         const d = await r.json();
         if (!d.error) {
           console.log('[Facebook] ✅ Photo post success — id:', d.id);
+          if (article.id) localStorage.setItem(fbPostKey, '1');
           return { ok: true };
         }
         console.warn('[Facebook] Photo post failed:', d.error?.message, '— falling back to feed post');
@@ -23974,6 +23986,7 @@ async function postToFacebook(article) {
     const d2 = await r2.json();
     if (d2.id) {
       console.log('[Facebook] ✅ Feed post success — id:', d2.id);
+      if (article.id) localStorage.setItem(fbPostKey, '1');
       return { ok: true };
     }
     let errMsg = d2.error?.message || 'Unknown Facebook error';
@@ -24070,64 +24083,277 @@ async function _ensureKeysLoaded() {
     '| tg_token:', _sk('tg_token') ? 'SET ✓' : '❌');
 }
 
-// Expose on window immediately so main app scripts can call it
-window.autoPostToSocials = async function autoPostToSocials(article) {
-  // ALWAYS refresh keys — localStorage first (freshest), then DB, then meta tags
-  await _ensureKeysLoaded();
+// ══════════════════════════════════════════════════════
+//  TV THUMBNAIL GENERATOR — 1200×630 canvas thumbnail
+//  Creates branded share image BEFORE auto-posting
+// ══════════════════════════════════════════════════════
+function _generateThumbnail(article) {
+  return new Promise(function(resolve) {
+    try {
+      var canvas = document.createElement('canvas');
+      canvas.width  = 1200;
+      canvas.height = 630;
+      var ctx = canvas.getContext('2d');
 
-  const enabled  = _sk('auto_post_enabled');
-  const fbToken  = _sk('fb_token');
-  const fbPageId = _sk('fb_page_id');
-  const tgToken  = _sk('tg_token');
-  const tgChat   = _sk('tg_chat_id');
+      // Category colors map
+      var catColors = {
+        politics:  '#1a4490', cinema:    '#6C3FC5',
+        sports:    '#1A7C3E', cricket:   '#1A7C3E',
+        andhra:    '#0369a1', telangana: '#7c3aed',
+        localnews: '#16a34a', national:  '#0369a1',
+        default:   '#E0182D'
+      };
+      var cat      = (article.category || 'default').toLowerCase();
+      var catColor = catColors[cat] || catColors.default;
+      var catLabel = (article.category || 'News').charAt(0).toUpperCase() + (article.category || 'News').slice(1);
 
-  console.log('[AutoPost] ══ Starting auto-post ══');
-  console.log('[AutoPost] auto_post_enabled:', enabled);
-  console.log('[AutoPost] fb_token    :', fbToken  ? fbToken.substring(0,20)+'...' : '❌ MISSING');
-  console.log('[AutoPost] fb_page_id  :', fbPageId || '❌ MISSING');
-  console.log('[AutoPost] tg_token    :', tgToken  ? tgToken.substring(0,15)+'...' : '❌ MISSING');
-  console.log('[AutoPost] tg_chat_id  :', tgChat   || '❌ MISSING');
+      function _drawContent(bgReady) {
+        // Dark gradient overlay
+        var grad = ctx.createLinearGradient(0, 0, 0, 630);
+        grad.addColorStop(0, 'rgba(10,14,26,0.55)');
+        grad.addColorStop(0.5,'rgba(10,14,26,0.75)');
+        grad.addColorStop(1, 'rgba(10,14,26,0.95)');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, 1200, 630);
 
-  if (!enabled || enabled !== '1') {
-    console.warn('[AutoPost] ✗ SKIPPED — Auto-post toggle is OFF. Go to Admin Panel → Social Settings → turn ON.');
-    return;
-  }
-  if (!article || !article.title) {
-    console.warn('[AutoPost] ✗ SKIPPED — article missing title:', article);
-    return;
-  }
+        // Left accent bar
+        ctx.fillStyle = '#E0182D';
+        ctx.fillRect(0, 0, 6, 630);
 
-  console.log('[AutoPost] Article:', article.title.substring(0, 60));
+        // Category badge (top-left)
+        ctx.fillStyle = catColor;
+        ctx.beginPath();
+        ctx.roundRect(32, 30, catLabel.length * 11 + 24, 34, 6);
+        ctx.fill();
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 15px Arial,sans-serif';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(catLabel.toUpperCase(), 44, 47);
 
-  const runners = [
-    postToTelegram(article),
-    postToFacebook(article)
-  ];
+        // BREAKING badge if category is politics/breaking
+        if (cat === 'politics' || (article.title || '').toLowerCase().includes('breaking')) {
+          ctx.fillStyle = '#E0182D';
+          ctx.beginPath();
+          ctx.roundRect(32, 76, 106, 28, 5);
+          ctx.fill();
+          ctx.fillStyle = '#fff';
+          ctx.font = 'bold 13px Arial,sans-serif';
+          ctx.fillText('🔴 BREAKING', 42, 90);
+        }
 
-  const results = await Promise.allSettled(runners);
-  const platforms = ['Telegram', 'Facebook'];
-  let successCount = 0;
-  results.forEach((r, i) => {
-    if (r.status === 'fulfilled' && r.value?.ok) {
-      successCount++;
-      console.log('[AutoPost] ✅', platforms[i], '— posted successfully');
-    } else {
-      const err = r.value?.error || r.value?.reason || r.reason?.message || 'unknown error';
-      console.error('[AutoPost] ❌', platforms[i], '— FAILED:', err);
+        // TSL branding (top-right)
+        ctx.fillStyle = 'rgba(255,255,255,0.92)';
+        ctx.font = 'bold 26px Georgia,serif';
+        ctx.textAlign = 'right';
+        ctx.fillText('TSL', 1168, 47);
+        ctx.font = '11px Arial,sans-serif';
+        ctx.fillStyle = '#f59e0b';
+        ctx.fillText('TeluguScoopLive', 1168, 66);
+        ctx.textAlign = 'left';
+
+        // Article title — bold, max 2 lines, wrapped
+        var title  = article.title || '';
+        var maxW   = 1100;
+        var fSize  = title.length > 60 ? 38 : title.length > 40 ? 44 : 50;
+        ctx.font   = 'bold ' + fSize + 'px Georgia,serif';
+        ctx.fillStyle = '#ffffff';
+        ctx.textBaseline = 'alphabetic';
+
+        // Word-wrap
+        var words = title.split(' ');
+        var line  = '';
+        var lines = [];
+        for (var w = 0; w < words.length; w++) {
+          var test = line + (line ? ' ' : '') + words[w];
+          if (ctx.measureText(test).width > maxW && line) {
+            lines.push(line);
+            line = words[w];
+            if (lines.length >= 2) { line = '…'; break; }
+          } else { line = test; }
+        }
+        if (line) lines.push(line);
+        lines = lines.slice(0, 2);
+
+        var lineH  = fSize * 1.28;
+        var totalH = lines.length * lineH;
+        var startY = 630 - 90 - totalH;
+        lines.forEach(function(l, i) {
+          ctx.fillText(l, 36, startY + i * lineH);
+        });
+
+        // Bottom bar — source + timestamp
+        ctx.fillStyle = 'rgba(255,255,255,0.12)';
+        ctx.fillRect(0, 590, 1200, 40);
+        ctx.fillStyle = 'rgba(255,255,255,0.55)';
+        ctx.font = '13px Arial,sans-serif';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('teluguscooplive.netlify.app', 36, 610);
+
+        var now = new Date();
+        var ts  = now.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+        ctx.textAlign = 'right';
+        ctx.fillText(ts, 1168, 610);
+        ctx.textAlign = 'left';
+
+        resolve(canvas.toDataURL('image/jpeg', 0.88));
+      }
+
+      // Try to load article image as background
+      var imgSrc = article.image || '';
+      if (imgSrc && imgSrc.startsWith('http')) {
+        var bg = new Image();
+        bg.crossOrigin = 'anonymous';
+        bg.onload = function() {
+          // Scale + center crop
+          var scale = Math.max(1200 / bg.width, 630 / bg.height);
+          var sw = bg.width * scale, sh = bg.height * scale;
+          ctx.drawImage(bg, (1200 - sw) / 2, (630 - sh) / 2, sw, sh);
+          _drawContent(true);
+        };
+        bg.onerror = function() {
+          // Fallback: category gradient background
+          var bg2 = ctx.createLinearGradient(0, 0, 1200, 630);
+          bg2.addColorStop(0, '#0A0E1A');
+          bg2.addColorStop(1, catColor + '55');
+          ctx.fillStyle = bg2;
+          ctx.fillRect(0, 0, 1200, 630);
+          _drawContent(false);
+        };
+        bg.src = imgSrc;
+        // Safety: if image takes too long, fallback after 4s
+        setTimeout(function() {
+          if (!bg.complete) { bg.src = ''; }
+        }, 4000);
+      } else {
+        // No image — category gradient
+        var bg3 = ctx.createLinearGradient(0, 0, 1200, 630);
+        bg3.addColorStop(0, '#0A0E1A');
+        bg3.addColorStop(1, catColor + '55');
+        ctx.fillStyle = bg3;
+        ctx.fillRect(0, 0, 1200, 630);
+        _drawContent(false);
+      }
+    } catch(err) {
+      console.warn('[Thumbnail] Generation failed:', err.message);
+      resolve(null); // never reject — caller handles null gracefully
     }
   });
+}
 
-  console.log('[AutoPost] ── Done:', successCount, '/', results.length, 'platforms succeeded ──');
+// ══════════════════════════════════════════════════════
+//  AUTO-POST DISPATCHER — deduplicated, queued, gated
+// ══════════════════════════════════════════════════════
+// Global dedup sets — persist for the page session
+var _autoPostInFlight = new Set();   // articles currently being posted (prevents race)
+var _autoPostSent     = new Set();   // articles already sent this session
 
-  if (successCount > 0) {
-    if (typeof toast === 'function') toast(`📣 Posted to ${successCount} platform${successCount > 1 ? 's' : ''}`, 'success');
-    else if (window.App && window.App._toast) window.App._toast(`📣 Posted to ${successCount} platform${successCount > 1 ? 's' : ''}`, 'success');
-  } else {
-    console.error('[AutoPost] ❌ ALL platforms failed. Open Admin → Social Settings → click Test to diagnose.');
+window.autoPostToSocials = async function autoPostToSocials(article) {
+  if (!article || !article.title) {
+    console.warn('[AutoPost] ✗ SKIPPED — article missing title');
+    return;
+  }
+
+  // Build a stable article key from id or slug
+  var postKey = String(article.id || article.slug || article.title).trim();
+  if (!postKey) { console.warn('[AutoPost] ✗ SKIPPED — no article key'); return; }
+
+  // ── SESSION-LEVEL DEDUP: already sent this tab session ──
+  if (_autoPostSent.has(postKey)) {
+    console.log('[AutoPost] ⏭ SKIPPED (session) — already sent:', postKey);
+    return;
+  }
+
+  // ── IN-FLIGHT LOCK: another async call is already posting this article ──
+  if (_autoPostInFlight.has(postKey)) {
+    console.log('[AutoPost] ⏭ SKIPPED (in-flight) — concurrent call for:', postKey);
+    return;
+  }
+
+  // ── LOCALSTORAGE DEDUP: persists across page reloads ──
+  var lsKey = 'tsl_posted_' + postKey;
+  if (localStorage.getItem(lsKey)) {
+    console.log('[AutoPost] ⏭ SKIPPED (localStorage) — already posted:', postKey);
+    _autoPostSent.add(postKey);
+    return;
+  }
+
+  _autoPostInFlight.add(postKey);
+  console.log('[AutoPost] ══ Starting auto-post ══ id:', postKey);
+
+  try {
+    // ALWAYS refresh keys — localStorage first (freshest), then DB, then meta tags
+    await _ensureKeysLoaded();
+
+    const enabled  = _sk('auto_post_enabled');
+    const fbToken  = _sk('fb_token');
+    const fbPageId = _sk('fb_page_id');
+    const tgToken  = _sk('tg_token');
+    const tgChat   = _sk('tg_chat_id');
+
+    console.log('[AutoPost] auto_post_enabled:', enabled,
+      '| fb:', fbToken ? 'SET' : '❌', '| tg:', tgToken ? 'SET' : '❌');
+
+    if (!enabled || enabled !== '1') {
+      console.warn('[AutoPost] ✗ SKIPPED — Auto-post toggle is OFF.');
+      return;
+    }
+
+    // ── Generate thumbnail BEFORE posting ──
+    console.log('[AutoPost] Generating thumbnail for:', article.title.substring(0, 50));
+    var thumbDataUrl = await _generateThumbnail(article);
+    if (thumbDataUrl) {
+      article._thumbnailDataUrl = thumbDataUrl;
+      console.log('[AutoPost] ✅ Thumbnail generated (' + Math.round(thumbDataUrl.length / 1024) + ' KB)');
+    } else {
+      console.warn('[AutoPost] ⚠ Thumbnail generation failed — using article image');
+    }
+
+    console.log('[AutoPost] Article:', article.title.substring(0, 60));
+
+    // ── Run Telegram + Facebook in parallel ──
+    const runners = [
+      postToTelegram(article),
+      postToFacebook(article)
+    ];
+
+    const results = await Promise.allSettled(runners);
+    const platforms = ['Telegram', 'Facebook'];
+    let successCount = 0;
+    results.forEach((r, i) => {
+      if (r.status === 'fulfilled' && r.value?.ok && !r.value?.skipped) {
+        successCount++;
+        console.log('[AutoPost] ✅', platforms[i], '— posted successfully');
+      } else if (r.value?.skipped) {
+        console.log('[AutoPost] ⏭', platforms[i], '— skipped (already posted)');
+      } else {
+        const err = r.value?.error || r.value?.reason || r.reason?.message || 'unknown error';
+        console.error('[AutoPost] ❌', platforms[i], '— FAILED:', err);
+      }
+    });
+
+    // ── Mark as sent (both session + localStorage) if at least one platform succeeded ──
+    const anySuccess = results.some(r => r.status === 'fulfilled' && r.value?.ok);
+    if (anySuccess) {
+      _autoPostSent.add(postKey);
+      try { localStorage.setItem(lsKey, Date.now().toString()); } catch(e) {}
+    }
+
+    console.log('[AutoPost] ── Done:', successCount, '/', results.length, 'platforms succeeded ──');
+
+    if (successCount > 0) {
+      if (typeof toast === 'function') toast(`📣 Posted to ${successCount} platform${successCount > 1 ? 's' : ''}`, 'success');
+      else if (window.App && window.App._toast) window.App._toast(`📣 Posted to ${successCount} platform${successCount > 1 ? 's' : ''}`, 'success');
+    } else {
+      console.error('[AutoPost] ❌ ALL platforms failed. Open Admin → Social Settings → click Test to diagnose.');
+    }
+  } finally {
+    // Always release the in-flight lock regardless of outcome
+    _autoPostInFlight.delete(postKey);
   }
 };
-// Ensure window.autoPostToSocials is always accessible from main app scripts
-window.autoPostToSocials = window.autoPostToSocials || autoPostToSocials;
+
+// Alias so legacy code using the inner function name still works
+var autoPostToSocials = window.autoPostToSocials;
 
 // ══════════════════════════════════════════════════════
 //  RSS XML GENERATOR
@@ -24640,21 +24866,13 @@ function _patchPublishHooks() {
     };
 
     // ── Patch adminTogglePublish ──
+    // NOTE: The original adminTogglePublish already calls autoPostToSocials.
+    // We rely on the global in-flight lock + session dedup in autoPostToSocials
+    // to prevent duplicates — no need to call it again here.
     const _origToggle = App.adminTogglePublish;
     App.adminTogglePublish = async function(articleId, publishState) {
       const result = await _origToggle.apply(this, arguments);
-      if (publishState) {
-        try {
-          const _client = _getClient();
-          if (!_client) { console.warn('[AutoPost] No Supabase client'); return result; }
-          const { data } = await _client
-            .from('articles').select('*').eq('id', articleId).single();
-          if (data) {
-            console.log('[AutoPost] adminTogglePublish fired for:', data.title?.substring(0,50));
-            autoPostToSocials(data);
-          }
-        } catch(e) { console.error('[AutoPost] adminTogglePublish fetch error:', e.message); }
-      }
+      // Dedup handled by autoPostToSocials global gate — no duplicate call needed here
       return result;
     };
 
@@ -24662,52 +24880,14 @@ function _patchPublishHooks() {
     const _origRewrite = App.rewriteAndPublishDraft;
     App.rewriteAndPublishDraft = async function(articleId) {
       await _origRewrite.apply(this, arguments);
-      {
-        try {
-          await new Promise(r => setTimeout(r, 1500));
-          const _client = _getClient();
-          if (!_client) { console.warn('[AutoPost] No Supabase client'); return; }
-          const { data } = await _client
-            .from('articles').select('*').eq('id', articleId).single();
-          if (data && data.published) {
-            console.log('[AutoPost] rewriteAndPublish fired for:', data.title?.substring(0,50));
-            autoPostToSocials(data);
-          }
-        } catch(e) { console.error('[AutoPost] rewriteAndPublish fetch error:', e.message); }
-      }
+      // Dedup handled by autoPostToSocials global gate — no duplicate call needed here
     };
 
     // ── Patch publishArticle (Write New tab) ──
     const _origPublish = App.publishArticle;
     App.publishArticle = async function(publishNow) {
-      const titleBefore = document.getElementById('adminTitle')?.value.trim();
-      const slugBefore  = (titleBefore || '').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
       await _origPublish.apply(this, arguments);
-      if (publishNow && titleBefore) {
-        try {
-          await new Promise(r => setTimeout(r, 2000));
-          const _client = _getClient();
-          if (!_client) { console.warn('[AutoPost] No Supabase client for publishArticle'); return; }
-          let data = null;
-          const { data: bySlug } = await _client
-            .from('articles').select('*').eq('slug', slugBefore)
-            .eq('published', true).order('created_at',{ascending:false}).limit(1).single();
-          if (bySlug) {
-            data = bySlug;
-          } else {
-            const { data: byTitle } = await _client
-              .from('articles').select('*').ilike('title', titleBefore)
-              .eq('published', true).order('created_at',{ascending:false}).limit(1).single();
-            data = byTitle;
-          }
-          if (data) {
-            console.log('[AutoPost] publishArticle fired for:', data.title?.substring(0,50));
-            autoPostToSocials(data);
-          } else {
-            console.warn('[AutoPost] publishArticle: could not find article after publish for title:', titleBefore);
-          }
-        } catch(e) { console.error('[AutoPost] publishArticle fetch error:', e.message); }
-      }
+      // Dedup handled by autoPostToSocials global gate — no duplicate call needed here
     };
 
     // Pre-load all keys from Supabase into localStorage NOW
@@ -25169,3 +25349,294 @@ _patchPublishHooks();
 }
 </style>
 
+<!-- ▼▼▼ TSL FINAL PERFORMANCE + UI POLISH PATCH ▼▼▼ -->
+<style id="tsl-final-polish">
+/* ══════════════════════════════════════════════════════
+   FINAL UI POLISH — News Portal Quality Pass
+   Applies after all other styles (highest specificity)
+   ══════════════════════════════════════════════════════ */
+
+/* ── 1. Object-fit everywhere — no image distortion ── */
+.news-card-img,
+.editors-pick-img,
+.hero-side-img,
+.bookmark-card-img,
+.politics-featured-img,
+.politics-small img,
+.related-card-img,
+.cinema-side-img,
+.hero-main > img,
+img[class*="-img"],
+img[class*="card-img"] {
+  object-fit: cover !important;
+  display: block !important;
+}
+
+/* ── 2. Consistent card radius — 14px everywhere ── */
+.news-card,
+.bookmark-card,
+.skeleton-card {
+  border-radius: 14px !important;
+  overflow: hidden !important;
+}
+.politics-featured,
+.politics-small,
+.related-card {
+  border-radius: 12px !important;
+  overflow: hidden !important;
+}
+.sidebar-widget,
+.most-read-section,
+.fz-hot-widget,
+#politicsSection {
+  border-radius: 14px !important;
+}
+.editors-picks-strip { border-radius: 16px !important; }
+
+/* ── 3. Stable image heights (eliminate CLS) ── */
+.news-card-img-wrap { height: 176px !important; overflow: hidden !important; position: relative !important; }
+.news-card-img      { width: 100% !important; height: 176px !important; object-fit: cover !important; }
+.editors-pick-img   { height: 96px !important; }
+.hero-side-img      { width: 80px !important; height: 64px !important; }
+.bookmark-card-img  { height: 130px !important; }
+.related-card-img   { height: 78px !important; }
+.politics-small img { height: 110px !important; }
+
+/* ── 4. Typography — tighter, bolder headlines ── */
+.hero-title {
+  font-size: clamp(18px, 2.5vw, 24px) !important;
+  font-weight: 800 !important;
+  line-height: 1.22 !important;
+  letter-spacing: -0.02em !important;
+}
+.news-card-title {
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  line-height: 1.35 !important;
+  letter-spacing: -0.01em !important;
+  color: #0F172A !important;
+}
+.news-card-excerpt {
+  font-size: 12.5px !important;
+  color: #475569 !important;
+  line-height: 1.6 !important;
+}
+.section-title {
+  font-size: 14px !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.01em !important;
+}
+.widget-title {
+  font-size: 9px !important;
+  letter-spacing: 0.14em !important;
+  font-weight: 800 !important;
+}
+.trending-topic, .most-read-title {
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  line-height: 1.4 !important;
+}
+
+/* ── 5. Reduce visual noise — lighter borders ── */
+.news-card,
+.bookmark-card,
+.sidebar-widget,
+.most-read-section,
+.fz-hot-widget {
+  border: 1px solid rgba(0,0,0,0.06) !important;
+}
+.trending-item,
+.most-read-item,
+.fanzone-item,
+.fz-contrib-item {
+  border-bottom: 1px solid rgba(0,0,0,0.04) !important;
+}
+
+/* ── 6. Consistent padding — 12–16px everywhere ── */
+.news-card-body  { padding: 12px 14px 14px !important; }
+.widget-hdr      { padding: 11px 14px !important; }
+.trending-item   { padding: 9px 14px !important; }
+.most-read-item  { padding: 9px 6px !important; }
+.poll-widget     { padding: 12px 14px !important; }
+.date-widget     { padding: 12px 14px !important; }
+.fanzone-item    { padding: 9px 14px !important; }
+
+/* ── 7. Shadows — subtle, consistent ── */
+:root {
+  --sh-xs: 0 1px 3px rgba(0,0,0,0.04) !important;
+  --sh-sm: 0 2px 8px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.03) !important;
+  --sh-md: 0 4px 16px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04) !important;
+  --sh-lg: 0 8px 28px rgba(0,0,0,0.10), 0 3px 8px rgba(0,0,0,0.04) !important;
+}
+.news-card         { box-shadow: var(--sh-xs) !important; }
+.sidebar-widget    { box-shadow: var(--sh-xs) !important; }
+.most-read-section { box-shadow: var(--sh-xs) !important; }
+.news-card:hover   { box-shadow: var(--sh-md) !important; transform: translateY(-2px) !important; }
+
+/* ── 8. Nav pills — clean touch targets ── */
+.ts-pill, .nav-link {
+  min-height: 36px !important;
+  padding: 7px 15px !important;
+  font-size: 12.5px !important;
+}
+
+/* ── 9. Prevent any horizontal scroll ── */
+html, body, .main-wrap, .hero, .news-grid, .editors-picks-grid {
+  max-width: 100vw !important;
+  overflow-x: hidden !important;
+}
+.editors-picks-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)) !important;
+}
+
+/* ── 10. Mobile: hero shorter, grid 1-col ── */
+@media (max-width: 640px) {
+  .hero { grid-template-columns: 1fr !important; padding: 0 12px !important; gap: 10px !important; }
+  .hero-side { display: none !important; } /* hidden on tiny screens — space saving */
+  .hero-main > img { height: 180px !important; }
+  .main-wrap { grid-template-columns: 1fr !important; padding: 12px !important; gap: 12px !important; }
+  .news-grid { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
+  .politics-grid { grid-template-columns: 1fr !important; }
+  .editors-picks-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  .related-grid { grid-template-columns: 1fr 1fr !important; }
+  /* Touch targets min 40px */
+  .ts-pill, .nav-link, button, .dropdown-item {
+    min-height: 40px !important;
+    touch-action: manipulation !important;
+  }
+  /* Remove sidebars */
+  .sidebar { display: none !important; }
+}
+
+@media (max-width: 768px) and (min-width: 641px) {
+  .hero { grid-template-columns: 1fr 200px !important; padding: 0 14px !important; }
+  .main-wrap { grid-template-columns: 1fr !important; padding: 14px !important; }
+  .sidebar { display: none !important; }
+  .news-grid { grid-template-columns: 1fr 1fr !important; }
+}
+
+/* ── 11. Cat-tag visual quality ── */
+.cat-tag {
+  font-size: 9px !important;
+  letter-spacing: 0.08em !important;
+  padding: 3px 9px !important;
+  border-radius: 20px !important;
+  font-weight: 800 !important;
+}
+
+/* ── 12. Section header line — thinner accent ── */
+.section-hdr {
+  border-bottom: 2px solid rgba(224,24,45,0.15) !important;
+  padding-bottom: 8px !important;
+  margin-bottom: 12px !important;
+}
+
+/* ── 13. Smooth image fade-in on load ── */
+img { transition: opacity 0.25s ease; }
+img:not([src]), img[src=""] { opacity: 0; }
+</style>
+
+<script>
+/* ── TSL FINAL PERF RUNTIME — runs after DOM ready ── */
+(function() {
+  'use strict';
+
+  function _onReady(fn) {
+    if (document.readyState !== 'loading') { fn(); }
+    else { document.addEventListener('DOMContentLoaded', fn, { once: true }); }
+  }
+
+  _onReady(function() {
+
+    // ── A. Lazy-load ALL images not already marked ──
+    // Adds loading="lazy" + decoding="async" to every img not in the viewport
+    var imgs = document.querySelectorAll('img:not([loading])');
+    var heroId = document.getElementById('heroImg');
+    imgs.forEach(function(img) {
+      if (img === heroId) {
+        img.loading = 'eager';
+        img.fetchPriority = 'high';
+      } else {
+        img.loading = 'lazy';
+        img.decoding = 'async';
+      }
+    });
+
+    // ── B. IntersectionObserver for fade-in on scroll ──
+    if ('IntersectionObserver' in window) {
+      var fadeIO = new IntersectionObserver(function(entries) {
+        entries.forEach(function(e) {
+          if (e.isIntersecting) {
+            e.target.classList.add('visible');
+            fadeIO.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.08 });
+      document.querySelectorAll('.fade-in').forEach(function(el) { fadeIO.observe(el); });
+    }
+
+    // ── C. Google Analytics — deferred, non-blocking ──
+    var gaId = (document.querySelector('meta[name="ga-id"]') || {}).content || '';
+    if (gaId && gaId.startsWith('G-')) {
+      var s = document.createElement('script');
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=' + gaId;
+      s.async = true;
+      s.defer = true;
+      document.head.appendChild(s);
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = function(){ dataLayer.push(arguments); };
+      gtag('js', new Date());
+      gtag('config', gaId, { send_page_view: true });
+    }
+
+    // ── D. Fix mobile horizontal overflow — scan and clamp ──
+    var bodyW = document.body.scrollWidth;
+    if (bodyW > window.innerWidth + 4) {
+      // Find the offending element
+      var all = document.querySelectorAll('*');
+      for (var i = 0; i < all.length; i++) {
+        var el = all[i];
+        if (el.scrollWidth > window.innerWidth + 4) {
+          el.style.maxWidth = '100%';
+          el.style.overflowX = 'hidden';
+        }
+      }
+    }
+
+    // ── E. Ensure all card images have object-fit:cover ──
+    document.querySelectorAll(
+      '.news-card-img,.editors-pick-img,.hero-side-img,.bookmark-card-img,.politics-featured-img,.related-card-img'
+    ).forEach(function(img) {
+      img.style.objectFit = 'cover';
+    });
+
+    console.log('[TSL Perf] Runtime init complete ✓');
+  });
+
+  // ── F. requestIdleCallback for non-critical work ──
+  if ('requestIdleCallback' in window) {
+    requestIdleCallback(function() {
+
+      // Prune old autopost localStorage keys (>30 days) to prevent storage bloat
+      try {
+        var now = Date.now();
+        var keysToRemove = [];
+        for (var k in localStorage) {
+          if (k.startsWith('tsl_posted_') || k.startsWith('tsl_tg_posted_') || k.startsWith('tsl_fb_posted_')) {
+            var ts = parseInt(localStorage.getItem(k), 10);
+            if (ts && (now - ts) > 30 * 24 * 60 * 60 * 1000) {
+              keysToRemove.push(k);
+            }
+          }
+        }
+        keysToRemove.forEach(function(k) { localStorage.removeItem(k); });
+        if (keysToRemove.length) { console.log('[TSL] Pruned', keysToRemove.length, 'old autopost keys'); }
+      } catch(e) {}
+
+    }, { timeout: 8000 });
+  }
+
+})();
+</script>
+<!-- ▲▲▲ TSL FINAL PERFORMANCE + UI POLISH PATCH ▲▲▲ -->
