@@ -4537,51 +4537,52 @@ window.mbnSetActive = function() {};
         <div class="tsl-nav-logo-name" style="display:block;line-height:1;">
           <span class="t1" style="
             color:#4f8ef7;
+            font-weight:800;
             text-shadow:
               1px 1px 0 #1a3a8f,
               2px 2px 0 #15317a,
-              3px 3px 0 #102966,
-              3px 4px 6px rgba(10,30,100,0.5),
-              0 -1px 0 rgba(180,215,255,0.5);
+              3px 3px 0 #0d2460;
             display:inline-block;
             transform:translateZ(0);
-            -webkit-font-smoothing:antialiased;">Telugu</span><span class="t2" style="
+            filter:none;
+            -webkit-font-smoothing:antialiased;
+            -moz-osx-font-smoothing:grayscale;">Telugu</span><span class="t2" style="
             color:#f5a623;
+            font-weight:800;
             text-shadow:
               1px 1px 0 #7a4a00,
               2px 2px 0 #643d00,
-              3px 3px 0 #4e3000,
-              3px 4px 6px rgba(80,40,0,0.5),
-              0 -1px 0 rgba(255,235,160,0.55);
+              3px 3px 0 #4e3000;
             display:inline-block;
             transform:translateZ(0);
-            -webkit-font-smoothing:antialiased;">Scoop</span><span class="t3 tsl-logo-live" style="
+            filter:none;
+            -webkit-font-smoothing:antialiased;
+            -moz-osx-font-smoothing:grayscale;">Scoop</span><span class="t3 tsl-logo-live" style="
             color:#ff3a4e;
+            font-weight:800;
             text-shadow:
               1px 1px 0 #8b000d,
               2px 2px 0 #720009,
-              3px 3px 0 #590006,
-              3px 4px 6px rgba(120,0,10,0.5),
-              0 -1px 0 rgba(255,180,190,0.5),
-              0 0 14px rgba(232,25,44,0.3);
+              3px 3px 0 #590006;
             display:inline-block;
             transform:translateZ(0);
-            -webkit-font-smoothing:antialiased;">Live</span>
+            filter:none;
+            -webkit-font-smoothing:antialiased;
+            -moz-osx-font-smoothing:grayscale;">Live</span>
         </div>
         <div class="tsl-nav-logo-tagline" style="
-          color:#1a3a6e;
+          color:#1a2e5a;
           font-weight:800;
-          letter-spacing:0.14em;
+          letter-spacing:0.12em;
           text-transform:uppercase;
-          font-size:8.5px;
-          text-shadow:
-            0 1px 0 rgba(255,255,255,0.9),
-            0 -1px 0 rgba(0,0,0,0.4),
-            1px 0 0 rgba(255,255,255,0.5),
-            -1px 0 0 rgba(0,0,0,0.2),
-            0 0 8px rgba(74,111,200,0.35);
+          font-size:9px;
+          font-style:normal;
+          text-shadow: 0 1px 0 rgba(255,255,255,0.7);
           -webkit-font-smoothing:antialiased;
-          display:block;">Truth in minutes!</div>
+          -moz-osx-font-smoothing:grayscale;
+          filter:none;
+          display:block;
+          margin-top:4px;">Truth in minutes!</div>
       </div>
     </a>
     <div class="nav-actions">
@@ -4908,7 +4909,7 @@ window.mbnSetActive = function() {};
   #tsl-3d-ticker .t3-live-dot { width: 6px; height: 6px; }
   #tsl-3d-ticker .t3-item { font-size: 12px; line-height: 30px; padding: 0 14px; }
   #tsl-3d-ticker .t3-btn { width: 26px; font-size: 8px; }
-  #tsl-3d-ticker .t3-track { animation-duration: 50s; }
+  #tsl-3d-ticker .t3-track { animation-duration: 130s; }
   #tsl-3d-ticker .t3-track-wrap { padding-left: 14px; }
 }
 </style>
@@ -22489,14 +22490,14 @@ window.TeluguRewriter = TeluguRewriter;
   function injectCSS() {
     const css = `
 
-    /* ── Hero height — 500px desktop, responsive on smaller screens ── */
+    /* ── Hero height — controlled by tsl-layout-polish stylesheet ── */
     .hero-main {
-      height: 500px !important;
+      height: 440px;
     }
-    @media (max-width: 1100px) { .hero-main { height: 440px !important; } }
-    @media (max-width: 768px)  { .hero-main { height: auto !important; min-height: 200px !important; } }
-    @media (max-width: 480px)  { .hero-main { height: auto !important; min-height: 185px !important; } }
-    @media (max-width: 360px)  { .hero-main { height: auto !important; min-height: 170px !important; } }
+    @media (max-width: 1100px) { .hero-main { height: 380px; } }
+    @media (max-width: 900px)  { .hero-main { height: 340px; } }
+    @media (max-width: 768px)  { .hero-main { height: 265px; } }
+    @media (max-width: 480px)  { .hero-main { height: 240px; } }
 
     /* Side panel tighten */
     .hero-side-item { padding: 14px 16px !important; }
@@ -25822,199 +25823,591 @@ img:not([src]), img[src=""] { opacity: 0; }
 </script>
 <!-- ▲▲▲ TSL FINAL PERFORMANCE + UI POLISH PATCH ▲▲▲ -->
 
-<!-- ▼▼▼ TSL RENDERING QUALITY FIX — Logo · Tagline · Ticker ▼▼▼ -->
+<!-- ▼▼▼ TSL RENDERING QUALITY FIX v2 — Logo · Tagline · Ticker ▼▼▼ -->
 <style id="tsl-quality-fix">
 
 /* ═══════════════════════════════════════════════════════════════
-   1. LOGO TITLE — crisp 3D text, no blur, sharp sub-pixel render
+   LOGO TEXT COLUMN — GPU layer, zero blur inheritance
    ═══════════════════════════════════════════════════════════════ */
-
-/* Force GPU compositing + sub-pixel AA on the whole logo text column */
 .tsl-nav-logo-text {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0 !important;
+  transform: translateZ(0) !important;
+  backface-visibility: hidden !important;
+  -webkit-backface-visibility: hidden !important;
   -webkit-font-smoothing: antialiased !important;
   -moz-osx-font-smoothing: grayscale !important;
   text-rendering: optimizeLegibility !important;
-  transform: translateZ(0) !important;          /* own compositor layer */
-  backface-visibility: hidden !important;
-  -webkit-backface-visibility: hidden !important;
+  filter: none !important;
 }
 
-/* Site-name wrapper — crisp, no inherited blur */
+/* ── Logo name wrapper ── */
 .tsl-nav-logo-name {
   font-family: 'DM Serif Display', Georgia, serif !important;
-  font-size: 22px !important;
-  font-weight: 700 !important;
+  font-size: 24px !important;          /* slightly larger for clarity */
+  font-weight: 800 !important;
   letter-spacing: 0.01em !important;
   line-height: 1 !important;
   display: block !important;
   white-space: nowrap !important;
-  /* Elevate onto its own paint layer so it never inherits blur */
-  will-change: transform !important;
   transform: translateZ(0) !important;
+  filter: none !important;
   -webkit-font-smoothing: antialiased !important;
   -moz-osx-font-smoothing: grayscale !important;
-  filter: none !important;            /* remove any accidental blur */
 }
 
-/* Telugu — sharp blue 3D */
+/* ── Telugu (blue) — pure pixel-sharp 3D, no blur layers ── */
 .tsl-nav-logo-name .t1 {
   color: #4f8ef7 !important;
+  font-weight: 800 !important;
   text-shadow:
     1px 1px 0 #1a3a8f,
     2px 2px 0 #15317a,
-    3px 3px 0 #102966,
-    0 4px 7px rgba(10,30,100,0.45),
-    0 -1px 0 rgba(180,215,255,0.55) !important;
+    3px 3px 0 #0d2460 !important;
   display: inline-block !important;
   transform: translateZ(0) !important;
-  -webkit-font-smoothing: antialiased !important;
   filter: none !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
 }
 
-/* Scoop — sharp amber 3D */
+/* ── Scoop (amber) — pure pixel-sharp 3D ── */
 .tsl-nav-logo-name .t2 {
   color: #f5a623 !important;
+  font-weight: 800 !important;
   text-shadow:
     1px 1px 0 #7a4a00,
-    2px 2px 0 #643d00,
-    3px 3px 0 #4e3000,
-    0 4px 7px rgba(80,40,0,0.45),
-    0 -1px 0 rgba(255,235,160,0.60) !important;
+    2px 2px 0 #5e3800,
+    3px 3px 0 #3d2400 !important;
   display: inline-block !important;
   transform: translateZ(0) !important;
-  -webkit-font-smoothing: antialiased !important;
   filter: none !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
 }
 
-/* Live — sharp red 3D */
+/* ── Live (red) — pure pixel-sharp 3D, glow kept very tight ── */
 .tsl-nav-logo-name .t3 {
   color: #ff3a4e !important;
+  font-weight: 800 !important;
   text-shadow:
     1px 1px 0 #8b000d,
     2px 2px 0 #720009,
-    3px 3px 0 #590006,
-    0 4px 7px rgba(120,0,10,0.45),
-    0 -1px 0 rgba(255,180,190,0.55),
-    0 0 16px rgba(232,25,44,0.28) !important;
+    3px 3px 0 #550006 !important;
   display: inline-block !important;
   transform: translateZ(0) !important;
-  -webkit-font-smoothing: antialiased !important;
   filter: none !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   2. TAGLINE — clearly visible, sharp, properly spaced
-   ═══════════════════════════════════════════════════════════════ */
+/* Kill the Live glow animation — it causes blur on mobile */
+.tsl-logo-live {
+  animation: none !important;
+}
+
+/* ── Tagline — high contrast, no blur shadow ── */
 .tsl-nav-logo-tagline {
   font-family: 'DM Sans', system-ui, sans-serif !important;
-  font-size: 9.5px !important;
-  font-weight: 700 !important;
-  font-style: italic !important;
-  color: #1e3a5f !important;             /* dark navy — high contrast on white header */
-  letter-spacing: 0.06em !important;
-  text-transform: none !important;
+  font-size: 9px !important;
+  font-weight: 800 !important;
+  font-style: normal !important;
+  color: #1a2e5a !important;
+  letter-spacing: 0.12em !important;
+  text-transform: uppercase !important;
   white-space: nowrap !important;
   display: block !important;
   margin-top: 4px !important;
   line-height: 1.2 !important;
-  /* Subtle emboss — readable, not blurry */
-  text-shadow:
-    0  1px 0 rgba(255,255,255,0.85),
-    0 -1px 0 rgba(0,0,0,0.12),
-    0  0  5px rgba(50,100,200,0.18) !important;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.6) !important;
+  filter: none !important;
   -webkit-font-smoothing: antialiased !important;
   -moz-osx-font-smoothing: grayscale !important;
-  filter: none !important;
 }
 
-/* Mobile tagline — keep visible, slightly smaller */
+/* ── Mobile sizes ── */
 @media (max-width: 768px) {
-  .tsl-nav-logo-tagline {
-    font-size: 9px !important;
-    margin-top: 3px !important;
-    color: #1e3a5f !important;
-    display: block !important;
-  }
-  .tsl-nav-logo-name {
-    font-size: 24px !important;
-  }
+  .tsl-nav-logo-name   { font-size: 26px !important; }
+  .tsl-nav-logo-tagline { font-size: 9px !important; display: block !important; color: #1a2e5a !important; }
+}
+@media (max-width: 480px) {
+  .tsl-nav-logo-name   { font-size: 23px !important; }
+  .tsl-nav-logo-tagline { font-size: 8.5px !important; }
 }
 @media (max-width: 380px) {
-  .tsl-nav-logo-tagline {
-    font-size: 8px !important;
-    letter-spacing: 0.04em !important;
-    display: block !important;
-    color: #1e3a5f !important;
-  }
-  .tsl-nav-logo-name {
-    font-size: 20px !important;
-  }
+  .tsl-nav-logo-name   { font-size: 21px !important; }
+  .tsl-nav-logo-tagline { font-size: 8px !important; letter-spacing: 0.08em !important; }
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   3. BREAKING NEWS TICKER — slow smooth scroll, sharp crisp text
+   BREAKING NEWS TICKER — crisp text, slow readable scroll
+   Root cause of blur: perspective/3d transforms on moving elements
+   Fix: keep translate3d for GPU but strip perspective + filters
    ═══════════════════════════════════════════════════════════════ */
 
-/* Slow the scroll from 90s → 160s for comfortable reading */
+/* Ticker wrapper — no filter, no perspective (causes text blur) */
+#tsl-3d-ticker {
+  filter: none !important;
+  -webkit-filter: none !important;
+  perspective: none !important;
+  -webkit-perspective: none !important;
+}
+
+/* Track wrap — no filter, no mask blur */
+#tsl-3d-ticker .t3-track-wrap {
+  filter: none !important;
+  -webkit-filter: none !important;
+  perspective: none !important;
+}
+
+/* The scrolling track — speed + crisp rendering ONLY, never touch transform */
 #tsl-3d-ticker .t3-track {
-  animation: t3-scroll-crisp 160s linear infinite !important;
-  /* Crisp GPU compositing — no filter, no blur inheritance */
+  animation-name: t3-scroll !important;
+  animation-duration: 160s !important;
+  animation-timing-function: linear !important;
+  animation-iteration-count: infinite !important;
+  animation-play-state: running !important;
+  /* !! DO NOT set transform here — it would freeze the animation !! */
   will-change: transform !important;
-  transform: translate3d(0, 0, 0) !important;
   backface-visibility: hidden !important;
   -webkit-backface-visibility: hidden !important;
-  perspective: 1000px !important;
-  -webkit-perspective: 1000px !important;
+  filter: none !important;
+  -webkit-filter: none !important;
   -webkit-font-smoothing: antialiased !important;
   -moz-osx-font-smoothing: grayscale !important;
-  filter: none !important;           /* remove any blur bleeding from parent */
 }
 #tsl-3d-ticker .t3-track.paused {
   animation-play-state: paused !important;
 }
 
-/* Identical keyframe name avoids fighting the original */
-@keyframes t3-scroll-crisp {
-  0%   { transform: translate3d(0,    0, 0); }
-  100% { transform: translate3d(-50%, 0, 0); }
-}
-
-/* Remove ANY blur effect from ticker items */
+/* Individual ticker items — crisp, white, bold */
 #tsl-3d-ticker .t3-item {
   color: #ffffff !important;
-  font-weight: 600 !important;
+  font-weight: 700 !important;
   font-size: 13.5px !important;
-  filter: none !important;                /* no blur */
-  /* High-contrast readable shadow — no glow smear */
-  text-shadow:
-    0 1px 2px rgba(0,0,0,0.75),
-    0 0 0 transparent !important;        /* remove soft glow blur */
+  text-shadow: 0 1px 1px rgba(0,0,0,0.9) !important;
+  filter: none !important;
+  -webkit-filter: none !important;
   -webkit-font-smoothing: antialiased !important;
   -moz-osx-font-smoothing: grayscale !important;
-  will-change: auto !important;
+  /* !! DO NOT set transform here — it breaks GPU compositing of parent !! */
 }
 
-/* Ticker track wrapper — no filter, no mask blur */
-#tsl-3d-ticker .t3-track-wrap {
-  filter: none !important;
-  -webkit-filter: none !important;
-}
-
-/* Whole ticker — ensure no filter bleeds in */
-#tsl-3d-ticker {
-  filter: none !important;
-  -webkit-filter: none !important;
-}
-
-/* Mobile: slightly slower for smaller viewport */
+/* Mobile ticker — match the 130s set on animation-duration */
 @media (max-width: 600px) {
   #tsl-3d-ticker .t3-track {
     animation-duration: 130s !important;
   }
   #tsl-3d-ticker .t3-item {
-    font-size: 12px !important;
+    font-size: 12.5px !important;
+    font-weight: 700 !important;
   }
 }
 
 </style>
-<!-- ▲▲▲ TSL RENDERING QUALITY FIX ▲▲▲ -->
+<!-- ▲▲▲ TSL RENDERING QUALITY FIX v2 ▲▲▲ -->
+
+<!-- ▼▼▼ TSL LAYOUT & SPACING POLISH — Hero · Sidebar · Grid ▼▼▼ -->
+<style id="tsl-layout-polish">
+
+/* ═══════════════════════════════════════════════════════════════════
+   1. HERO SECTION — Tighter, premium proportions
+      Desktop: 440px  |  Tablet: 380px  |  Mobile: 260px
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Hero grid: 70% main + 30% sidebar, tighter gap */
+.hero {
+  grid-template-columns: 1fr 300px !important;
+  gap: 18px !important;
+  padding: 0 22px !important;
+  margin-top: 14px !important;
+  max-width: 1200px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  align-items: stretch !important;
+}
+
+/* Hero main: fixed crisp height, no overflow */
+.hero-main {
+  height: 440px !important;
+  min-height: 440px !important;
+  border-radius: 16px !important;
+  overflow: hidden !important;
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* Slider container fills hero exactly */
+#hsTrack {
+  height: 100% !important;
+  position: absolute !important;
+  inset: 0 !important;
+}
+
+.hs-frame {
+  height: 100% !important;
+}
+
+.hs-img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+}
+
+/* Fallback static hero image */
+.hero-main > img,
+#heroImg {
+  width: 100% !important;
+  height: 100% !important;
+  max-height: 440px !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+  display: block !important;
+}
+
+/* Text overlay — elevated from bottom with breathing room */
+.hs-box {
+  padding: 28px 28px 56px !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+}
+
+.hs-headline {
+  font-size: 26px !important;
+  line-height: 1.3 !important;
+  margin-bottom: 10px !important;
+}
+
+/* Non-slider hero text content */
+.hero-main-content {
+  padding: 16px 20px 20px !important;
+  background: #fff !important;
+}
+
+.hero-title {
+  font-size: 21px !important;
+  line-height: 1.3 !important;
+  margin-bottom: 8px !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   2. HERO RIGHT SIDEBAR — CricZone / Latest updates
+      Cards: 100px min-height, 88×72px thumbnails, proper spacing
+   ═══════════════════════════════════════════════════════════════════ */
+
+.hero-side {
+  display: flex !important;
+  flex-direction: column !important;
+  background: #fff !important;
+  border-radius: 16px !important;
+  overflow: hidden !important;
+  box-shadow: var(--sh-sm) !important;
+  height: 440px !important;           /* match hero exactly */
+  min-height: 440px !important;
+}
+
+.hero-side-item {
+  flex: 1 !important;
+  display: flex !important;
+  gap: 12px !important;
+  align-items: center !important;     /* vertically centre thumb + text */
+  padding: 14px 16px !important;
+  border-bottom: 1px solid var(--border2) !important;
+  min-height: 100px !important;
+  cursor: pointer !important;
+  transition: background 0.12s !important;
+}
+.hero-side-item:last-child {
+  border-bottom: none !important;
+}
+.hero-side-item:hover {
+  background: rgba(0,0,0,0.025) !important;
+}
+
+/* Larger, cleaner thumbnail */
+.hero-side-img {
+  width: 88px !important;
+  height: 72px !important;
+  min-width: 88px !important;
+  object-fit: cover !important;
+  border-radius: 10px !important;
+  flex-shrink: 0 !important;
+  display: block !important;
+  background: linear-gradient(135deg, #f1f5f9, #e2e8f0) !important;
+}
+
+.hero-side-body {
+  flex: 1 !important;
+  min-width: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  gap: 4px !important;
+}
+
+.hero-side-title {
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  line-height: 1.42 !important;
+  color: var(--text2) !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 3 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+}
+
+.hero-side-meta {
+  font-size: 11px !important;
+  color: var(--muted) !important;
+  margin-top: 2px !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   3. MAIN CONTENT WRAP — Consistent spacing below hero
+   ═══════════════════════════════════════════════════════════════════ */
+
+.main-wrap {
+  max-width: 1200px !important;
+  margin: 20px auto 0 !important;
+  padding: 0 22px 24px !important;
+  grid-template-columns: 1fr 284px !important;
+  gap: 18px !important;
+  align-items: start !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   4. NEWS GRID — Even columns, clean spacing
+   ═══════════════════════════════════════════════════════════════════ */
+
+.news-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 16px !important;
+  margin-bottom: 24px !important;
+  width: 100% !important;
+}
+
+/* News card image — consistent height */
+.news-card-img-wrap {
+  width: 100% !important;
+  aspect-ratio: 16 / 10 !important;
+  overflow: hidden !important;
+  border-radius: 12px 12px 0 0 !important;
+}
+
+.news-card-img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+  display: block !important;
+}
+
+/* Card body breathing room */
+.news-card-body {
+  padding: 14px 16px 16px !important;
+}
+
+/* Section spacing */
+.section-hdr {
+  margin-bottom: 16px !important;
+  padding-bottom: 10px !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   5. EDITORS PICKS — Better grid proportions
+   ═══════════════════════════════════════════════════════════════════ */
+
+.editors-picks-strip {
+  margin-bottom: 24px !important;
+  padding: 22px 24px !important;
+}
+
+.editors-picks-grid {
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 14px !important;
+}
+
+.editors-pick-img {
+  height: 104px !important;
+  width: 100% !important;
+  object-fit: cover !important;
+  border-radius: 10px !important;
+  margin-bottom: 8px !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   6. RIGHT SIDEBAR (main-wrap) — Sticky, clean padding
+   ═══════════════════════════════════════════════════════════════════ */
+
+.sidebar {
+  position: sticky !important;
+  top: 90px !important;
+  align-self: start !important;
+  min-width: 0 !important;
+}
+
+.sidebar-widget {
+  margin-bottom: 16px !important;
+  border-radius: 14px !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   7. TABLET (1024px–768px) — Maintain two-column layout
+   ═══════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 1100px) {
+  .hero {
+    grid-template-columns: 1fr 260px !important;
+    gap: 14px !important;
+    padding: 0 16px !important;
+  }
+  .hero-main {
+    height: 380px !important;
+    min-height: 380px !important;
+  }
+  .hero-side {
+    height: 380px !important;
+    min-height: 380px !important;
+  }
+  .hs-headline {
+    font-size: 22px !important;
+  }
+  .main-wrap {
+    padding: 0 16px 20px !important;
+    gap: 14px !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: 1fr !important;
+    padding: 0 14px !important;
+    gap: 12px !important;
+  }
+  .hero-main {
+    height: 340px !important;
+    min-height: 340px !important;
+  }
+  .hero-side {
+    display: none !important;    /* hidden on small tablet per original design */
+  }
+  .news-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 14px !important;
+  }
+  .editors-picks-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   8. MOBILE (≤ 768px) — Clean, readable, no overlap
+   ═══════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  .hero {
+    grid-template-columns: 1fr !important;
+    margin-top: 10px !important;
+    padding: 0 12px !important;
+    gap: 10px !important;
+  }
+
+  .hero-main {
+    height: 265px !important;
+    min-height: 265px !important;
+    border-radius: 14px !important;
+  }
+
+  .hero-side {
+    display: none !important;
+  }
+
+  /* Slider image: fill the 265px container */
+  #hsTrack,
+  .hs-frame,
+  .hero-main > img,
+  #heroImg {
+    height: 265px !important;
+    max-height: 265px !important;
+  }
+
+  .hs-box {
+    padding: 14px 16px 46px !important;
+  }
+  .hs-headline {
+    font-size: 18px !important;
+    line-height: 1.35 !important;
+    -webkit-line-clamp: 3 !important;
+  }
+
+  .main-wrap {
+    grid-template-columns: 1fr !important;
+    padding: 14px 12px 16px !important;
+    margin-top: 14px !important;
+    gap: 14px !important;
+  }
+
+  .news-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+  }
+
+  .editors-picks-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+  }
+
+  .editors-pick-img {
+    height: 90px !important;
+  }
+
+  .sidebar {
+    display: none !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   9. SMALL PHONES (≤ 480px)
+   ═══════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 480px) {
+  .hero {
+    padding: 0 10px !important;
+    margin-top: 8px !important;
+  }
+  .hero-main {
+    height: 240px !important;
+    min-height: 240px !important;
+    border-radius: 12px !important;
+  }
+  #hsTrack,
+  .hs-frame,
+  .hero-main > img,
+  #heroImg {
+    height: 240px !important;
+    max-height: 240px !important;
+  }
+  .hs-headline {
+    font-size: 16px !important;
+  }
+  .main-wrap {
+    padding: 12px 10px 14px !important;
+    margin-top: 12px !important;
+  }
+  .news-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
+  }
+  .editors-picks-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
+  }
+}
+
+</style>
+<!-- ▲▲▲ TSL LAYOUT & SPACING POLISH ▲▲▲ -->
