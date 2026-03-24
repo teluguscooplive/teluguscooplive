@@ -4387,8 +4387,8 @@ window.mbnSetActive = function() {};
 <!-- Toast Container -->
 <div class="toast-container" id="toastContainer"></div>
 
-<!-- Breaking Ticker -->
-<div class="ticker-bar">
+<!-- Breaking Ticker — data holder (hidden, feeds 3D ticker) -->
+<div class="ticker-bar" style="display:none!important;position:absolute;visibility:hidden;pointer-events:none;" aria-hidden="true">
   <div class="ticker-inner">
     <div class="ticker-label" id="liveRefreshBadge" title="Auto-refreshes every 90s">
       <span class="ticker-dot"></span>
@@ -4399,9 +4399,9 @@ window.mbnSetActive = function() {};
       <div class="ticker-scroll" id="tickerScroll">
         <span class="ticker-item" onclick="App.filterCategory('politics');App.openArticle && App.openArticle(window.DEMO_ARTICLES && DEMO_ARTICLES.find(a=>a.category==='politics')||{title:'అమరావతి ఫేజ్-2: ₹80,000 కోట్ల ప్లాన్ విడుదల',category:'politics',body:'',excerpt:'అమరావతి ఫేజ్-2 మాస్టర్ ప్లాన్ వివరాలు.'})">అమరావతి ఫేజ్-2: ₹80,000 కోట్ల ప్లాన్ విడుదల — చంద్రబాబు</span>
         <span class="ticker-item" onclick="App.filterCategory('cricket');App.openArticle && App.openArticle(window.DEMO_ARTICLES && DEMO_ARTICLES.find(a=>a.category==='cricket')||{title:'IPL 2026: SRH vs MI — హైదరాబాద్‌లో థ్రిల్లర్ ఓపెనర్',category:'cricket',body:'',excerpt:'IPL 2026 ఓపెనింగ్ మ్యాచ్ థ్రిల్లర్.'})">IPL 2026: SRH vs MI — హైదరాబాద్‌లో థ్రిల్లర్ ఓపెనర్</span>
-        <span class="ticker-item" onclick="App.filterCategory('cinema');App.openArticle && App.openArticle(window.DEMO_ARTICLES && DEMO_ARTICLES.find(a=>a.category==='cinema')||{title:\"SSMB29 టైటిల్ 'ఉస్తాద్' కన్ఫర్మ్\",category:'cinema',body:'',excerpt:'రాజమౌళి మహేష్ బాబు చిత్రం టైటిల్.'})">SSMB29 టైటిల్ 'ఉస్తాద్' కన్ఫర్మ్ — రాజమౌళి + మహేష్</span>
+        <span class="ticker-item" onclick="App.filterCategory('cinema');App.openArticle && App.openArticle(window.DEMO_ARTICLES && DEMO_ARTICLES.find(a=>a.category===&apos;cinema&apos;)||{title:'SSMB29 టైటిల్ ఉస్తాద్ కన్ఫర్మ్',category:'cinema',body:'',excerpt:'రాజమౌళి మహేష్ బాబు చిత్రం టైటిల్.'})">SSMB29 టైటిల్ 'ఉస్తాద్' కన్ఫర్మ్ — రాజమౌళి + మహేష్</span>
         <span class="ticker-item" onclick="App.filterCategory('telangana');App.openArticle && App.openArticle(window.DEMO_ARTICLES && DEMO_ARTICLES.find(a=>a.category==='telangana')||{title:'TGPSC Group-1 2026: 800 పోస్టులు',category:'telangana',body:'',excerpt:'TGPSC నోటిఫికేషన్ వివరాలు.'})">TGPSC Group-1 2026: 800 పోస్టులు — దరఖాస్తు మార్చి 31 వరకు</span>
-        <span class="ticker-item" onclick="App.filterCategory('cinema');App.openArticle && App.openArticle(window.DEMO_ARTICLES && DEMO_ARTICLES.find(a=>a.title&&a.title.includes('పుష్ప'))||{title:\"పుష్ప 3 'ది రాంపేజ్' షూటింగ్ స్టార్ట్\",category:'cinema',body:'',excerpt:'అల్లు అర్జున్ పుష్ప 3 షూటింగ్ వివరాలు.'})">పుష్ప 3 'ది రాంపేజ్' షూటింగ్ స్టార్ట్ — అల్లు అర్జున్</span>
+        <span class="ticker-item" onclick="App.filterCategory('cinema');App.openArticle && App.openArticle(window.DEMO_ARTICLES && DEMO_ARTICLES.find(a=>a.title&&a.title.includes('పుష్ప'))||{title:'పుష్ప 3 ది రాంపేజ్ షూటింగ్ స్టార్ట్',category:'cinema',body:'',excerpt:'అల్లు అర్జున్ పుష్ప 3 షూటింగ్ వివరాలు.'})">పుష్ప 3 'ది రాంపేజ్' షూటింగ్ స్టార్ట్ — అల్లు అర్జున్</span>
         <span class="ticker-item" onclick="App.filterCategory('cricket');App.openArticle && App.openArticle(window.DEMO_ARTICLES && DEMO_ARTICLES.filter(a=>a.category==='cricket')[1]||{title:'భారత్ SA పై 3-0 ODI సిరీస్ విజయం',category:'cricket',body:'',excerpt:'భారత్ క్లీన్ స్వీప్ విజయం.'})">భారత్ SA పై 3-0 ODI సిరీస్ విజయం — షుబ్మన్ గిల్ ప్లేయర్ ఆఫ్ సిరీస్</span>
       </div>
     </div>
@@ -4413,59 +4413,175 @@ window.mbnSetActive = function() {};
   <div class="nav-top">
     <!-- ── SITE LOGO — left-aligned, single instance ── -->
     <a class="tsl-nav-logo" onclick="App.filterCategory('home')" style="cursor:pointer;text-decoration:none;" title="TeluguScoopLive — Home">
-      <!-- AI-Generated Logo matching screenshot: dark navy pill with sun+book+arrow icon and TS text -->
-      <svg class="tsl-nav-logo-img" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg" style="height:52px;width:52px;flex-shrink:0;">
+      <!-- 3D Premium Logo -->
+      <svg class="tsl-nav-logo-img" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg" style="height:52px;width:52px;flex-shrink:0;filter:drop-shadow(0 4px 12px rgba(0,0,0,0.55)) drop-shadow(0 1px 3px rgba(0,0,0,0.8));">
         <defs>
-          <linearGradient id="navBg" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" style="stop-color:#1a2f5e;stop-opacity:1" />
-            <stop offset="100%" style="stop-color:#0d1f3c;stop-opacity:1" />
+          <!-- 3D face gradient: top-left lit, bottom-right dark -->
+          <linearGradient id="navBg3d" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%"   stop-color="#2a4a8a"/>
+            <stop offset="40%"  stop-color="#1a3060"/>
+            <stop offset="100%" stop-color="#080f24"/>
           </linearGradient>
-          <linearGradient id="arrowGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:1" />
-            <stop offset="100%" style="stop-color:#fbbf24;stop-opacity:1" />
+          <!-- Side/extrusion face — much darker -->
+          <linearGradient id="navSide3d" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%"   stop-color="#050c1e"/>
+            <stop offset="100%" stop-color="#0a1530"/>
           </linearGradient>
-          <linearGradient id="bookGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
-            <stop offset="100%" style="stop-color:#e8f0ff;stop-opacity:1" />
+          <!-- Top edge highlight -->
+          <linearGradient id="navTop3d" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%"   stop-color="#4a6fa5"/>
+            <stop offset="50%"  stop-color="#6a8fc5"/>
+            <stop offset="100%" stop-color="#3a5a95"/>
           </linearGradient>
+          <!-- Gold gradient for arrow -->
+          <linearGradient id="arrowG3d" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%"   stop-color="#f5c842"/>
+            <stop offset="100%" stop-color="#fde68a"/>
+          </linearGradient>
+          <!-- Sun glow -->
+          <radialGradient id="sunGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%"   stop-color="#ffe066"/>
+            <stop offset="60%"  stop-color="#f59e0b"/>
+            <stop offset="100%" stop-color="#d97706" stop-opacity="0"/>
+          </radialGradient>
+          <!-- Inner bevel light on face -->
+          <linearGradient id="faceBevel" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%"   stop-color="rgba(255,255,255,0.12)"/>
+            <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
+          </linearGradient>
+          <!-- Book page gradient -->
+          <linearGradient id="bookG3d" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%"   stop-color="#e8f0ff"/>
+            <stop offset="100%" stop-color="#b8c8e8"/>
+          </linearGradient>
+          <filter id="innerShadow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="1" result="blur"/>
+            <feOffset dx="0.5" dy="1"/>
+            <feComposite in2="SourceGraphic" operator="arithmetic" k2="-1" k3="1"/>
+          </filter>
         </defs>
-        <!-- Background -->
-        <rect width="56" height="56" rx="13" fill="url(#navBg)"/>
-        <!-- Sun rays -->
-        <g transform="translate(28,13)" stroke="#f59e0b" stroke-width="1.4" stroke-linecap="round">
-          <line x1="0" y1="-6.5" x2="0" y2="-9.5"/>
-          <line x1="4.6" y1="-4.6" x2="6.7" y2="-6.7"/>
-          <line x1="6.5" y1="0" x2="9.5" y2="0"/>
-          <line x1="-4.6" y1="-4.6" x2="-6.7" y2="-6.7"/>
-          <line x1="-6.5" y1="0" x2="-9.5" y2="0"/>
+
+        <!-- ── 3D EXTRUSION SIDES (drawn first, behind face) ── -->
+        <!-- Bottom-right side face — darkest (opposite light source) -->
+        <path d="M4 14 L8 18 L8 46 L4 42 Z" fill="url(#navSide3d)" opacity="0.9"/>
+        <path d="M4 42 L8 46 L50 46 L46 42 Z" fill="#04091a" opacity="0.95"/>
+        <!-- Right side -->
+        <path d="M46 14 L50 10 L50 46 L46 42 Z" fill="#06102a" opacity="0.85"/>
+
+        <!-- ── MAIN FACE ── -->
+        <rect x="4" y="4" width="48" height="48" rx="11" fill="url(#navBg3d)"/>
+        <!-- Inner bevel: top-left highlight -->
+        <rect x="4" y="4" width="48" height="48" rx="11" fill="url(#faceBevel)"/>
+
+        <!-- Top lit edge -->
+        <path d="M15 4 Q4 4 4 15 L4 5 Q4 4 5 4 Z" fill="rgba(255,255,255,0.08)"/>
+        <path d="M4 4 L52 4 L50 6 L6 6 Z" fill="rgba(255,255,255,0.14)" rx="2"/>
+
+        <!-- ── SUN — with glow halo ── -->
+        <circle cx="28" cy="14" r="8" fill="url(#sunGlow)" opacity="0.25"/>
+        <g transform="translate(28,14)" stroke="#fbbf24" stroke-width="1.5" stroke-linecap="round" opacity="0.9">
+          <line x1="0" y1="-6" x2="0" y2="-9"/>
+          <line x1="4.2" y1="-4.2" x2="6.4" y2="-6.4"/>
+          <line x1="6" y1="0" x2="9" y2="0"/>
+          <line x1="-4.2" y1="-4.2" x2="-6.4" y2="-6.4"/>
+          <line x1="-6" y1="0" x2="-9" y2="0"/>
         </g>
-        <!-- Sun semicircle (rising) -->
-        <path d="M21 13 A7 7 0 0 1 35 13" fill="#f59e0b" opacity="0.95"/>
-        <circle cx="28" cy="13" r="4.5" fill="#f59e0b"/>
-        <!-- Book — WHITE pages, light sky-blue covers -->
-        <!-- Left cover -->
-        <path d="M10 27 Q19 23.5 28 27 L28 40 Q19 36.5 10 40 Z" fill="url(#bookGrad)" stroke="#c8d8f0" stroke-width="0.4"/>
-        <!-- Right cover -->
-        <path d="M28 27 Q37 23.5 46 27 L46 40 Q37 36.5 28 40 Z" fill="url(#bookGrad)" stroke="#c8d8f0" stroke-width="0.4"/>
-        <!-- Book base shadow -->
-        <path d="M10 40 Q28 43 46 40 L46 41.5 Q28 44.5 10 41.5 Z" fill="#c8d8f0" opacity="0.5"/>
-        <!-- Center spine -->
-        <line x1="28" y1="27" x2="28" y2="40" stroke="#b0c4de" stroke-width="0.7"/>
-        <!-- Page lines on left -->
-        <line x1="14" y1="31" x2="26" y2="29.5" stroke="#c0cfea" stroke-width="0.5" stroke-linecap="round"/>
-        <line x1="14" y1="34" x2="26" y2="32.5" stroke="#c0cfea" stroke-width="0.5" stroke-linecap="round"/>
-        <!-- Page lines on right -->
-        <line x1="30" y1="29.5" x2="42" y2="31" stroke="#c0cfea" stroke-width="0.5" stroke-linecap="round"/>
-        <line x1="30" y1="32.5" x2="42" y2="34" stroke="#c0cfea" stroke-width="0.5" stroke-linecap="round"/>
-        <!-- Upward trending arrow -->
-        <polyline points="15,38 22,31 30,35 41,23" fill="none" stroke="url(#arrowGrad)" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
-        <polyline points="37,21 41,23 39,27" fill="none" stroke="url(#arrowGrad)" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
-        <!-- TS label -->
-        <text x="28" y="52.5" text-anchor="middle" font-family="Georgia,serif" font-size="9.5" font-weight="700" fill="#e2c97e" letter-spacing="1.5">TS</text>
+        <path d="M21.5 14 A6.5 6.5 0 0 1 34.5 14" fill="#f5c842"/>
+        <circle cx="28" cy="14" r="4.5" fill="#fde68a"/>
+        <circle cx="28" cy="14" r="4.5" fill="url(#sunGlow)" opacity="0.4"/>
+        <!-- Sun specular -->
+        <circle cx="26.5" cy="12.5" r="1.5" fill="rgba(255,255,255,0.55)"/>
+
+        <!-- ── BOOK — 3D open book with depth ── -->
+        <!-- Book shadow beneath -->
+        <ellipse cx="28" cy="41.5" rx="17" ry="2" fill="rgba(0,0,0,0.4)"/>
+        <!-- Left page — slight angle for 3D -->
+        <path d="M11 28 Q19.5 24.5 28 28 L28 40 Q19.5 36.5 11 40 Z" fill="url(#bookG3d)" stroke="#8aabcc" stroke-width="0.5"/>
+        <!-- Right page -->
+        <path d="M28 28 Q36.5 24.5 45 28 L45 40 Q36.5 36.5 28 40 Z" fill="url(#bookG3d)" stroke="#8aabcc" stroke-width="0.5"/>
+        <!-- Page edge depth on left -->
+        <path d="M11 40 Q11 41 12 41 Q20 37.5 28 41 L28 40 Q19.5 36.5 11 40 Z" fill="#8aabcc" opacity="0.6"/>
+        <!-- Page edge depth on right -->
+        <path d="M28 40 Q36.5 36.5 45 40 L45 41 Q36.5 37.5 28 41 Z" fill="#8aabcc" opacity="0.6"/>
+        <!-- Center spine highlight -->
+        <line x1="28" y1="28" x2="28" y2="40" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
+        <!-- Left page lines -->
+        <line x1="14.5" y1="31.5" x2="26" y2="30" stroke="rgba(100,140,200,0.5)" stroke-width="0.6"/>
+        <line x1="14.5" y1="34.5" x2="26" y2="33" stroke="rgba(100,140,200,0.5)" stroke-width="0.6"/>
+        <!-- Right page lines -->
+        <line x1="30" y1="30" x2="41.5" y2="31.5" stroke="rgba(100,140,200,0.5)" stroke-width="0.6"/>
+        <line x1="30" y1="33" x2="41.5" y2="34.5" stroke="rgba(100,140,200,0.5)" stroke-width="0.6"/>
+
+        <!-- ── ARROW — gold with drop shadow ── -->
+        <polyline points="14,38 21,31 29,35 40,23" fill="none" stroke="rgba(0,0,0,0.4)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <polyline points="14,38 21,31 29,35 40,23" fill="none" stroke="url(#arrowG3d)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <polyline points="36,21 40,23 38,27" fill="none" stroke="url(#arrowG3d)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- Arrow highlight -->
+        <polyline points="14,38 21,31 29,35 40,23" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
+
+        <!-- ── TS TEXT — embossed ── -->
+        <!-- Shadow layer -->
+        <text x="29" y="53" text-anchor="middle" font-family="Georgia,serif" font-size="9" font-weight="700" fill="#000" opacity="0.6" letter-spacing="2">TS</text>
+        <!-- Main layer -->
+        <text x="28" y="52" text-anchor="middle" font-family="Georgia,serif" font-size="9" font-weight="700" fill="#e2c97e" letter-spacing="2">TS</text>
+        <!-- Highlight layer -->
+        <text x="27.5" y="51.5" text-anchor="middle" font-family="Georgia,serif" font-size="9" font-weight="700" fill="rgba(255,240,180,0.4)" letter-spacing="2">TS</text>
+
+        <!-- ── OUTER BEVEL RING — top-left bright, bottom-right dark ── -->
+        <rect x="4" y="4" width="48" height="48" rx="11" fill="none"
+              stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+        <rect x="4" y="4" width="48" height="48" rx="11" fill="none"
+              stroke="rgba(0,0,0,0.5)" stroke-width="0.5" stroke-dasharray="30 100" stroke-dashoffset="-65"/>
       </svg>
       <div class="tsl-nav-logo-text">
-        <div class="tsl-nav-logo-name"><span class="t1">Telugu</span><span class="t2">Scoop</span><span class="t3">Live</span></div>
-        <div class="tsl-nav-logo-tagline">Truth in minutes!</div>
+        <div class="tsl-nav-logo-name" style="display:block;line-height:1;">
+          <span class="t1" style="
+            color:#4f8ef7;
+            text-shadow:
+              1px 1px 0 #1a3a8f,
+              2px 2px 0 #15317a,
+              3px 3px 0 #102966,
+              3px 4px 6px rgba(10,30,100,0.5),
+              0 -1px 0 rgba(180,215,255,0.5);
+            display:inline-block;
+            transform:translateZ(0);
+            -webkit-font-smoothing:antialiased;">Telugu</span><span class="t2" style="
+            color:#f5a623;
+            text-shadow:
+              1px 1px 0 #7a4a00,
+              2px 2px 0 #643d00,
+              3px 3px 0 #4e3000,
+              3px 4px 6px rgba(80,40,0,0.5),
+              0 -1px 0 rgba(255,235,160,0.55);
+            display:inline-block;
+            transform:translateZ(0);
+            -webkit-font-smoothing:antialiased;">Scoop</span><span class="t3 tsl-logo-live" style="
+            color:#ff3a4e;
+            text-shadow:
+              1px 1px 0 #8b000d,
+              2px 2px 0 #720009,
+              3px 3px 0 #590006,
+              3px 4px 6px rgba(120,0,10,0.5),
+              0 -1px 0 rgba(255,180,190,0.5),
+              0 0 14px rgba(232,25,44,0.3);
+            display:inline-block;
+            transform:translateZ(0);
+            -webkit-font-smoothing:antialiased;">Live</span>
+        </div>
+        <div class="tsl-nav-logo-tagline" style="
+          color:#1a3a6e;
+          font-weight:800;
+          letter-spacing:0.14em;
+          text-transform:uppercase;
+          font-size:8.5px;
+          text-shadow:
+            0 1px 0 rgba(255,255,255,0.9),
+            0 -1px 0 rgba(0,0,0,0.4),
+            1px 0 0 rgba(255,255,255,0.5),
+            -1px 0 0 rgba(0,0,0,0.2),
+            0 0 8px rgba(74,111,200,0.35);
+          -webkit-font-smoothing:antialiased;
+          display:block;">Truth in minutes!</div>
       </div>
     </a>
     <div class="nav-actions">
@@ -4544,276 +4660,319 @@ window.mbnSetActive = function() {};
 
 <!-- HERO SECTION -->
 
-<!-- ═══ PREMIUM BREAKING NEWS TICKER ═══ -->
+<!-- ═══ 3D PREMIUM BREAKING NEWS TICKER ═══ -->
 <style>
-/* ── Premium Breaking Ticker ───────────────────────── */
-#tsl-breaking-ticker {
+/* ─────────────────────────────────────────────────────────────────
+   TSL 3D BREAKING TICKER  —  single source of truth
+   Position: immediately after navbar (replaces all previous tickers)
+───────────────────────────────────────────────────────────────── */
+
+/* Wrapper — full width, no margins, zero gap to navbar */
+#tsl-3d-ticker {
+  position: relative;
   width: 100%;
   max-width: 100vw;
   box-sizing: border-box;
-  background: linear-gradient(90deg, #0369a1 0%, #0284c7 50%, #0ea5e9 100%);
-  border-bottom: 2px solid rgba(255,255,255,0.12);
+  height: 38px;
   display: flex;
   align-items: stretch;
-  height: 30px;
   overflow: hidden;
-  position: relative;
-  box-shadow: 0 1px 4px rgba(3,105,161,0.2);
-  z-index: 10;
+  z-index: 200;
   margin: 0;
   padding: 0;
+  /* ── 3D depth background ── */
+  background:
+    linear-gradient(180deg,
+      #1a0000 0%,
+      #8B0000 18%,
+      #C0001A 45%,
+      #E8192C 65%,
+      #C0001A 82%,
+      #8B0000 100%);
+  /* Top highlight edge */
+  border-top: 1px solid rgba(255,160,160,0.35);
+  /* Deep bottom shadow for 3D lift */
+  box-shadow:
+    0 1px 0 rgba(255,100,100,0.25) inset,
+    0 -1px 0 rgba(0,0,0,0.55) inset,
+    0 3px 12px rgba(140,0,10,0.55),
+    0 6px 28px rgba(0,0,0,0.35);
 }
 
-/* BREAKING label badge */
-#tsl-breaking-ticker .tbt-label {
+/* ── BREAKING badge — 3D embossed pill ── */
+#tsl-3d-ticker .t3-badge {
   flex-shrink: 0;
-  background: #E8192C;
-  color: #fff;
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  padding: 0 12px 0 16px;
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 7px;
+  padding: 0 20px 0 16px;
+  background:
+    linear-gradient(180deg, #1a0000 0%, #3d0000 40%, #1a0000 100%);
+  border-right: none;
   white-space: nowrap;
-  position: relative;
-  z-index: 2;
-  /* Chevron right edge */
+  z-index: 3;
+  /* 3D bevel */
+  box-shadow:
+    1px 0 0 rgba(255,80,80,0.2),
+    inset 0 1px 0 rgba(255,120,120,0.15),
+    inset 0 -1px 0 rgba(0,0,0,0.4);
 }
-#tsl-breaking-ticker .tbt-label::after {
+
+/* Angled chevron divider */
+#tsl-3d-ticker .t3-badge::after {
   content: '';
   position: absolute;
-  right: -10px;
+  right: -16px;
   top: 0;
   width: 0;
   height: 0;
-  border-top: 30px solid #E8192C;
-  border-right: 10px solid transparent;
+  border-top: 38px solid #1a0000;
+  border-right: 16px solid transparent;
+  z-index: 4;
+  /* filter removed — drop-shadow bleeds onto adjacent composited layers */
 }
 
 /* Pulsing live dot */
-#tsl-breaking-ticker .tbt-dot {
-  width: 6px;
-  height: 6px;
-  background: #fff;
+#tsl-3d-ticker .t3-live-dot {
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
+  background: #ff4d4d;
+  box-shadow:
+    0 0 0 0 rgba(255,77,77,0.7),
+    0 0 6px rgba(255,77,77,0.9);
+  animation: t3-pulse 1.6s ease-in-out infinite;
   flex-shrink: 0;
-  margin: 0 8px 0 18px;
-  animation: tbt-pulse 1.4s ease-in-out infinite;
-  opacity: 0.85;
-  align-self: center;
 }
-@keyframes tbt-pulse {
-  0%, 100% { transform: scale(1);   opacity: 0.85; }
-  50%       { transform: scale(1.6); opacity: 0.4;  }
+@keyframes t3-pulse {
+  0%  { box-shadow: 0 0 0 0 rgba(255,77,77,0.8), 0 0 6px rgba(255,77,77,0.9); }
+  60% { box-shadow: 0 0 0 6px rgba(255,77,77,0), 0 0 10px rgba(255,77,77,0.6); }
+  100%{ box-shadow: 0 0 0 0 rgba(255,77,77,0),   0 0 6px rgba(255,77,77,0.9); }
 }
 
-/* Scrolling track wrapper — takes all remaining space */
-#tsl-breaking-ticker .tbt-track-wrap {
+/* BREAKING text */
+#tsl-3d-ticker .t3-badge-text {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 10.5px;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow:
+    0 1px 3px rgba(0,0,0,0.8),
+    0 0 12px rgba(255,100,100,0.5);
+}
+
+/* ── Scrolling track ── */
+#tsl-3d-ticker .t3-track-wrap {
   flex: 1;
-  min-width: 0;          /* critical — prevents flex overflow */
+  min-width: 0;
   overflow: hidden;
-  position: relative;
   display: flex;
   align-items: center;
-  /* Fade edges */
-  mask-image: linear-gradient(90deg, transparent 0%, #000 3%, #000 97%, transparent 100%);
-  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 3%, #000 97%, transparent 100%);
+  padding-left: 20px;
+  /* NO mask — mask-image causes compositor blur on moving layers */
 }
-#tsl-breaking-ticker .tbt-track {
-  display: inline-flex;
-  align-items: center;
-  white-space: nowrap;
-  animation: tbt-scroll 120s linear infinite;
-  will-change: transform;
-}
-#tsl-breaking-ticker .tbt-track:hover { animation-play-state: paused; }
 
-@keyframes tbt-scroll {
-  0%   { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+#tsl-3d-ticker .t3-track {
+  display: block;          /* block avoids inline-flex sub-pixel gaps */
+  white-space: nowrap;
+  /* ── Crisp GPU path: integer pixel anchor, no filter inheritance ── */
+  animation: t3-scroll 90s linear infinite;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  perspective: 1000px;
+  -webkit-perspective: 1000px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+#tsl-3d-ticker .t3-track.paused { animation-play-state: paused; }
+
+@keyframes t3-scroll {
+  0%   { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
 }
 
 /* Individual headline */
-#tsl-breaking-ticker .tbt-item {
-  display: inline-flex;
-  align-items: center;
+#tsl-3d-ticker .t3-item {
+  display: inline-block;   /* inline-block keeps text on pixel grid */
+  vertical-align: middle;
   color: #fff;
-  font-size: 13px;
+  font-family: 'Noto Sans Telugu', 'DM Sans', system-ui, sans-serif;
+  font-size: 13.5px;
   font-weight: 600;
-  letter-spacing: 0.01em;
-  padding: 0 32px;
+  letter-spacing: 0.012em;
+  line-height: 38px;
+  padding: 0 28px;
   cursor: pointer;
   white-space: nowrap;
-  transition: opacity 0.15s, background 0.15s;
-  line-height: 30px;
-  font-family: 'Noto Sans Telugu', 'DM Sans', system-ui, sans-serif;
+  /* Subtle embossed text depth */
+  text-shadow:
+    0 1px 2px rgba(0,0,0,0.6),
+    0 0 8px rgba(255,200,200,0.08);
+  transition: color 0.18s, text-shadow 0.18s;
   border-radius: 2px;
 }
-#tsl-breaking-ticker .tbt-item:hover {
-  opacity: 0.85;
+#tsl-3d-ticker .t3-item:hover {
+  color: #ffe0e0;
+  text-shadow:
+    0 1px 4px rgba(0,0,0,0.7),
+    0 0 14px rgba(255,180,180,0.4);
   text-decoration: underline;
-  text-underline-offset: 2px;
-  background: rgba(255,255,255,0.08);
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
 }
 
 /* Diamond separator */
-#tsl-breaking-ticker .tbt-sep {
-  color: rgba(255,255,255,0.3);
-  font-size: 8px;
+#tsl-3d-ticker .t3-sep {
+  color: rgba(255,255,255,0.22);
+  font-size: 7px;
   flex-shrink: 0;
   user-select: none;
   padding: 0 2px;
+  text-shadow: none;
 }
 
-/* Pause button — right edge */
-#tsl-breaking-ticker .tbt-pause {
+/* ── Pause / Play button ── */
+#tsl-3d-ticker .t3-btn {
   flex-shrink: 0;
-  width: 30px;
+  width: 34px;
   height: 100%;
-  background: rgba(0,0,0,0.18);
   border: none;
-  border-left: 1px solid rgba(255,255,255,0.1);
-  color: rgba(255,255,255,0.65);
+  background:
+    linear-gradient(180deg, rgba(0,0,0,0.22) 0%, rgba(0,0,0,0.35) 100%);
+  border-left: 1px solid rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.55);
   font-size: 9px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.15s;
+  transition: background 0.15s, color 0.15s;
+  box-shadow: inset 1px 0 0 rgba(255,255,255,0.05);
 }
-#tsl-breaking-ticker .tbt-pause:hover {
-  background: rgba(0,0,0,0.3);
+#tsl-3d-ticker .t3-btn:hover {
+  background: rgba(0,0,0,0.45);
   color: #fff;
 }
 
-/* ── DESKTOP — align with navbar container ── */
+/* ── Top specular highlight line (3D shine) ── */
+#tsl-3d-ticker::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(255,150,150,0.45) 20%,
+    rgba(255,220,220,0.6) 50%,
+    rgba(255,150,150,0.45) 80%,
+    transparent 100%);
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* ── Bottom shadow line ── */
+#tsl-3d-ticker::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(0,0,0,0.6);
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* ── RESPONSIVE ── */
 @media (min-width: 1024px) {
-  #tsl-breaking-ticker {
-    height: 30px;
-  }
-  #tsl-breaking-ticker .tbt-item { font-size: 13px; }
-  #tsl-breaking-ticker .tbt-label { padding: 0 14px 0 20px; font-size: 10px; }
+  #tsl-3d-ticker { height: 38px; }
+  #tsl-3d-ticker .t3-item { font-size: 13.5px; line-height: 38px; }
 }
-
-/* ── TABLET ── */
 @media (min-width: 601px) and (max-width: 1023px) {
-  #tsl-breaking-ticker { height: 30px; }
-  #tsl-breaking-ticker .tbt-label::after { border-top-width: 30px; }
-  #tsl-breaking-ticker .tbt-item { font-size: 12.5px; padding: 0 20px; line-height: 30px; }
+  #tsl-3d-ticker { height: 35px; }
+  #tsl-3d-ticker .t3-badge::after { border-top-width: 35px; }
+  #tsl-3d-ticker .t3-item { font-size: 13px; line-height: 35px; padding: 0 22px; }
 }
-
-/* ── MOBILE ── */
 @media (max-width: 600px) {
-  #tsl-breaking-ticker {
-    height: 28px;
-  }
-  #tsl-breaking-ticker .tbt-label {
-    font-size: 9px;
-    padding: 0 8px 0 10px;
-    letter-spacing: 0.06em;
-  }
-  #tsl-breaking-ticker .tbt-label::after {
-    border-top-width: 28px;
-    right: -8px;
-    border-right-width: 8px;
-  }
-  #tsl-breaking-ticker .tbt-dot {
-    width: 5px;
-    height: 5px;
-    margin: 0 6px 0 12px;
-  }
-  #tsl-breaking-ticker .tbt-item {
-    font-size: 12px;
-    padding: 0 12px;
-    line-height: 28px;
-  }
-  #tsl-breaking-ticker .tbt-pause {
-    width: 24px;
-    font-size: 8px;
-  }
-  #tsl-breaking-ticker .tbt-track {
-    animation-duration: 35s;
-  }
+  #tsl-3d-ticker { height: 30px; }
+  #tsl-3d-ticker .t3-badge { padding: 0 12px 0 10px; }
+  #tsl-3d-ticker .t3-badge::after { border-top-width: 30px; right: -12px; border-right-width: 12px; }
+  #tsl-3d-ticker .t3-badge-text { font-size: 9px; letter-spacing: 0.12em; }
+  #tsl-3d-ticker .t3-live-dot { width: 6px; height: 6px; }
+  #tsl-3d-ticker .t3-item { font-size: 12px; line-height: 30px; padding: 0 14px; }
+  #tsl-3d-ticker .t3-btn { width: 26px; font-size: 8px; }
+  #tsl-3d-ticker .t3-track { animation-duration: 50s; }
+  #tsl-3d-ticker .t3-track-wrap { padding-left: 14px; }
 }
 </style>
 
-<div id="tsl-breaking-ticker">
-  <div class="tbt-label">
-    🔴 Breaking
+<div id="tsl-3d-ticker" role="marquee" aria-label="Breaking news ticker" aria-live="polite">
+  <div class="t3-badge">
+    <span class="t3-live-dot" aria-hidden="true"></span>
+    <span class="t3-badge-text">Breaking</span>
   </div>
-  <div class="tbt-dot"></div>
-  <div class="tbt-track-wrap">
-    <div class="tbt-track" id="tbtTrack">
-      <!-- Items injected by JS below — fallback shown until JS runs -->
-      <span class="tbt-item" id="tbtFallback">తాజా వార్తలు లోడ్ అవుతున్నాయి...</span>
+  <div class="t3-track-wrap">
+    <div class="t3-track" id="t3Track">
+      <span class="t3-item">తాజా వార్తలు లోడ్ అవుతున్నాయి...</span>
     </div>
   </div>
-  <button class="tbt-pause" id="tbtPauseBtn" title="Pause scrolling to read" onclick="(function(btn){var t=document.getElementById('tbtTrack');var p=t.style.animationPlayState==='paused';t.style.animationPlayState=p?'running':'paused';btn.textContent=p?'⏸':'▶';btn.title=p?'Pause scrolling to read':'Resume scrolling';})(this)">⏸</button>
+  <button class="t3-btn" id="t3PauseBtn" title="Pause / resume ticker" aria-label="Pause ticker">⏸</button>
 </div>
 
 <script>
-// Premium ticker — waits for loadBreakingTicker to populate tickerScroll, then mirrors it
-(function() {
-  function buildTicker(items) {
-    var track = document.getElementById('tbtTrack');
+(function () {
+  'use strict';
+
+  var track   = document.getElementById('t3Track');
+  var pauseBtn = document.getElementById('t3PauseBtn');
+  var paused  = false;
+
+  // Toggle pause on button click
+  if (pauseBtn) {
+    pauseBtn.addEventListener('click', function () {
+      paused = !paused;
+      track.classList.toggle('paused', paused);
+      pauseBtn.textContent = paused ? '▶' : '⏸';
+      pauseBtn.title = paused ? 'Resume ticker' : 'Pause ticker';
+    });
+  }
+
+  // Build track items — duplicated for seamless infinite loop
+  function buildTrack(items) {
     if (!track || !items || !items.length) return;
-    var all = items.concat(items);
-    track.innerHTML = all.map(function(item) {
-      var title   = (item.title || '').substring(0, 100);
+    var double = items.concat(items);
+    track.innerHTML = double.map(function (item) {
+      var title   = (item.title || '').substring(0, 110);
       var id      = item.id || '';
-      var onclick = id ? 'App&&App.openArticleById&&App.openArticleById(\'' + id + '\')' : '';
-      return '<span class="tbt-item"' + (onclick ? ' onclick="' + onclick + '"' : '') + '>'
-           + title + '</span><span class="tbt-sep">◆</span>';
+      var onclick = id
+        ? 'App&&App.openArticleById&&App.openArticleById(\'' + id + '\')'
+        : '';
+      return '<span class="t3-item"' + (onclick ? ' onclick="' + onclick + '"' : '') + '>'
+           + title + '</span><span class="t3-sep" aria-hidden="true">◆</span>';
     }).join('');
   }
 
-  // Called directly by loadBreakingTicker after Supabase fetch
-  window._updatePremiumTicker = buildTicker;
+  // Expose so loadBreakingTicker can call directly — only real Supabase data flows here
+  window._updatePremiumTicker = buildTrack;
 
-  // Also poll tickerScroll — loadBreakingTicker updates it with real articles
-  // This handles the case where Supabase loads successfully
-  var _prev = '';
-  var _polls = 0;
-  var _t = setInterval(function() {
-    _polls++;
-
-    // 1. Use _tickerArticles if set by loadBreakingTicker
+  // Wait for loadBreakingTicker to set _tickerArticles (Supabase data only)
+  // No fallback to demo HTML — if Supabase isn't connected, ticker stays at loading state
+  var polls = 0;
+  var timer = setInterval(function () {
+    polls++;
     if (window._tickerArticles && window._tickerArticles.length) {
-      clearInterval(_t);
-      buildTicker(window._tickerArticles);
+      clearInterval(timer);
+      buildTrack(window._tickerArticles);
       return;
     }
-
-    // 2. Watch tickerScroll — when loadBreakingTicker replaces its content
-    //    with real articles, mirror those into the premium ticker
-    var tickerScroll = document.getElementById('tickerScroll');
-    if (tickerScroll) {
-      var items = tickerScroll.querySelectorAll('.ticker-item');
-      var currentText = tickerScroll.innerText || '';
-      // Only use if content changed from initial demo AND has real items
-      if (items.length > 0 && currentText !== _prev && _polls > 5) {
-        _prev = currentText;
-        // Check if these are real Supabase items (loadBreakingTicker sets data-duped)
-        if (tickerScroll.dataset.duped === '1') {
-          clearInterval(_t);
-          var mapped = [];
-          // Get unique items (first half before duplication)
-          var allItems = Array.from(items);
-          var half = Math.ceil(allItems.length / 2);
-          allItems.slice(0, half).forEach(function(el) {
-            // Extract article ID from onclick
-            var match = el.getAttribute('onclick') && el.getAttribute('onclick').match(/openArticleById\('([^']+)'\)/);
-            mapped.push({ title: el.textContent.trim(), id: match ? match[1] : '' });
-          });
-          if (mapped.length) buildTicker(mapped);
-        }
-      }
-    }
-
-    if (_polls > 80) clearInterval(_t); // stop after 8s
+    if (polls > 150) clearInterval(timer); // give up after 15s
   }, 100);
 })();
 </script>
@@ -10041,20 +10200,24 @@ ORDER BY tablename, cmd;
         if (latest?.length) items = latest;
       }
     }
-    if (!items.length) return; // keep existing static HTML
 
-    // ✅ Update premium ticker directly with real Supabase data
+    // No Supabase data — do NOT fall back to demo HTML, leave ticker at loading state
+    if (!items.length) {
+      console.log('[Ticker] No Supabase articles — ticker stays empty until data arrives');
+      return;
+    }
+
+    // ✅ Push real Supabase articles to the 3D ticker
     window._tickerArticles = items;
     if (typeof window._updatePremiumTicker === 'function') {
       window._updatePremiumTicker(items);
     }
 
-    // Pre-cache so openArticleById works
+    // Keep hidden tickerScroll in sync (used by legacy references)
     items.forEach(a => _articleCache && _articleCache.set(String(a.id), a));
     tickerEl.innerHTML = items.map(a =>
       `<span class="ticker-item" onclick="App.openArticleById('${a.id}')">${a.title}</span>`
     ).join('');
-    // Duplicate for infinite scroll
     if (!tickerEl.dataset.duped) {
       tickerEl.innerHTML += tickerEl.innerHTML;
       tickerEl.dataset.duped = '1';
@@ -25178,9 +25341,7 @@ _patchPublishHooks();
   line-height: 1 !important;
   display: block !important;
 }
-.tsl-nav-logo-name .t1 { color: #1a56db !important; }
-.tsl-nav-logo-name .t2 { color: #b45309 !important; }
-.tsl-nav-logo-name .t3 { color: #dc2626 !important; }
+/* t1/t2/t3 colors set in 3D block below — removed flat overrides */
 
 /* ── Tagline ── */
 .tsl-nav-logo-tagline {
@@ -25346,6 +25507,26 @@ _patchPublishHooks();
     font-size: 13px !important;
   }
   .nav-actions { gap: 4px !important; }
+}
+
+</style>
+
+<!-- 3D Logo Live Glow Animation -->
+<style>
+@keyframes tsl-logo-live-glow {
+  0%,100% { text-shadow:
+    1px 1px 0 #8b000d, 2px 2px 0 #720009, 3px 3px 0 #590006,
+    3px 4px 6px rgba(120,0,10,0.5),
+    0 -1px 0 rgba(255,180,190,0.5),
+    0 0 14px rgba(232,25,44,0.30); }
+  50% { text-shadow:
+    1px 1px 0 #8b000d, 2px 2px 0 #720009, 3px 3px 0 #590006,
+    3px 4px 8px rgba(120,0,10,0.6),
+    0 -1px 0 rgba(255,180,190,0.6),
+    0 0 26px rgba(232,25,44,0.65); }
+}
+.tsl-logo-live {
+  animation: tsl-logo-live-glow 2.8s ease-in-out infinite;
 }
 </style>
 
