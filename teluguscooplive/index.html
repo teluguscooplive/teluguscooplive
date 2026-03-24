@@ -27,6 +27,63 @@
   })();
 </script>
 <!-- ▲ FOUC PREVENTION ▲ -->
+<!-- ▼ PWA SPLASH SCREEN — shows instantly on app launch, hides when page is ready ▼ -->
+<style>
+#tsl-pwa-splash {
+  position: fixed; inset: 0; z-index: 999999;
+  background: linear-gradient(160deg, #1a2f5e 0%, #0d1b3e 60%, #1a0a0f 100%);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  transition: opacity 0.35s ease, visibility 0.35s ease;
+}
+#tsl-pwa-splash.sp-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+#tsl-pwa-splash .sp-logo { width: 110px; height: 110px; margin-bottom: 22px; animation: splashPop 0.5s cubic-bezier(0.34,1.56,0.64,1) both; }
+#tsl-pwa-splash .sp-name { font-family: "DM Serif Display",Georgia,serif; font-size: 30px; font-weight: 700; animation: splashFadeUp 0.5s 0.15s ease both; }
+#tsl-pwa-splash .sp-name .n1 { color: #4d90fe; }
+#tsl-pwa-splash .sp-name .n2 { color: #f59e0b; }
+#tsl-pwa-splash .sp-name .n3 { color: #E8192C; }
+#tsl-pwa-splash .sp-tag { font-family: "DM Sans",system-ui,sans-serif; font-size: 11px; color: #94a3b8; letter-spacing: 0.15em; text-transform: uppercase; margin-top: 7px; animation: splashFadeUp 0.5s 0.25s ease both; }
+#tsl-pwa-splash .sp-bar { width: 48px; height: 3px; background: #E8192C; border-radius: 2px; margin-top: 30px; animation: splashGrow 0.6s 0.3s ease both; }
+@keyframes splashPop { from { transform: scale(0.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes splashFadeUp { from { transform: translateY(12px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@keyframes splashGrow { from { width: 0; opacity: 0; } to { width: 48px; opacity: 1; } }
+@media not all and (display-mode: standalone) { #tsl-pwa-splash { display: none !important; } }
+</style>
+<div id="tsl-pwa-splash" aria-hidden="true">
+  <svg class="sp-logo" viewBox="0 0 192 192" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="spBg" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:#1a2f5e"/><stop offset="100%" style="stop-color:#0d1b3e"/>
+      </linearGradient>
+    </defs>
+    <rect width="192" height="192" rx="38" fill="url(#spBg)"/>
+    <rect x="0" y="0" width="192" height="8" rx="4" fill="#E8192C"/>
+    <rect x="0" y="184" width="192" height="8" rx="4" fill="#E8192C"/>
+    <g transform="translate(96,52)">
+      <g stroke="#f59e0b" stroke-width="3.5" stroke-linecap="round" opacity="0.85">
+        <line x1="0" y1="-34" x2="0" y2="-44"/><line x1="24" y1="-24" x2="31" y2="-31"/>
+        <line x1="34" y1="0" x2="44" y2="0"/><line x1="-24" y1="-24" x2="-31" y2="-31"/>
+        <line x1="-34" y1="0" x2="-44" y2="0"/>
+      </g>
+      <path d="M-22 0 A22 22 0 0 1 22 0" fill="#f59e0b" opacity="0.95"/>
+      <circle cx="0" cy="0" r="16" fill="#f59e0b"/><circle cx="0" cy="0" r="10" fill="#fde68a"/>
+    </g>
+    <text x="96" y="128" text-anchor="middle" font-family="Georgia,serif" font-size="52" font-weight="700" fill="#ffffff" letter-spacing="3">TSL</text>
+    <text x="96" y="152" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" font-weight="600" fill="#f59e0b" letter-spacing="1.5">TELUGU SCOOP</text>
+    <text x="96" y="172" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" font-weight="400" fill="#94a3b8" letter-spacing="2">LIVE</text>
+  </svg>
+  <div class="sp-name"><span class="n1">Telugu</span><span class="n2">Scoop</span><span class="n3">Live</span></div>
+  <div class="sp-tag">Truth in Minutes</div>
+  <div class="sp-bar"></div>
+</div>
+<script>
+(function(){
+  function hideSplash(){ var s=document.getElementById("tsl-pwa-splash"); if(s) s.classList.add("sp-hidden"); }
+  if(document.readyState==="loading"){ document.addEventListener("DOMContentLoaded",function(){ setTimeout(hideSplash,800); }); }
+  else{ setTimeout(hideSplash,600); }
+  setTimeout(hideSplash,2500);
+})();
+</script>
+<!-- ▲ PWA SPLASH SCREEN ▲ -->
 <title>TeluguScoopLive — Breaking Telugu News, Cinema, Politics & Cricket</title>
 <meta name="description" content="Your premium source for Telugu news, cinema, politics, cricket and discussions.">
 <!-- ▼▼▼ REPLACE WITH YOUR REAL VALUES ▼▼▼ -->
@@ -84,24 +141,38 @@
 <link rel="alternate" type="application/rss+xml" title="TeluguScoopLive — Politics" href="/rss/politics">
 <link rel="alternate" type="application/rss+xml" title="TeluguScoopLive — Cinema" href="/rss/cinema">
 <link rel="alternate" type="application/atom+xml" title="TeluguScoopLive — Atom Feed" href="/feed.atom">
-<!-- PWA manifest -->
+<!-- PWA manifest — professional app icon, fast launch -->
 <link rel="manifest" href="data:application/json,{
   %22name%22:%22TeluguScoopLive%22,
-  %22short_name%22:%22TeluguScoopLive%22,
+  %22short_name%22:%22TSL%20News%22,
   %22description%22:%22Breaking%20News%2C%20Cinema%2C%20Politics%20%26%20Cricket%20in%20Telugu%22,
   %22start_url%22:%22/%22,
   %22display%22:%22standalone%22,
-  %22background_color%22:%22%230D0D0D%22,
+  %22background_color%22:%22%231a2f5e%22,
   %22theme_color%22:%22%23E8192C%22,
   %22orientation%22:%22portrait-primary%22,
   %22lang%22:%22te%22,
-  %22icons%22:[{%22src%22:%22/icons/icon-192x192.png%22,%22sizes%22:%22192x192%22,%22type%22:%22image/png%22,%22purpose%22:%22any%20maskable%22},{%22src%22:%22/icons/icon-512x512.png%22,%22sizes%22:%22512x512%22,%22type%22:%22image/png%22,%22purpose%22:%22any%20maskable%22}]
+  %22scope%22:%22/%22,
+  %22icons%22:[
+    {%22src%22:%22/icons/icon-192x192.png%22,%22sizes%22:%22192x192%22,%22type%22:%22image/png%22,%22purpose%22:%22any%20maskable%22},
+    {%22src%22:%22/icons/icon-512x512.png%22,%22sizes%22:%22512x512%22,%22type%22:%22image/png%22,%22purpose%22:%22any%20maskable%22}
+  ]
 }">
+<!-- Apple Touch Icon — inline SVG data URI (no external file needed) -->
+<link rel="apple-touch-icon" sizes="180x180" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxODAgMTgwIiB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCI+CiAgPHJlY3Qgd2lkdGg9IjE4MCIgaGVpZ2h0PSIxODAiIHJ4PSIzNiIgZmlsbD0iIzFhMmY1ZSIvPgogIDxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxODAiIGhlaWdodD0iNyIgcng9IjMuNSIgZmlsbD0iI0U4MTkyQyIvPgogIDxyZWN0IHg9IjAiIHk9IjE3MyIgd2lkdGg9IjE4MCIgaGVpZ2h0PSI3IiByeD0iMy41IiBmaWxsPSIjRTgxOTJDIi8+CiAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoOTAsNDgpIj4KICAgIDxnIHN0cm9rZT0iI2Y1OWUwYiIgc3Ryb2tlLXdpZHRoPSIzIiBzdHJva2UtbGluZWNhcD0icm91bmQiIG9wYWNpdHk9IjAuOSI+CiAgICAgIDxsaW5lIHgxPSIwIiB5MT0iLTMwIiB4Mj0iMCIgeTI9Ii00MCIvPgogICAgICA8bGluZSB4MT0iMjEiIHkxPSItMjEiIHgyPSIyOCIgeTI9Ii0yOCIvPgogICAgICA8bGluZSB4MT0iMzAiIHkxPSIwIiB4Mj0iNDAiIHkyPSIwIi8+CiAgICAgIDxsaW5lIHgxPSItMjEiIHkxPSItMjEiIHgyPSItMjgiIHkyPSItMjgiLz4KICAgICAgPGxpbmUgeDE9Ii0zMCIgeTE9IjAiIHgyPSItNDAiIHkyPSIwIi8+CiAgICA8L2c+CiAgICA8cGF0aCBkPSJNLTIwIDAgQTIwIDIwIDAgMCAxIDIwIDAiIGZpbGw9IiNmNTllMGIiIG9wYWNpdHk9IjAuOTUiLz4KICAgIDxjaXJjbGUgY3g9IjAiIGN5PSIwIiByPSIxNCIgZmlsbD0iI2Y1OWUwYiIvPgogICAgPGNpcmNsZSBjeD0iMCIgY3k9IjAiIHI9IjkiIGZpbGw9IiNmZGU2OGEiLz4KICA8L2c+CiAgPHRleHQgeD0iOTAiIHk9IjExOCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9Ikdlb3JnaWEsc2VyaWYiIGZvbnQtc2l6ZT0iNDgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNmZmZmZmYiIGxldHRlci1zcGFjaW5nPSIzIj5UU0w8L3RleHQ+CiAgPHRleHQgeD0iOTAiIHk9IjE0NCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTMiIGZvbnQtd2VpZ2h0PSI2MDAiIGZpbGw9IiNmNTllMGIiIGxldHRlci1zcGFjaW5nPSIxLjUiPlRFTFVHVSBTQ09PUDwvdGV4dD4KICA8dGV4dCB4PSI5MCIgeT0iMTYyIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMSIgZm9udC13ZWlnaHQ9IjQwMCIgZmlsbD0iIzk0YTNiOCIgbGV0dGVyLXNwYWNpbmc9IjIiPkxJVkU8L3RleHQ+Cjwvc3ZnPg==">
+<link rel="apple-touch-icon" sizes="152x152" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxODAgMTgwIiB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCI+CiAgPHJlY3Qgd2lkdGg9IjE4MCIgaGVpZ2h0PSIxODAiIHJ4PSIzNiIgZmlsbD0iIzFhMmY1ZSIvPgogIDxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxODAiIGhlaWdodD0iNyIgcng9IjMuNSIgZmlsbD0iI0U4MTkyQyIvPgogIDxyZWN0IHg9IjAiIHk9IjE3MyIgd2lkdGg9IjE4MCIgaGVpZ2h0PSI3IiByeD0iMy41IiBmaWxsPSIjRTgxOTJDIi8+CiAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoOTAsNDgpIj4KICAgIDxnIHN0cm9rZT0iI2Y1OWUwYiIgc3Ryb2tlLXdpZHRoPSIzIiBzdHJva2UtbGluZWNhcD0icm91bmQiIG9wYWNpdHk9IjAuOSI+CiAgICAgIDxsaW5lIHgxPSIwIiB5MT0iLTMwIiB4Mj0iMCIgeTI9Ii00MCIvPgogICAgICA8bGluZSB4MT0iMjEiIHkxPSItMjEiIHgyPSIyOCIgeTI9Ii0yOCIvPgogICAgICA8bGluZSB4MT0iMzAiIHkxPSIwIiB4Mj0iNDAiIHkyPSIwIi8+CiAgICAgIDxsaW5lIHgxPSItMjEiIHkxPSItMjEiIHgyPSItMjgiIHkyPSItMjgiLz4KICAgICAgPGxpbmUgeDE9Ii0zMCIgeTE9IjAiIHgyPSItNDAiIHkyPSIwIi8+CiAgICA8L2c+CiAgICA8cGF0aCBkPSJNLTIwIDAgQTIwIDIwIDAgMCAxIDIwIDAiIGZpbGw9IiNmNTllMGIiIG9wYWNpdHk9IjAuOTUiLz4KICAgIDxjaXJjbGUgY3g9IjAiIGN5PSIwIiByPSIxNCIgZmlsbD0iI2Y1OWUwYiIvPgogICAgPGNpcmNsZSBjeD0iMCIgY3k9IjAiIHI9IjkiIGZpbGw9IiNmZGU2OGEiLz4KICA8L2c+CiAgPHRleHQgeD0iOTAiIHk9IjExOCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9Ikdlb3JnaWEsc2VyaWYiIGZvbnQtc2l6ZT0iNDgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNmZmZmZmYiIGxldHRlci1zcGFjaW5nPSIzIj5UU0w8L3RleHQ+CiAgPHRleHQgeD0iOTAiIHk9IjE0NCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTMiIGZvbnQtd2VpZ2h0PSI2MDAiIGZpbGw9IiNmNTllMGIiIGxldHRlci1zcGFjaW5nPSIxLjUiPlRFTFVHVSBTQ09PUDwvdGV4dD4KICA8dGV4dCB4PSI5MCIgeT0iMTYyIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMSIgZm9udC13ZWlnaHQ9IjQwMCIgZmlsbD0iIzk0YTNiOCIgbGV0dGVyLXNwYWNpbmc9IjIiPkxJVkU8L3RleHQ+Cjwvc3ZnPg==">
+<link rel="apple-touch-icon" sizes="144x144" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxODAgMTgwIiB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCI+CiAgPHJlY3Qgd2lkdGg9IjE4MCIgaGVpZ2h0PSIxODAiIHJ4PSIzNiIgZmlsbD0iIzFhMmY1ZSIvPgogIDxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxODAiIGhlaWdodD0iNyIgcng9IjMuNSIgZmlsbD0iI0U4MTkyQyIvPgogIDxyZWN0IHg9IjAiIHk9IjE3MyIgd2lkdGg9IjE4MCIgaGVpZ2h0PSI3IiByeD0iMy41IiBmaWxsPSIjRTgxOTJDIi8+CiAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoOTAsNDgpIj4KICAgIDxnIHN0cm9rZT0iI2Y1OWUwYiIgc3Ryb2tlLXdpZHRoPSIzIiBzdHJva2UtbGluZWNhcD0icm91bmQiIG9wYWNpdHk9IjAuOSI+CiAgICAgIDxsaW5lIHgxPSIwIiB5MT0iLTMwIiB4Mj0iMCIgeTI9Ii00MCIvPgogICAgICA8bGluZSB4MT0iMjEiIHkxPSItMjEiIHgyPSIyOCIgeTI9Ii0yOCIvPgogICAgICA8bGluZSB4MT0iMzAiIHkxPSIwIiB4Mj0iNDAiIHkyPSIwIi8+CiAgICAgIDxsaW5lIHgxPSItMjEiIHkxPSItMjEiIHgyPSItMjgiIHkyPSItMjgiLz4KICAgICAgPGxpbmUgeDE9Ii0zMCIgeTE9IjAiIHgyPSItNDAiIHkyPSIwIi8+CiAgICA8L2c+CiAgICA8cGF0aCBkPSJNLTIwIDAgQTIwIDIwIDAgMCAxIDIwIDAiIGZpbGw9IiNmNTllMGIiIG9wYWNpdHk9IjAuOTUiLz4KICAgIDxjaXJjbGUgY3g9IjAiIGN5PSIwIiByPSIxNCIgZmlsbD0iI2Y1OWUwYiIvPgogICAgPGNpcmNsZSBjeD0iMCIgY3k9IjAiIHI9IjkiIGZpbGw9IiNmZGU2OGEiLz4KICA8L2c+CiAgPHRleHQgeD0iOTAiIHk9IjExOCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9Ikdlb3JnaWEsc2VyaWYiIGZvbnQtc2l6ZT0iNDgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNmZmZmZmYiIGxldHRlci1zcGFjaW5nPSIzIj5UU0w8L3RleHQ+CiAgPHRleHQgeD0iOTAiIHk9IjE0NCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTMiIGZvbnQtd2VpZ2h0PSI2MDAiIGZpbGw9IiNmNTllMGIiIGxldHRlci1zcGFjaW5nPSIxLjUiPlRFTFVHVSBTQ09PUDwvdGV4dD4KICA8dGV4dCB4PSI5MCIgeT0iMTYyIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMSIgZm9udC13ZWlnaHQ9IjQwMCIgZmlsbD0iIzk0YTNiOCIgbGV0dGVyLXNwYWNpbmc9IjIiPkxJVkU8L3RleHQ+Cjwvc3ZnPg==">
+<link rel="apple-touch-icon" sizes="120x120" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxODAgMTgwIiB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCI+CiAgPHJlY3Qgd2lkdGg9IjE4MCIgaGVpZ2h0PSIxODAiIHJ4PSIzNiIgZmlsbD0iIzFhMmY1ZSIvPgogIDxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxODAiIGhlaWdodD0iNyIgcng9IjMuNSIgZmlsbD0iI0U4MTkyQyIvPgogIDxyZWN0IHg9IjAiIHk9IjE3MyIgd2lkdGg9IjE4MCIgaGVpZ2h0PSI3IiByeD0iMy41IiBmaWxsPSIjRTgxOTJDIi8+CiAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoOTAsNDgpIj4KICAgIDxnIHN0cm9rZT0iI2Y1OWUwYiIgc3Ryb2tlLXdpZHRoPSIzIiBzdHJva2UtbGluZWNhcD0icm91bmQiIG9wYWNpdHk9IjAuOSI+CiAgICAgIDxsaW5lIHgxPSIwIiB5MT0iLTMwIiB4Mj0iMCIgeTI9Ii00MCIvPgogICAgICA8bGluZSB4MT0iMjEiIHkxPSItMjEiIHgyPSIyOCIgeTI9Ii0yOCIvPgogICAgICA8bGluZSB4MT0iMzAiIHkxPSIwIiB4Mj0iNDAiIHkyPSIwIi8+CiAgICAgIDxsaW5lIHgxPSItMjEiIHkxPSItMjEiIHgyPSItMjgiIHkyPSItMjgiLz4KICAgICAgPGxpbmUgeDE9Ii0zMCIgeTE9IjAiIHgyPSItNDAiIHkyPSIwIi8+CiAgICA8L2c+CiAgICA8cGF0aCBkPSJNLTIwIDAgQTIwIDIwIDAgMCAxIDIwIDAiIGZpbGw9IiNmNTllMGIiIG9wYWNpdHk9IjAuOTUiLz4KICAgIDxjaXJjbGUgY3g9IjAiIGN5PSIwIiByPSIxNCIgZmlsbD0iI2Y1OWUwYiIvPgogICAgPGNpcmNsZSBjeD0iMCIgY3k9IjAiIHI9IjkiIGZpbGw9IiNmZGU2OGEiLz4KICA8L2c+CiAgPHRleHQgeD0iOTAiIHk9IjExOCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9Ikdlb3JnaWEsc2VyaWYiIGZvbnQtc2l6ZT0iNDgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNmZmZmZmYiIGxldHRlci1zcGFjaW5nPSIzIj5UU0w8L3RleHQ+CiAgPHRleHQgeD0iOTAiIHk9IjE0NCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTMiIGZvbnQtd2VpZ2h0PSI2MDAiIGZpbGw9IiNmNTllMGIiIGxldHRlci1zcGFjaW5nPSIxLjUiPlRFTFVHVSBTQ09PUDwvdGV4dD4KICA8dGV4dCB4PSI5MCIgeT0iMTYyIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMSIgZm9udC13ZWlnaHQ9IjQwMCIgZmlsbD0iIzk0YTNiOCIgbGV0dGVyLXNwYWNpbmc9IjIiPkxJVkU8L3RleHQ+Cjwvc3ZnPg==">
+<!-- Favicon inline SVG -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA2NCA2NCc+PHJlY3Qgd2lkdGg9JzY0JyBoZWlnaHQ9JzY0JyByeD0nMTInIGZpbGw9JyMxYTJmNWUnLz48cmVjdCB4PScwJyB5PScwJyB3aWR0aD0nNjQnIGhlaWdodD0nNCcgcng9JzInIGZpbGw9JyNFODE5MkMnLz48cmVjdCB4PScwJyB5PSc2MCcgd2lkdGg9JzY0JyBoZWlnaHQ9JzQnIHJ4PScyJyBmaWxsPScjRTgxOTJDJy8+PHRleHQgeD0nMzInIHk9JzQ0JyB0ZXh0LWFuY2hvcj0nbWlkZGxlJyBmb250LWZhbWlseT0nR2VvcmdpYSxzZXJpZicgZm9udC1zaXplPScyOCcgZm9udC13ZWlnaHQ9JzcwMCcgZmlsbD0nI2ZmZmZmZic+VFM8L3RleHQ+PC9zdmc+">
 <meta name="theme-color" content="#E8192C">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="TeluguScoopLive">
+<meta name="apple-mobile-web-app-title" content="TSL News">
+<!-- PWA Splash screen background matches launch screen -->
+<meta name="msapplication-TileColor" content="#1a2f5e">
+<meta name="msapplication-TileImage" content="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxODAgMTgwIiB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCI+CiAgPHJlY3Qgd2lkdGg9IjE4MCIgaGVpZ2h0PSIxODAiIHJ4PSIzNiIgZmlsbD0iIzFhMmY1ZSIvPgogIDxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxODAiIGhlaWdodD0iNyIgcng9IjMuNSIgZmlsbD0iI0U4MTkyQyIvPgogIDxyZWN0IHg9IjAiIHk9IjE3MyIgd2lkdGg9IjE4MCIgaGVpZ2h0PSI3IiByeD0iMy41IiBmaWxsPSIjRTgxOTJDIi8+CiAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoOTAsNDgpIj4KICAgIDxnIHN0cm9rZT0iI2Y1OWUwYiIgc3Ryb2tlLXdpZHRoPSIzIiBzdHJva2UtbGluZWNhcD0icm91bmQiIG9wYWNpdHk9IjAuOSI+CiAgICAgIDxsaW5lIHgxPSIwIiB5MT0iLTMwIiB4Mj0iMCIgeTI9Ii00MCIvPgogICAgICA8bGluZSB4MT0iMjEiIHkxPSItMjEiIHgyPSIyOCIgeTI9Ii0yOCIvPgogICAgICA8bGluZSB4MT0iMzAiIHkxPSIwIiB4Mj0iNDAiIHkyPSIwIi8+CiAgICAgIDxsaW5lIHgxPSItMjEiIHkxPSItMjEiIHgyPSItMjgiIHkyPSItMjgiLz4KICAgICAgPGxpbmUgeDE9Ii0zMCIgeTE9IjAiIHgyPSItNDAiIHkyPSIwIi8+CiAgICA8L2c+CiAgICA8cGF0aCBkPSJNLTIwIDAgQTIwIDIwIDAgMCAxIDIwIDAiIGZpbGw9IiNmNTllMGIiIG9wYWNpdHk9IjAuOTUiLz4KICAgIDxjaXJjbGUgY3g9IjAiIGN5PSIwIiByPSIxNCIgZmlsbD0iI2Y1OWUwYiIvPgogICAgPGNpcmNsZSBjeD0iMCIgY3k9IjAiIHI9IjkiIGZpbGw9IiNmZGU2OGEiLz4KICA8L2c+CiAgPHRleHQgeD0iOTAiIHk9IjExOCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9Ikdlb3JnaWEsc2VyaWYiIGZvbnQtc2l6ZT0iNDgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNmZmZmZmYiIGxldHRlci1zcGFjaW5nPSIzIj5UU0w8L3RleHQ+CiAgPHRleHQgeD0iOTAiIHk9IjE0NCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTMiIGZvbnQtd2VpZ2h0PSI2MDAiIGZpbGw9IiNmNTllMGIiIGxldHRlci1zcGFjaW5nPSIxLjUiPlRFTFVHVSBTQ09PUDwvdGV4dD4KICA8dGV4dCB4PSI5MCIgeT0iMTYyIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMSIgZm9udC13ZWlnaHQ9IjQwMCIgZmlsbD0iIzk0YTNiOCIgbGV0dGVyLXNwYWNpbmc9IjIiPkxJVkU8L3RleHQ+Cjwvc3ZnPg==">
 <link rel="canonical" href="https://teluguscooplive.netlify.app/" id="canonicalUrl">
 <!-- Critical fonts: DM Sans + Space Mono load first (used in visible UI), rest load async -->
 <!-- Critical UI fonts: DM Sans + DM Serif Display + Space Mono — used in above-fold elements -->
@@ -4009,19 +4080,19 @@ window.mbnCloseArticleThen = function(btn, cb) { if (typeof cb === 'function') c
 window.mbnSetActive = function() {};
 </script>
 
-<!-- Eid Festival Banner -->
+<!-- Sri Rama Navami Festival Banner -->
 <style>
-@keyframes eidFadeIn { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
-#eidBanner { animation: eidFadeIn 0.6s ease forwards; }
+@keyframes ramaNavamiFadeIn { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
+#ramaNavamiBanner { animation: ramaNavamiFadeIn 0.6s ease forwards; }
 </style>
-<div id="eidBanner" style="display:none;background:linear-gradient(135deg,#1a6b3c,#0f4d2b);color:#fff;padding:10px 16px;text-align:center;position:relative;font-family:'Plus Jakarta Sans',system-ui,sans-serif;">
-  <span style="font-size:14px;font-weight:700;">🌙 Eid Mubarak – Ramzan Festival శుభాకాంక్షలు &nbsp;·&nbsp; <span style="font-weight:400;font-size:13px;opacity:0.9;">Wishing peace, happiness, and prosperity to all</span></span>
-  <button onclick="document.getElementById('eidBanner').style.display='none';localStorage.setItem('tsl_eid_banner_dismissed','1')" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.15);border:none;color:#fff;width:24px;height:24px;border-radius:50%;cursor:pointer;font-size:14px;line-height:1;">✕</button>
+<div id="ramaNavamiBanner" style="display:none;background:linear-gradient(135deg,#7c3f00,#b8690a,#f5c842,#b8690a,#7c3f00);color:#fff;padding:10px 16px;text-align:center;position:relative;font-family:'Plus Jakarta Sans',system-ui,sans-serif;">
+  <span style="font-size:14px;font-weight:700;">🏹 Happy Sri Rama Navami &nbsp;·&nbsp; <span style="font-weight:400;font-size:13px;opacity:0.95;">రామ నవమి శుభాకాంక్షలు — జయ శ్రీ రామ్! 🙏</span></span>
+  <button onclick="document.getElementById('ramaNavamiBanner').style.display='none';localStorage.setItem('tsl_ramanavami_banner_dismissed','1')" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.15);border:none;color:#fff;width:24px;height:24px;border-radius:50%;cursor:pointer;font-size:14px;line-height:1;">✕</button>
 </div>
 <script>
 (function(){
-  if (!localStorage.getItem('tsl_eid_banner_dismissed')) {
-    var b = document.getElementById('eidBanner');
+  if (!localStorage.getItem('tsl_ramanavami_banner_dismissed')) {
+    var b = document.getElementById('ramaNavamiBanner');
     if (b) b.style.display = 'block';
   }
 })();
@@ -14738,10 +14809,10 @@ Write exactly 5 paragraphs, minimum 600 words. No section labels. Zero repetitio
 
 
 <style id="eid-festival-styles">
-/* ── Eid Mubarak badge on article cards ── */
+/* ── Sri Rama Navami badge on article cards ── */
 .eid-badge {
   display: inline-block;
-  background: linear-gradient(135deg, #1a6b3c, #0f4d2b);
+  background: linear-gradient(135deg, #7c3f00, #b8690a);
   color: #fff;
   font-size: 9px;
   font-weight: 800;
@@ -14890,9 +14961,6 @@ Write exactly 5 paragraphs, minimum 600 words. No section labels. Zero repetitio
   .tsl-nav-logo-tagline { display: block !important; font-size: 7.5px !important; color: #1e293b !important; }
 }
 </style>
-</body>
-
-
 </html>`);
     pw.document.close();
     pw.focus();
@@ -15139,8 +15207,9 @@ Write exactly 5 paragraphs, minimum 600 words. No section labels. Zero repetitio
     }
 
     try {
-      // Pollinations.ai — free, no API key, high quality
-      const prompt = encodeURIComponent(`${catContext}, professional news photograph, photojournalism, high resolution, 16:9`);
+      // Pollinations.ai — free, no API key, high quality — Professional TV news anchor style
+      const tvNewsPrompt = `A highly professional news studio scene with a confident and elegant female news anchor, realistic and natural appearance, wearing formal attire blazer or saree, in a modern high-end newsroom. Background clean minimal broadcast studio with soft lighting subtle digital news screens no clutter. Anchor positioned slightly left with empty space for headline text on right side, balanced layout like international news channels. Soft studio lighting natural skin tones no harsh shadows. Ultra realistic sharp 4K quality premium broadcast look clean and minimal. Serious trustworthy professional news reporting tone. Landscape 16:9 clean background for text overlay. No loud colors no over dramatic expressions no cheap breaking news graphics no cartoonish faces. Context: ${catContext}`;
+      const prompt = encodeURIComponent(tvNewsPrompt);
       const seed = Math.floor(Math.random() * 999999);
       const imageUrl = `https://image.pollinations.ai/prompt/${prompt}?width=1200&height=630&seed=${seed}&nologo=true&enhance=true&model=flux`;
 
@@ -23497,248 +23566,97 @@ function _articleUrl(article) {
   return base + '/?article=' + String(ref);
 }
 
-// ══════════════════════════════════════════════════════
-//  TV-QUALITY THUMBNAIL GENERATOR  (Canvas → JPEG blob)
-//  Generates a 1280×720 broadcast-style card and sends as
-//  a real image file — always a rich visual on Telegram/FB
-// ══════════════════════════════════════════════════════
-
-const _CAT_COLORS = {
-  politics:   { bg: '#C8102E', label: 'POLITICS'   },
-  cinema:     { bg: '#7C3AED', label: 'CINEMA'     },
-  sports:     { bg: '#0EA5E9', label: 'SPORTS'     },
-  cricket:    { bg: '#16A34A', label: 'CRICKET'    },
-  telangana:  { bg: '#EA580C', label: 'TELANGANA'  },
-  andhra:     { bg: '#0369A1', label: 'ANDHRA'     },
-  localnews:  { bg: '#DC2626', label: 'LOCAL NEWS' },
-  national:   { bg: '#1D4ED8', label: 'NATIONAL'   },
-  business:   { bg: '#059669', label: 'BUSINESS'   },
-  technology: { bg: '#6D28D9', label: 'TECHNOLOGY' },
-  health:     { bg: '#0F766E', label: 'HEALTH'     },
-  education:  { bg: '#B45309', label: 'EDUCATION'  },
-  _default:   { bg: '#C8102E', label: 'NEWS'       }
-};
-
-function _loadImg(url) {
-  return new Promise(resolve => {
-    if (!url || !url.startsWith('http')) return resolve(null);
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.onload  = () => resolve(img);
-    img.onerror = () => resolve(null);
-    if (url.includes('unsplash.com')) {
-      url = url.replace(/[?&]w=\d+/g,'').replace(/[?&]h=\d+/g,'').replace(/[?&]fit=[^&]*/g,'');
-      url += (url.includes('?') ? '&' : '?') + 'w=1280&h=720&fit=crop&q=92&auto=format';
-    }
-    img.src = url;
-    setTimeout(() => resolve(null), 6000);
-  });
-}
-
-function _wrapText(ctx, text, maxWidth) {
-  const words = text.split(' ');
-  const lines = [];
-  let line = '';
-  for (const word of words) {
-    const test = line ? line + ' ' + word : word;
-    if (ctx.measureText(test).width > maxWidth && line) { lines.push(line); line = word; }
-    else line = test;
-  }
-  if (line) lines.push(line);
-  return lines;
-}
-
-function _roundRect(ctx, x, y, w, h, r) {
-  ctx.beginPath();
-  ctx.moveTo(x + r, y);
-  ctx.lineTo(x + w - r, y);
-  ctx.arcTo(x + w, y, x + w, y + r, r);
-  ctx.lineTo(x + w, y + h - r);
-  ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
-  ctx.lineTo(x + r, y + h);
-  ctx.arcTo(x, y + h, x, y + h - r, r);
-  ctx.lineTo(x, y + r);
-  ctx.arcTo(x, y, x + r, y, r);
-  ctx.closePath();
-}
-
-async function _buildTVThumbnail(article) {
-  const W = 1280, H = 720;
-  const canvas = document.createElement('canvas');
-  canvas.width = W; canvas.height = H;
-  const ctx = canvas.getContext('2d');
-
-  const cat    = (article.category || '_default').toLowerCase();
-  const info   = _CAT_COLORS[cat] || _CAT_COLORS._default;
-  const accent = info.bg;
-  const title  = (article.title || '').trim();
-  const excerpt= (article.excerpt || article.summary || '').trim();
-  const ts     = new Date().toLocaleString('en-IN',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:true});
-
-  // 1. Background photo
-  const photo = await _loadImg(article.image);
-  if (photo) {
-    const sc = Math.max(W / photo.width, H / photo.height);
-    ctx.drawImage(photo, (W - photo.width*sc)/2, (H - photo.height*sc)/2, photo.width*sc, photo.height*sc);
-  } else {
-    const grd = ctx.createLinearGradient(0,0,W,H);
-    grd.addColorStop(0,'#0d1b3e'); grd.addColorStop(1,'#1a3060');
-    ctx.fillStyle = grd; ctx.fillRect(0,0,W,H);
-  }
-
-  // 2. Full-frame cinematic dark overlay
-  const vig = ctx.createRadialGradient(W/2,H/2,H*0.15,W/2,H/2,H*0.9);
-  vig.addColorStop(0,'rgba(0,0,0,0.15)'); vig.addColorStop(1,'rgba(0,0,0,0.75)');
-  ctx.fillStyle = vig; ctx.fillRect(0,0,W,H);
-
-  // 3. Strong bottom panel gradient
-  const grad = ctx.createLinearGradient(0,H*0.38,0,H);
-  grad.addColorStop(0,'rgba(0,0,0,0)');
-  grad.addColorStop(0.3,'rgba(0,0,0,0.85)');
-  grad.addColorStop(1,'rgba(0,0,0,0.98)');
-  ctx.fillStyle = grad; ctx.fillRect(0,0,W,H);
-
-  // 4. Left accent stripe
-  ctx.fillStyle = accent; ctx.fillRect(0,0,7,H);
-
-  // 5. Category badge (top-left)
-  ctx.font = 'bold 17px Arial';
-  const badgeTxt = '⚡ ' + info.label;
-  const bw = ctx.measureText(badgeTxt).width + 32;
-  _roundRect(ctx, 26, 26, bw, 38, 6);
-  ctx.fillStyle = accent; ctx.fill();
-  ctx.fillStyle = '#fff';
-  ctx.fillText(badgeTxt, 40, 51);
-
-  // 6. LIVE badge (top-right)
-  _roundRect(ctx, W - 130, 26, 104, 38, 6);
-  ctx.fillStyle = '#E8192C'; ctx.fill();
-  ctx.font = 'bold 16px Arial';
-  ctx.fillStyle = '#fff';
-  ctx.textAlign = 'center';
-  ctx.fillText('● LIVE NEWS', W - 78, 51);
-  ctx.textAlign = 'left';
-
-  // 7. Headline (large bold)
-  const padX = 36, maxW = W - 72;
-  ctx.font = 'bold 58px Arial';
-  ctx.fillStyle = '#FFFFFF';
-  ctx.shadowColor = 'rgba(0,0,0,0.95)'; ctx.shadowBlur = 10; ctx.shadowOffsetY = 3;
-  const titleLines = _wrapText(ctx, title, maxW).slice(0,3);
-  if (titleLines.length === 3 && _wrapText(ctx, title, maxW).length > 3) titleLines[2] += '…';
-  const lh = 72;
-  const baseY = H - 56 - 34 - 18 - (excerpt ? 38 : 0) - titleLines.length * lh - 8;
-  titleLines.forEach((ln, i) => ctx.fillText(ln, padX, baseY + i * lh));
-  ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
-
-  // 8. Sub-headline / excerpt
-  if (excerpt) {
-    ctx.font = '27px Arial';
-    ctx.fillStyle = 'rgba(255,255,255,0.84)';
-    const excLines = _wrapText(ctx, excerpt, maxW).slice(0,2);
-    const eBase = baseY + titleLines.length * lh + 12;
-    excLines.forEach((ln, i) => ctx.fillText(ln, padX, eBase + i * 36));
-  }
-
-  // 9. Lower-third brand bar
-  ctx.fillStyle = accent; ctx.fillRect(0, H - 52, W, 52);
-
-  // Site name (left)
-  ctx.font = 'bold 22px Arial';
-  ctx.fillStyle = '#fff';
-  ctx.fillText('📺  TeluguScoopLive', 26, H - 17);
-
-  // Timestamp (center)
-  ctx.font = '16px Arial';
-  ctx.fillStyle = 'rgba(255,255,255,0.78)';
-  ctx.textAlign = 'center';
-  ctx.fillText(ts, W/2, H - 17);
-
-  // Domain (right)
-  ctx.font = '16px Arial';
-  ctx.fillStyle = 'rgba(255,255,255,0.85)';
-  ctx.textAlign = 'right';
-  ctx.fillText('teluguscooplive.netlify.app', W - 26, H - 17);
-  ctx.textAlign = 'left';
-
-  return new Promise(resolve => canvas.toBlob(b => resolve(b), 'image/jpeg', 0.94));
-}
-
-async function _sendTgBlob(token, chatId, blob, caption, keyboard) {
-  const form = new FormData();
-  form.append('chat_id', chatId);
-  form.append('photo',   blob, 'news.jpg');
-  form.append('caption', caption);
-  form.append('parse_mode', 'HTML');
-  if (keyboard) form.append('reply_markup', JSON.stringify(keyboard));
-  const r = await fetch(`https://api.telegram.org/bot${token}/sendPhoto`, { method:'POST', body:form });
-  return r.json();
-}
-
-// ── Format Breaking News caption ─────────────────────
+// ── Format Breaking News post body ──────────────────
 function _postBody(article) {
   const title   = (article.title   || '').trim();
   const excerpt = (article.excerpt || article.summary || '').trim();
   const url     = _articleUrl(article);
-  const cat     = (article.category || 'news').toUpperCase();
-  const info    = _CAT_COLORS[(article.category||'').toLowerCase()] || _CAT_COLORS._default;
-  const desc    = excerpt ? '\n' + excerpt.substring(0,160) + (excerpt.length>160?'…':'') : '';
-  return '⚡ <b>' + info.label + ' | ' + cat + '</b>\n\n<b>' + title + '</b>' + desc +
-         '\n\n🔗 ' + url + '\n\n#TeluguNews #TeluguScoopLive #BreakingNews';
+  const cat     = article.category ? article.category.toUpperCase() : 'NEWS';
+  const desc    = excerpt ? '\n\n' + excerpt.substring(0, 180) + (excerpt.length > 180 ? '...' : '') : '';
+  // Telegram parses the last URL in message for link preview
+  // Put article URL at the very end so Telegram opens THAT page
+  return '📰 ' + cat + '\n\n<b>' + title + '</b>' + desc + '\n\n🔗 ' + url + '\n\n' + HASHTAGS;
 }
 
 // ══════════════════════════════════════════════════════
-//  TELEGRAM — TV thumbnail → raw URL → text fallback
+//  TELEGRAM
 // ══════════════════════════════════════════════════════
 async function postToTelegram(article) {
   const token  = _sk('tg_token');
   const chatId = _sk('tg_chat_id');
-  if (!token || !chatId) return { ok:false, reason:'No Telegram token/chat_id configured' };
+  if (!token || !chatId) return { ok: false, reason: 'No Telegram token/chat_id configured' };
 
-  const caption  = _postBody(article);
-  const keyboard = { inline_keyboard:[[{ text:'📖 Read Full Article', url:_articleUrl(article) }]] };
+  // ── DEDUPLICATION: prevent double-posting same article ──
+  const articleKey = 'tsl_tg_posted_' + (article.id || article.slug || '');
+  if (article.id && localStorage.getItem(articleKey)) {
+    console.log('[AutoPost][Telegram] ⏭ SKIPPED — article already posted (id:', article.id, ')');
+    return { ok: true, platform: 'telegram', skipped: true };
+  }
+
+  const text = _postBody(article);
+  const imgUrl = article.image;
 
   try {
-    // Step 1 — Canvas TV thumbnail (best quality)
-    let blob = null;
-    try { blob = await _buildTVThumbnail(article); } catch(e) { console.warn('[TG] canvas err:', e.message); }
-    if (blob) {
-      const d = await _sendTgBlob(token, chatId, blob, caption, keyboard);
-      if (d.ok) { console.log('[TG] ✅ TV thumbnail sent'); return { ok:true, platform:'telegram' }; }
-      console.warn('[TG] blob upload failed:', d.description);
-    }
-    // Step 2 — Raw image URL
-    const imgUrl = article.image;
+    // Try sendPhoto first if image available
     if (imgUrl && imgUrl.startsWith('http')) {
       const r = await fetch(`https://api.telegram.org/bot${token}/sendPhoto`, {
-        method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ chat_id:chatId, photo:imgUrl, caption, parse_mode:'HTML', reply_markup:keyboard })
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: chatId,
+          photo: imgUrl,
+          caption: text,
+          parse_mode: 'HTML',
+          reply_markup: {
+            inline_keyboard: [[
+              { text: '📖 Read Full Article', url: _articleUrl(article) }
+            ]]
+          }
+        })
       });
       const d = await r.json();
-      if (d.ok) { console.log('[TG] ✅ raw URL sent'); return { ok:true, platform:'telegram' }; }
-      console.warn('[TG] raw URL failed:', d.description);
+      if (d.ok) {
+        // ── Mark as posted to prevent duplicate posts ──
+        if (article.id) localStorage.setItem(articleKey, '1');
+        return { ok: true, platform: 'telegram' };
+      }
+      // Photo failed — fall back to text
     }
-    // Step 3 — Text only
+    // Text-only with HTML parse mode and inline button
+    const articleUrl = _articleUrl(article);
     const r2 = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ chat_id:chatId, text:caption, parse_mode:'HTML', disable_web_page_preview:false, reply_markup:keyboard })
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text: text,
+        parse_mode: 'HTML',
+        disable_web_page_preview: false,
+        reply_markup: {
+          inline_keyboard: [[
+            { text: '📖 Read Full Article', url: articleUrl }
+          ]]
+        }
+      })
     });
     const d2 = await r2.json();
     if (!d2.ok) {
-      let msg = d2.description || 'Unknown Telegram error';
-      if (msg.includes('chat not found'))  msg = 'Chat not found — add bot as Admin first.';
-      if (msg.includes('Unauthorized'))    msg = 'Invalid token — get fresh one from @BotFather.';
-      if (msg.includes('bot was kicked'))  msg = 'Bot was kicked — re-add as Admin.';
-      if (msg.includes('have no rights'))  msg = 'Bot needs Admin + Post Messages permission.';
-      if (msg.includes('PEER_ID_INVALID')) msg = 'Invalid Chat ID — use Auto-Find Chat ID.';
-      return { ok:false, platform:'telegram', error:msg };
+      // Give actionable error based on Telegram error code
+      let errMsg = d2.description || 'Unknown Telegram error';
+      if (errMsg.includes('chat not found'))     errMsg = 'Chat not found — bot is NOT in the channel. Add bot as Admin to your channel first, then use Auto-Find Chat ID.';
+      if (errMsg.includes('Unauthorized'))       errMsg = 'Unauthorized — bot token is invalid. Get a fresh token from @BotFather.';
+      if (errMsg.includes('bot was kicked'))     errMsg = 'Bot was kicked from the channel — re-add it as Admin.';
+      if (errMsg.includes('have no rights'))     errMsg = 'Bot has no rights to post — make it Admin with "Post Messages" permission.';
+      if (errMsg.includes('PEER_ID_INVALID'))    errMsg = 'Invalid Chat ID — use Auto-Find Chat ID button to get the correct numeric ID.';
+      return { ok: false, platform: 'telegram', error: errMsg };
     }
-    return { ok:true, platform:'telegram' };
+    // ── Mark as posted to prevent duplicate posts ──
+    if (article.id) localStorage.setItem(articleKey, '1');
+    return { ok: true, platform: 'telegram' };
   } catch(e) {
-    return { ok:false, platform:'telegram', error:e.message };
+    return { ok: false, platform: 'telegram', error: e.message };
   }
 }
-
 
 // ══════════════════════════════════════════════════════
 //  FACEBOOK PAGE — with retry + logging
@@ -23778,24 +23696,9 @@ async function postToFacebook(article) {
   const url    = _articleUrl(article);
   const imgUrl = article.image;
 
-  // ── Helper: one attempt (TV thumbnail first) ────────
+  // ── Helper: one attempt ──────────────────────────────
   async function _attempt() {
-    // Try TV thumbnail blob upload first (best quality)
-    let thumbBlob = null;
-    try { thumbBlob = await _buildTVThumbnail(article); } catch(e) {}
-    if (thumbBlob) {
-      try {
-        const form = new FormData();
-        form.append('source',  thumbBlob, 'news.jpg');
-        form.append('caption', text);
-        form.append('access_token', token);
-        const r = await fetch(`https://graph.facebook.com/v19.0/${pageId}/photos`, { method:'POST', body:form });
-        const d = await r.json();
-        if (!d.error) { console.log('[Facebook] ✅ TV thumbnail post — id:', d.id); return { ok:true }; }
-        console.warn('[Facebook] Blob photo failed:', d.error?.message, '— trying URL');
-      } catch(e) { console.warn('[Facebook] Blob exception:', e.message); }
-    }
-    // Fallback — raw image URL
+    // Try photo post if image available
     if (imgUrl && imgUrl.startsWith('http')) {
       try {
         const r = await fetch(`https://graph.facebook.com/v19.0/${pageId}/photos`, {
@@ -23803,23 +23706,31 @@ async function postToFacebook(article) {
           body: new URLSearchParams({ caption: text, url: imgUrl, access_token: token })
         });
         const d = await r.json();
-        if (!d.error) { console.log('[Facebook] ✅ URL photo post — id:', d.id); return { ok:true }; }
-        console.warn('[Facebook] URL photo failed:', d.error?.message, '— feed fallback');
-      } catch(e) { console.warn('[Facebook] URL photo exception:', e.message); }
+        if (!d.error) {
+          console.log('[Facebook] ✅ Photo post success — id:', d.id);
+          return { ok: true };
+        }
+        console.warn('[Facebook] Photo post failed:', d.error?.message, '— falling back to feed post');
+      } catch(e) {
+        console.warn('[Facebook] Photo post exception:', e.message, '— falling back to feed post');
+      }
     }
-    // Feed post (link preview)
+    // Feed post (link)
     const r2 = await fetch(`https://graph.facebook.com/v19.0/${pageId}/feed`, {
       method: 'POST',
       body: new URLSearchParams({ message: text, link: url, access_token: token })
     });
     const d2 = await r2.json();
-    if (d2.id) { console.log('[Facebook] ✅ Feed post — id:', d2.id); return { ok:true }; }
+    if (d2.id) {
+      console.log('[Facebook] ✅ Feed post success — id:', d2.id);
+      return { ok: true };
+    }
     let errMsg = d2.error?.message || 'Unknown Facebook error';
-    if (errMsg.includes('OAuthException') || d2.error?.code === 190) errMsg = 'Token expired — regenerate Page Access Token in Meta Developer Console.';
-    if (d2.error?.code === 200) errMsg = 'Missing permission pages_manage_posts — re-authorise app.';
-    if (d2.error?.code === 100) errMsg = 'Invalid Page ID — enter numeric Page ID in Admin → Social Settings.';
-    console.error('[Facebook] ✗ All attempts failed:', errMsg, '| code:', d2.error?.code);
-    return { ok:false, error:errMsg };
+    if (errMsg.includes('OAuthException') || d2.error?.code === 190) errMsg = 'Token expired or invalid — generate a new Page Access Token in Meta Developer Console.';
+    if (d2.error?.code === 200) errMsg = 'Missing permission pages_manage_posts — re-authorise the app with correct permissions.';
+    if (d2.error?.code === 100) errMsg = 'Invalid Page ID — go to Admin → Social Settings and enter the numeric Page ID (found in Facebook Page → About).';
+    console.error('[Facebook] ✗ Feed post failed:', errMsg, '| code:', d2.error?.code);
+    return { ok: false, error: errMsg };
   }
 
   // ── Retry up to 2 times ──────────────────────────────
@@ -25006,3 +24917,112 @@ _patchPublishHooks();
   .nav-actions { gap: 4px !important; }
 }
 </style>
+
+<!-- ▼ PWA ICON GENERATOR — creates crisp home-screen icon via Canvas if PNG missing ▼ -->
+<script>
+(function(){
+  // Generate icon PNG via Canvas and cache in localStorage for service worker / manifest override
+  function generateTSLIcon(size) {
+    try {
+      var c = document.createElement('canvas');
+      c.width = c.height = size;
+      var ctx = c.getContext('2d');
+      var s = size;
+      // Background
+      var grd = ctx.createLinearGradient(0,0,s,s);
+      grd.addColorStop(0,'#1a2f5e'); grd.addColorStop(1,'#0d1b3e');
+      ctx.fillStyle = grd;
+      var r = s*0.2;
+      ctx.beginPath();
+      ctx.moveTo(r,0); ctx.lineTo(s-r,0); ctx.quadraticCurveTo(s,0,s,r);
+      ctx.lineTo(s,s-r); ctx.quadraticCurveTo(s,s,s-r,s);
+      ctx.lineTo(r,s); ctx.quadraticCurveTo(0,s,0,s-r);
+      ctx.lineTo(0,r); ctx.quadraticCurveTo(0,0,r,0);
+      ctx.closePath(); ctx.fill();
+      // Red top bar
+      ctx.fillStyle='#E8192C';
+      ctx.fillRect(0,0,s,s*0.045);
+      ctx.fillRect(0,s-s*0.045,s,s*0.045);
+      // Sun
+      var cx=s*0.5, cy=s*0.28, sr=s*0.1;
+      ctx.strokeStyle='#f59e0b'; ctx.lineWidth=s*0.02; ctx.lineCap='round';
+      var rays=[[0,-1],[0.7,-0.7],[1,0],[-0.7,-0.7],[-1,0]];
+      rays.forEach(function(ray){
+        ctx.beginPath();
+        ctx.moveTo(cx+ray[0]*sr*1.5, cy+ray[1]*sr*1.5);
+        ctx.lineTo(cx+ray[0]*sr*2.1, cy+ray[1]*sr*2.1);
+        ctx.stroke();
+      });
+      ctx.beginPath(); ctx.arc(cx,cy,sr,Math.PI,0); ctx.fillStyle='#f59e0b'; ctx.fill();
+      ctx.beginPath(); ctx.arc(cx,cy,sr,0,Math.PI*2); ctx.fillStyle='#f59e0b'; ctx.fill();
+      ctx.beginPath(); ctx.arc(cx,cy,sr*0.6,0,Math.PI*2); ctx.fillStyle='#fde68a'; ctx.fill();
+      // TSL text
+      ctx.fillStyle='#ffffff';
+      ctx.font = 'bold '+Math.round(s*0.28)+'px Georgia,serif';
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText('TSL', s*0.5, s*0.64);
+      // Tagline
+      ctx.fillStyle='#f59e0b';
+      ctx.font = 'bold '+Math.round(s*0.075)+'px Arial,sans-serif';
+      ctx.letterSpacing='2px';
+      ctx.fillText('TELUGU SCOOP', s*0.5, s*0.82);
+      ctx.fillStyle='#94a3b8';
+      ctx.font = Math.round(s*0.065)+'px Arial,sans-serif';
+      ctx.fillText('LIVE', s*0.5, s*0.91);
+      return c.toDataURL('image/png');
+    } catch(e){ return null; }
+  }
+
+  // Patch manifest icons with canvas-generated data URIs (works for Chrome PWA install)
+  function patchManifest() {
+    try {
+      var icon192 = generateTSLIcon(192);
+      var icon512 = generateTSLIcon(512);
+      if (!icon192 || !icon512) return;
+
+      var manifestData = {
+        name: 'TeluguScoopLive',
+        short_name: 'TSL News',
+        description: 'Breaking News, Cinema, Politics & Cricket in Telugu',
+        start_url: '/',
+        display: 'standalone',
+        background_color: '#1a2f5e',
+        theme_color: '#E8192C',
+        orientation: 'portrait-primary',
+        lang: 'te',
+        scope: '/',
+        icons: [
+          { src: icon192, sizes: '192x192', type: 'image/png', purpose: 'any maskable' },
+          { src: icon512, sizes: '512x512', type: 'image/png', purpose: 'any maskable' }
+        ]
+      };
+
+      var blob = new Blob([JSON.stringify(manifestData)], {type:'application/json'});
+      var url = URL.createObjectURL(blob);
+      // Replace the manifest link with the canvas-icon version
+      var existing = document.querySelector('link[rel="manifest"]');
+      if (existing) { existing.href = url; }
+      else {
+        var link = document.createElement('link');
+        link.rel = 'manifest'; link.href = url;
+        document.head.appendChild(link);
+      }
+      // Also set apple-touch-icon dynamically
+      var appleLink = document.querySelector('link[rel="apple-touch-icon"]');
+      if (appleLink) appleLink.href = icon192;
+      else {
+        var al = document.createElement('link');
+        al.rel='apple-touch-icon'; al.sizes='180x180'; al.href=icon192;
+        document.head.appendChild(al);
+      }
+    } catch(e){ /* silent fail */ }
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded', patchManifest);
+  } else {
+    patchManifest();
+  }
+})();
+</script>
+<!-- ▲ PWA ICON GENERATOR ▲ -->
