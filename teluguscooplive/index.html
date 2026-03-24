@@ -142,7 +142,7 @@
 <link rel="alternate" type="application/rss+xml" title="TeluguScoopLive — Cinema" href="/rss/cinema">
 <link rel="alternate" type="application/atom+xml" title="TeluguScoopLive — Atom Feed" href="/feed.atom">
 <!-- PWA: manifest + SW + install prompt — fully self-contained -->
-<link rel="manifest" id="tsl-manifest-link" href="">
+<link rel="manifest" id="tsl-manifest-link" href="/manifest.json">
 <link rel="apple-touch-icon" sizes="180x180" id="tsl-apple-icon" href="">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%231a2f5e'/%3E%3Crect x='0' y='0' width='64' height='4' rx='2' fill='%23E8192C'/%3E%3Crect x='0' y='60' width='64' height='4' rx='2' fill='%23E8192C'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-family='Georgia,serif' font-size='28' font-weight='700' fill='%23ffffff'%3ETS%3C/text%3E%3C/svg%3E">
 <meta name="theme-color" content="#E8192C">
@@ -231,24 +231,81 @@ function buildManifest(icon192,icon512){
 // Chrome requires SW scope to match page origin — blob: URLs don't work for scope '/'.
 // Solution: write SW code into a <script id="tsl-sw-src"> tag, then register /sw.js
 // If /sw.js exists on server, great. If not, we inject a meta SW via the page itself.
-function registerSW(){
+function registerSW(icon192){
   if(!('serviceWorker' in navigator)) return;
   if(window.location.protocol!=='https:' && window.location.hostname!=='localhost') return;
 
-  // Try /sw.js first (works if Netlify has the file)
-  navigator.serviceWorker.getRegistrations().then(function(regs){
-    if(regs.length>0){
-      console.log('[TSL SW] Already registered');
-      return;
-    }
-    navigator.serviceWorker.register('/sw.js',{scope:'/'})
-      .then(function(r){console.log('[TSL SW] /sw.js registered, scope:',r.scope);})
-      .catch(function(){
-        console.warn('[TSL SW] /sw.js not found — app still installable via manifest');
-        // App is still installable! SW is recommended but not required for install prompt
-        // Chrome will show install prompt as long as manifest is valid + HTTPS
-      });
+  // Build manifest JSON string to pass into SW so it can serve /manifest.json
+  var manifestJson = JSON.stringify({
+    name:'TeluguScoopLive',
+    short_name:'TSL News',
+    description:'Breaking Telugu News, Cinema, Politics & Cricket',
+    start_url:'/',scope:'/',display:'standalone',
+    background_color:'#1a2f5e',theme_color:'#E8192C',
+    orientation:'portrait-primary',lang:'te',
+    icons:[
+      {src: icon192 || '/icons/icon-192x192.png', sizes:'192x192', type:'image/png', purpose:'any maskable'},
+      {src: icon192 || '/icons/icon-512x512.png', sizes:'512x512', type:'image/png', purpose:'any maskable'}
+    ]
   });
+
+  // SW code — intercepts /manifest.json + caches app shell
+  var swCode =
+    '"use strict";'+
+    'var CACHE="tsl-v4";'+
+    'var MANIFEST_JSON='+JSON.stringify(manifestJson)+';'+
+    'self.addEventListener("install",function(e){'+
+      'self.skipWaiting();'+
+      'e.waitUntil(caches.open(CACHE).then(function(c){'+
+        'return c.addAll(["/"]).catch(function(){});'+
+      '}));'+
+    '});'+
+    'self.addEventListener("activate",function(e){'+
+      'e.waitUntil(caches.keys().then(function(keys){'+
+        'return Promise.all(keys.filter(function(k){return k!==CACHE;}).map(function(k){return caches.delete(k);}));'+
+      '}).then(function(){return self.clients.claim();}));'+
+    '});'+
+    'self.addEventListener("fetch",function(e){'+
+      'var url=e.request.url;'+
+      // Intercept /manifest.json — serve our dynamic manifest
+      'if(url.endsWith("/manifest.json")||url.includes("/manifest.json?")){'+
+        'e.respondWith(new Response(MANIFEST_JSON,{headers:{"Content-Type":"application/manifest+json","Access-Control-Allow-Origin":"*"}}));'+
+        'return;'+
+      '}'+
+      // Skip API/external calls
+      'if(url.includes("supabase.co")||url.includes("api.telegram")||url.includes("googleapis")||url.includes("pollinations")||url.includes("unsplash")||e.request.method!=="GET") return;'+
+      'e.respondWith('+
+        'caches.match(e.request).then(function(cached){'+
+          'return cached||fetch(e.request).then(function(res){'+
+            'if(res&&res.status===200&&res.type==="basic"){'+
+              'var cp=res.clone();'+
+              'caches.open(CACHE).then(function(c){c.put(e.request,cp);});'+
+            '}'+
+            'return res;'+
+          '}).catch(function(){return cached||new Response("Offline",{status:503});});'+
+        '})'+
+      ');'+
+    '});';
+
+  try {
+    var blob = new Blob([swCode], {type:'text/javascript'});
+    var swUrl = URL.createObjectURL(blob);
+    navigator.serviceWorker.register(swUrl, {scope:'/'})
+      .then(function(r){
+        console.log('[TSL SW] Inline SW registered, scope:', r.scope);
+        // Force manifest reload now that SW is ready
+        setTimeout(function(){
+          var link = document.getElementById('tsl-manifest-link');
+          if(link){ var h=link.href; link.href=''; link.href=h; }
+        }, 500);
+      })
+      .catch(function(err){
+        console.warn('[TSL SW] Blob SW failed:', err.message, '— trying /sw.js');
+        navigator.serviceWorker.register('/sw.js',{scope:'/'})
+          .then(function(r){ console.log('[TSL SW] /sw.js registered'); })
+          .catch(function(e2){ console.warn('[TSL SW] /sw.js also failed:', e2.message); });
+      });
+  } catch(e){ console.warn('[TSL SW] SW setup error:', e.message); }
 }
 
 // ─── 4. INSTALL PROMPT — capture + show custom button ────────────────────────
@@ -323,11 +380,10 @@ function initPWA(){
   var icon512=makeTSLIcon(512);
   if(icon192){
     buildManifest(icon192,icon512);
-    // Set apple icon
     var al=document.getElementById('tsl-apple-icon');
     if(al) al.href=icon192;
   }
-  registerSW();
+  registerSW(icon192); // pass icon so SW can serve it in /manifest.json
 }
 
 if(document.readyState==='loading'){
@@ -15378,15 +15434,17 @@ Write exactly 5 paragraphs, minimum 600 words. No section labels. Zero repetitio
     }
 
     try {
-      // Pollinations.ai — professional TV news anchor style (prompt kept short to stay under URL limit)
-      const tvNewsPrompt = `professional female news anchor, modern broadcast studio, soft lighting, 4K, 16:9, ${catContext}, premium news channel, clean minimal background, ultra realistic`;
+      // Pollinations.ai — turbo model for fast generation (~3-5s vs flux's 60s+)
+      const tvNewsPrompt = `professional news anchor woman, broadcast studio, soft lighting, 16:9, ${catContext}, premium TV news, ultra realistic, 4K`;
       const prompt = encodeURIComponent(tvNewsPrompt);
       const seed = Math.floor(Math.random() * 999999);
-      const imageUrl = `https://image.pollinations.ai/prompt/${prompt}?width=1200&height=630&seed=${seed}&nologo=true&enhance=true&model=flux`;
+      // Use 'turbo' model — much faster than 'flux', still high quality
+      const imageUrl = `https://image.pollinations.ai/prompt/${prompt}?width=1200&height=630&seed=${seed}&nologo=true&model=turbo`;
 
       await new Promise((resolve, reject) => {
         const img = new Image();
-        const imgTimeout = setTimeout(function() { reject(new Error('Image load timed out')); }, 25000);
+        img.crossOrigin = 'anonymous';
+        const imgTimeout = setTimeout(function() { reject(new Error('Image load timed out')); }, 45000);
         img.onload = function() { clearTimeout(imgTimeout); resolve(); };
         img.onerror = function() { clearTimeout(imgTimeout); reject(new Error('Image load failed')); };
         img.src = imageUrl;
